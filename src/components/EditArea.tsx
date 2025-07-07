@@ -1,41 +1,14 @@
-import React from "react";
+import React, { useState, type MouseEventHandler } from "react";
 import { useComponentsStore, type Component } from "../stores/components";
 import { useComponentConfigStore } from "../stores/component-config";
+import HoverMask from "./HoverMask";
+import SelectedMask from "./SelectedMask";
 
 export default function EditArea() {
-  const { components } = useComponentsStore();
+  const { components, curComponentId, setCurComponentId } =
+    useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
-  // useEffect(() => {
-  //   addComponent(
-  //     {
-  //       id: 2,
-  //       name: "Container",
-  //       props: {},
-  //       children: [],
-  //     },
-  //     1
-  //   );
-  //   addComponent(
-  //     {
-  //       id: 3,
-  //       name: "Button",
-  //       props: {
-  //         text: "Click me",
-  //       },
-  //       children: [],
-  //     },
-  //     2
-  //   );
-  //   addComponent(
-  //     {
-  //       id: 4,
-  //       name: "Page",
-  //       props: {},
-  //       children: [],
-  //     },
-  //     2
-  //   );
-  // }, []);
+  const [hoveredComponentId, setHoveredComponentId] = useState<number>();
 
   function renderComponents(components: Component[]): React.ReactNode {
     return components.map((component: Component) => {
@@ -56,10 +29,49 @@ export default function EditArea() {
       );
     });
   }
-
+  const handleMouseOver: MouseEventHandler = (e) => {
+    const path = e.nativeEvent.composedPath();
+    for (let i = 0; i < path.length; i += 1) {
+      const ele = path[i] as HTMLElement;
+      const componentId = ele.dataset.componentId;
+      if (componentId) {
+        setHoveredComponentId(+componentId);
+        return;
+      }
+    }
+  };
+  const handleClick: MouseEventHandler = (e) => {
+    const path = e.nativeEvent.composedPath();
+    for (let i = 0; i < path.length; i += 1) {
+      const ele = path[i] as HTMLElement;
+      const componentId = ele.dataset.componentId;
+      if (componentId) {
+        setCurComponentId(+componentId);
+        return;
+      }
+    }
+  };
   return (
-    <div className="h-[100%] scrollable overflow-y-auto">
+    <div
+      className="h-[100%] scrollable overflow-y-auto edit-area"
+      onMouseOver={handleMouseOver}
+      onMouseLeave={() => setHoveredComponentId(undefined)}
+      onClick={handleClick}
+    >
       {renderComponents(components)}
+      {hoveredComponentId && hoveredComponentId !== curComponentId && (
+        <HoverMask
+          containerClassName="edit-area"
+          componentId={hoveredComponentId}
+        />
+      )}
+      {curComponentId && (
+        <SelectedMask
+          containerClassName="edit-area"
+          componentId={curComponentId}
+        />
+      )}
+      <div className="potral-wrapper"></div>
       {/* <pre>{JSON.stringify(components, null, 2)}</pre> */}
     </div>
   );

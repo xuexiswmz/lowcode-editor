@@ -6,6 +6,7 @@ import Page from "../materials/Page";
 
 export interface ComponentConfig {
   name: string;
+  desc: string;
   defaultProps: Record<string, unknown>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   component: React.ComponentType<any>;
@@ -24,10 +25,12 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
     Container: {
       name: "Container",
       defaultProps: {},
+      desc: "容器",
       component: Container,
     },
     Button: {
       name: "Button",
+      desc: "按钮",
       defaultProps: {
         type: "primary",
         text: "button",
@@ -36,6 +39,7 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
     },
     Page: {
       name: "Page",
+      desc: "页面",
       defaultProps: {},
       component: Page,
     },

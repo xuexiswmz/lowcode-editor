@@ -3,6 +3,7 @@ import { create } from "zustand";
 export interface Component {
   id: number;
   name: string;
+  desc: string;
   props: Record<string, unknown>;
   children?: Component[];
   parentId?: number;
@@ -10,6 +11,8 @@ export interface Component {
 
 interface State {
   components: Component[];
+  curComponent: Component | null;
+  curComponentId?: number | null;
 }
 
 interface Action {
@@ -19,6 +22,7 @@ interface Action {
     componentId: number,
     props: Record<string, unknown>
   ) => void;
+  setCurComponentId: (componentId: number | null) => void;
 }
 
 export const useComponentsStore = create<State & Action>((set, get) => ({
@@ -30,6 +34,13 @@ export const useComponentsStore = create<State & Action>((set, get) => ({
       desc: "页面",
     },
   ],
+  curComponent: null,
+  curComponentId: null,
+  setCurComponentId: (componentId) =>
+    set((state) => ({
+      curComponentId: componentId,
+      curComponent: getComponentById(componentId, state.components),
+    })),
   addComponent: (component, parentId) =>
     set((state) => {
       if (parentId) {
