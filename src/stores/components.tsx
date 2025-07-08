@@ -5,7 +5,8 @@ export interface Component {
   id: number;
   name: string;
   desc: string;
-  props: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props: Record<string, any>;
   styles?: CSSProperties;
   children?: Component[];
   parentId?: number;
@@ -15,6 +16,7 @@ interface State {
   components: Component[];
   curComponent: Component | null;
   curComponentId?: number | null;
+  mode: "edit" | "preview";
 }
 
 interface Action {
@@ -30,6 +32,7 @@ interface Action {
     replace?: boolean
   ) => void;
   setCurComponentId: (componentId: number | null) => void;
+  setMode: (mode: State["mode"]) => void;
 }
 
 export const useComponentsStore = create<State & Action>((set, get) => ({
@@ -43,6 +46,8 @@ export const useComponentsStore = create<State & Action>((set, get) => ({
   ],
   curComponent: null,
   curComponentId: null,
+  mode: "edit",
+  setMode: (mode) => set({ mode }),
   setCurComponentId: (componentId) =>
     set((state) => ({
       curComponentId: componentId,

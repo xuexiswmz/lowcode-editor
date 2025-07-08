@@ -1,8 +1,12 @@
 import { create } from "zustand";
-import Container from "../materials/Container";
-import Button from "../materials/Button";
-import type React from "react";
-import Page from "../materials/Page";
+import ContainerDev from "../materials/Container/dev";
+import ButtonDev from "../materials/Button/dev";
+import PageDev from "../materials/Page/dev";
+import ContainerProd from "../materials/Container/prod";
+import ButtonProd from "../materials/Button/prod";
+import PageProd from "../materials/Page/prod";
+import type { ComponentType } from "react";
+import type { CommonComponentProps } from "../interface";
 
 export interface componentSetter {
   name: string;
@@ -12,14 +16,20 @@ export interface componentSetter {
   [key: string]: unknown;
 }
 
-export interface ComponentConfig {
+export interface ComponentEvent {
+  name: string;
+  label: string;
+}
+
+export interface ComponentConfig<T = CommonComponentProps> {
   name: string;
   desc: string;
   setter?: componentSetter[];
   stylesSetter?: componentSetter[];
   defaultProps: Record<string, unknown>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  component: React.ComponentType<any>;
+  dev: ComponentType<T>;
+  prod: ComponentType<T>;
+  events?: ComponentEvent[];
 }
 
 interface State {
@@ -36,7 +46,8 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       name: "Container",
       defaultProps: {},
       desc: "容器",
-      component: Container,
+      dev: ContainerDev,
+      prod: ContainerProd,
     },
     Button: {
       name: "Button",
@@ -73,13 +84,25 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
           type: "inputNumber",
         },
       ],
-      component: Button,
+      events: [
+        {
+          name: "onClick",
+          label: "点击事件",
+        },
+        {
+          name: "onDoubleClick",
+          label: "双击事件",
+        },
+      ],
+      dev: ButtonDev,
+      prod: ButtonProd,
     },
     Page: {
       name: "Page",
       desc: "页面",
       defaultProps: {},
-      component: Page,
+      dev: PageDev,
+      prod: PageProd,
     },
   },
 
