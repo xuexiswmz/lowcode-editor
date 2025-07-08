@@ -1,9 +1,9 @@
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import Header from "../components/Header";
-import Setting from "../components/Setting";
 import EditArea from "../components/EditArea";
 import Marerial from "../components/Material";
+import { Setting } from "../components/Setting";
 export default function LowcodeEditor() {
   return (
     <div className="h-[100vh] flex flex-col">
@@ -17,7 +17,7 @@ export default function LowcodeEditor() {
         <Allotment.Pane>
           <EditArea />
         </Allotment.Pane>
-        <Allotment.Pane preferredSize={300} maxSize={500} minSize={300}>
+        <Allotment.Pane preferredSize={300} maxSize={500} minSize={375}>
           <Setting />
         </Allotment.Pane>
       </Allotment>

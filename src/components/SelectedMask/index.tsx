@@ -30,7 +30,9 @@ function SelectedMask({ containerClassName, componentId }: SelectedMaskProps) {
     updatePosition();
   }, [componentId]);
   useEffect(() => {
-    updatePosition();
+    setTimeout(() => {
+      updatePosition();
+    }, 200);
   }, [components]);
   useEffect(() => {
     const resizeHandler = () => {
