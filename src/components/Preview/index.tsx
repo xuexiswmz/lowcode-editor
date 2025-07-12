@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useComponentsStore, type Component } from "../../stores/components";
 import { useComponentConfigStore } from "../../stores/component-config";
 import type { ActionConfig } from "../Setting/ActionModal";
@@ -7,6 +7,7 @@ import { message } from "antd";
 export default function Preview() {
   const { components } = useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
+  const componentRef = useRef<Record<string, { [key: string]: unknown }>>({});
 
   function handleEvent(component: Component) {
     const props: Record<string, unknown> = {};
@@ -32,6 +33,17 @@ export default function Preview() {
                   message.success(content);
                 },
               });
+            } else if (action.type === "componentMethod") {
+              const component = componentRef.current[action.config.componentId];
+              if (component) {
+                if (typeof component[action.config.method] === "function") {
+                  (
+                    component[action.config.method] as (
+                      ...args: unknown[]
+                    ) => unknown
+                  )();
+                }
+              }
             }
           });
         };
@@ -54,6 +66,9 @@ export default function Preview() {
           id: component.id,
           name: component.name,
           styles: component.styles,
+          ref: (ref: Record<string, unknown>) => {
+            componentRef.current[component.id] = ref;
+          },
           ...config.defaultProps,
           ...component.props,
           ...handleEvent(component),

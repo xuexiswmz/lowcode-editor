@@ -4,14 +4,21 @@ import GoToLink, { type GoToLinkConfig } from "./actions/GoToLink";
 import ShowMessage, { type ShowMessageConfig } from "./actions/ShowMessage";
 import type { CustomJSConfig } from "./actions/CustomJS";
 import CustomJS from "./actions/CustomJS";
+import ComponentMethod, {
+  type ComponentMethodConfig,
+} from "./actions/ComponentMethod";
 
-interface ActionModalProps {
+export interface ActionModalProps {
   visible: boolean;
   action?: ActionConfig;
   handleOk: (config?: ActionConfig) => void;
   handleCancel: () => void;
 }
-export type ActionConfig = GoToLinkConfig | ShowMessageConfig | CustomJSConfig;
+export type ActionConfig =
+  | GoToLinkConfig
+  | ShowMessageConfig
+  | CustomJSConfig
+  | ComponentMethodConfig;
 
 export default function ActionModal(props: ActionModalProps) {
   const { visible, action, handleOk, handleCancel } = props;
@@ -19,6 +26,7 @@ export default function ActionModal(props: ActionModalProps) {
     goToLink: "访问链接",
     showMessage: "消息提示",
     customJS: "自定义JS",
+    componentMethod: "组件方法",
   };
   const [key, setKey] = useState<string>("访问链接");
   const [curConfig, setCurConfig] = useState<ActionConfig>();
@@ -33,17 +41,17 @@ export default function ActionModal(props: ActionModalProps) {
       title="事件配置"
       width={800}
       open={visible}
-      onOk={() => handleOk(curConfig)}
-      onCancel={handleCancel}
       okText="添加"
       cancelText="取消"
+      onOk={() => handleOk(curConfig)}
+      onCancel={handleCancel}
     >
       <div className="h-[500px]">
         <Segmented
           value={key}
           onChange={setKey}
           block
-          options={["访问链接", "消息提示", "自定义JS"]}
+          options={["访问链接", "消息提示", "组件方法", "自定义JS"]}
         />
         {key === "访问链接" && (
           <GoToLink
@@ -61,6 +69,15 @@ export default function ActionModal(props: ActionModalProps) {
             onChange={(config) => {
               setCurConfig(config);
             }}
+          />
+        )}
+        {key === "组件方法" && (
+          <ComponentMethod
+            key="showMessage"
+            value={
+              action?.type === "componentMethod" ? action.config : undefined
+            }
+            onChange={(config) => setCurConfig(config)}
           />
         )}
         {key === "自定义JS" && (

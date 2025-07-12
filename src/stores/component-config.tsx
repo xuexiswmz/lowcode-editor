@@ -7,6 +7,8 @@ import ButtonProd from "../materials/Button/prod";
 import PageProd from "../materials/Page/prod";
 import type { ComponentType } from "react";
 import type { CommonComponentProps } from "../interface";
+import ModalDev from "../materials/Modal/dev";
+import ModalProd from "../materials/Modal/prod";
 
 export interface componentSetter {
   name: string;
@@ -21,6 +23,11 @@ export interface ComponentEvent {
   label: string;
 }
 
+export interface ComponentMethod {
+  name: string;
+  label: string;
+}
+
 export interface ComponentConfig<T = CommonComponentProps> {
   name: string;
   desc: string;
@@ -30,6 +37,7 @@ export interface ComponentConfig<T = CommonComponentProps> {
   dev: ComponentType<T>;
   prod: ComponentType<T>;
   events?: ComponentEvent[];
+  methods?: ComponentMethod[];
 }
 
 interface State {
@@ -103,6 +111,43 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       defaultProps: {},
       dev: PageDev,
       prod: PageProd,
+    },
+    Modal: {
+      name: "Modal",
+      defaultProps: {
+        title: "弹窗",
+      },
+      setter: [
+        {
+          name: "title",
+          label: "标题",
+          type: "input",
+        },
+      ],
+      stylesSeteer: [],
+      events: [
+        {
+          name: "onOk",
+          label: "确认事件",
+        },
+        {
+          name: "onCancel",
+          label: "取消事件",
+        },
+      ],
+      methods: [
+        {
+          name: "open",
+          label: "打开弹窗",
+        },
+        {
+          name: "close",
+          label: "关闭弹窗",
+        },
+      ],
+      desc: "弹窗",
+      dev: ModalDev,
+      prod: ModalProd,
     },
   },
 

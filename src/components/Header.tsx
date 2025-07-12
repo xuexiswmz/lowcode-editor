@@ -22,8 +22,7 @@ export default function Header() {
           {mode === "preview" && (
             <Button
               onClick={() => {
-                setMode("preview");
-                setCurComponentId(null);
+                setMode("edit");
               }}
               type="primary"
             >

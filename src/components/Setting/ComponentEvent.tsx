@@ -1,4 +1,4 @@
-import { useComponentsStore } from "../../stores/components";
+import { getComponentById, useComponentsStore } from "../../stores/components";
 import {
   useComponentConfigStore,
   type ComponentEvent,
@@ -9,7 +9,8 @@ import ActionModal, { type ActionConfig } from "./ActionModal";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 export default function ComponentEvent() {
-  const { curComponent, updateComponentProps } = useComponentsStore();
+  const { curComponent, updateComponentProps, components } =
+    useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
   const [actionModalOpen, setActionModalOpen] = useState(false);
   const [curEvent, setCurEvent] = useState<ComponentEvent>();
@@ -153,6 +154,44 @@ export default function ComponentEvent() {
                           cursor: "pointer",
                         }}
                         onChange={() => deleteAction(event, index)}
+                      >
+                        <DeleteOutlined />
+                      </div>
+                    </div>
+                  ) : null}
+                  {item.type === "componentMethod" ? (
+                    <div
+                      key="componentMethod"
+                      className="border border-[#aaa] m-[10px] p-[10px] relative"
+                    >
+                      <div className="text-[#23e06c]">组件方法</div>
+                      <div>
+                        {
+                          getComponentById(item.config.componentId, components)
+                            ?.desc
+                        }
+                      </div>
+                      <div>{item.config.componentId}</div>
+                      <div>{item.config.method}</div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 30,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => editAction(item, index)}
+                      >
+                        <EditOutlined />
+                      </div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 10,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => deleteAction(event, index)}
                       >
                         <DeleteOutlined />
                       </div>
