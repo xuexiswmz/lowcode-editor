@@ -28,17 +28,25 @@ export default function ComponentStyle() {
   function toCSSStr(css: CSSProperties) {
     let str = `.comp{\n`;
     for (const key in css) {
-      let value = css[key as keyof CSSProperties];
+      const value = css[key as keyof CSSProperties];
       if (!value) {
         continue;
       }
+
+      let valueStr = String(value);
+
+      // 为数字值添加 px 单位
       if (
-        ["width", "height"].includes(key) &&
-        !value.toString().endsWith("px")
+        ["width", "height", "margin", "padding", "borderRadius"].includes(
+          key
+        ) &&
+        typeof value === "number" &&
+        !valueStr.endsWith("px")
       ) {
-        value += "px";
+        valueStr += "px";
       }
-      str += `\t${key}: ${value};\n`;
+
+      str += `\t${key}: ${valueStr};\n`;
     }
     str += `}`;
     return str;
@@ -51,16 +59,27 @@ export default function ComponentStyle() {
     if (type === "select") {
       return <Select options={options} />;
     } else if (type === "input") {
-      <Input />;
+      return <Input />;
     } else if (type === "inputNumber") {
       return <InputNumber />;
     }
+    return <Input />;
   }
 
-  function valueChange(changeValues: CSSProperties) {
+  const debouncedValueChange = debounce((changeValues: CSSProperties) => {
     if (curComponentId) {
       updateComponentStyles(curComponentId, changeValues);
     }
+  }, 500);
+
+  function valueChange(changeValues: CSSProperties) {
+    // 立即更新 CSS 编辑器显示
+    const currentValues = form.getFieldsValue();
+    const newStyles = { ...currentValues, ...changeValues };
+    setCss(toCSSStr(newStyles));
+
+    // 防抖更新组件样式
+    debouncedValueChange(newStyles);
   }
   const handleEditorChange = debounce((value) => {
     const css: Record<string, unknown> = {};

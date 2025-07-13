@@ -1,5 +1,5 @@
-import { Form, Input, Select } from "antd";
-import React, { useEffect } from "react";
+import { Form, Input, Select, Switch, InputNumber } from "antd";
+import { useEffect } from "react";
 import { useComponentsStore } from "../../stores/components";
 import {
   useComponentConfigStore,
@@ -26,7 +26,12 @@ export default function ComponentAttr() {
       return <Select options={options} />;
     } else if (type === "input") {
       return <Input />;
+    } else if (type === "switch") {
+      return <Switch />;
+    } else if (type === "inputNumber") {
+      return <InputNumber style={{ width: "100%" }} />;
     }
+    return <Input />;
   }
 
   function valueChange(changeValues: Record<string, unknown>) {

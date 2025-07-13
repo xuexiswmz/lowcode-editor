@@ -62,7 +62,10 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       desc: "按钮",
       defaultProps: {
         type: "primary",
-        text: "button",
+        text: "按钮",
+        size: "middle",
+        disabled: false,
+        loading: false,
       },
       setter: [
         {
@@ -72,6 +75,9 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
           options: [
             { label: "主按钮", value: "primary" },
             { label: "次按钮", value: "default" },
+            { label: "虚线按钮", value: "dashed" },
+            { label: "文本按钮", value: "text" },
+            { label: "链接按钮", value: "link" },
           ],
         },
         {
@@ -79,16 +85,41 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
           label: "文本",
           type: "input",
         },
+        {
+          name: "size",
+          label: "大小",
+          type: "select",
+          options: [
+            { label: "大", value: "large" },
+            { label: "中", value: "middle" },
+            { label: "小", value: "small" },
+          ],
+        },
+        {
+          name: "disabled",
+          label: "禁用",
+          type: "switch",
+        },
+        {
+          name: "loading",
+          label: "加载中",
+          type: "switch",
+        },
       ],
       stylesSetter: [
         {
-          name: "width",
-          label: "宽度",
-          type: "inputNumber",
+          name: "margin",
+          label: "外边距",
+          type: "input",
         },
         {
-          name: "height",
-          label: "高度",
+          name: "padding",
+          label: "内边距",
+          type: "input",
+        },
+        {
+          name: "borderRadius",
+          label: "圆角",
           type: "inputNumber",
         },
       ],
@@ -100,6 +131,14 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
         {
           name: "onDoubleClick",
           label: "双击事件",
+        },
+        {
+          name: "onMouseEnter",
+          label: "鼠标进入",
+        },
+        {
+          name: "onMouseLeave",
+          label: "鼠标离开",
         },
       ],
       dev: ButtonDev,
@@ -124,7 +163,7 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
           type: "input",
         },
       ],
-      stylesSeteer: [],
+      stylesSetter: [],
       events: [
         {
           name: "onOk",
