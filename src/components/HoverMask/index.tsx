@@ -17,17 +17,49 @@ function HoverMask({ containerClassName, componentId }: HoverMaskProps) {
     labelLeft: 0,
   });
   const { components } = useComponentsStore();
+
   useEffect(() => {
     updatePosition();
   }, [componentId]);
+
+  useEffect(() => {
+    const container = document.querySelector(`.${containerClassName}`);
+    if (!container) return;
+
+    // 创建 ResizeObserver 监听容器大小变化
+    const resizeObserver = new ResizeObserver(() => {
+      // 使用 setTimeout 确保 DOM 更新后再计算位置
+      setTimeout(() => {
+        updatePosition();
+      }, 10);
+    });
+
+    // 监听容器大小变化
+    resizeObserver.observe(container);
+
+    // 同时保留原有的窗口大小变化监听
+    window.addEventListener("resize", updatePosition);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [containerClassName]);
+
   function updatePosition() {
     if (!componentId) return;
 
     const container = document.querySelector(`.${containerClassName}`);
     if (!container) return;
 
-    const node = document.querySelector(`[data-component-id="${componentId}"]`);
-    if (!node) return;
+    // 确保使用正确的组件ID进行查询，避免选择错误的组件
+    const selector = `[data-component-id="${componentId}"]`;
+    const node = document.querySelector(selector);
+
+    if (!node) {
+      console.log(`未找到组件: ${selector}`);
+      return;
+    }
 
     const { top, left, width, height } = node.getBoundingClientRect();
     const { top: containerTop, left: containerLeft } =

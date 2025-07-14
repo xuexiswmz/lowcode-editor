@@ -29,20 +29,43 @@ function SelectedMask({ containerClassName, componentId }: SelectedMaskProps) {
   useEffect(() => {
     updatePosition();
   }, [componentId]);
+
   useEffect(() => {
     setTimeout(() => {
       updatePosition();
     }, 200);
   }, [components]);
+
   useEffect(() => {
-    const resizeHandler = () => {
-      updatePosition();
-    };
-    window.addEventListener("resize", resizeHandler);
+    // 监听窗口大小变化
+    window.addEventListener("resize", updatePosition);
+
     return () => {
-      window.removeEventListener("resize", resizeHandler);
+      window.removeEventListener("resize", updatePosition);
     };
-  });
+  }, []);
+
+  useEffect(() => {
+    if (!containerClassName) return;
+
+    const container = document.querySelector(`.${containerClassName}`);
+    if (!container) return;
+
+    // 创建 ResizeObserver 监听容器大小变化
+    const resizeObserver = new ResizeObserver(() => {
+      // 使用 setTimeout 确保 DOM 更新后再计算位置
+      setTimeout(() => {
+        updatePosition();
+      }, 10);
+    });
+
+    // 监听容器大小变化
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [containerClassName]);
 
   function updatePosition() {
     if (!componentId) return;
@@ -50,8 +73,14 @@ function SelectedMask({ containerClassName, componentId }: SelectedMaskProps) {
     const container = document.querySelector(`.${containerClassName}`);
     if (!container) return;
 
-    const node = document.querySelector(`[data-component-id="${componentId}"]`);
-    if (!node) return;
+    // 确保使用正确的组件ID进行查询，避免选择错误的组件
+    const selector = `[data-component-id="${componentId}"]`;
+    const node = document.querySelector(selector);
+
+    if (!node) {
+      console.log(`未找到组件: ${selector}`);
+      return;
+    }
 
     const { top, left, width, height } = node.getBoundingClientRect();
     const { top: containerTop, left: containerLeft } =
@@ -63,9 +92,10 @@ function SelectedMask({ containerClassName, componentId }: SelectedMaskProps) {
     if (labelTop <= 0) {
       labelTop -= -20;
     }
+
     setPosition({
       top: top - containerTop + container.scrollTop,
-      left: left - containerLeft + container.scrollTop,
+      left: left - containerLeft + container.scrollLeft,
       width,
       height,
       labelTop,
@@ -75,7 +105,7 @@ function SelectedMask({ containerClassName, componentId }: SelectedMaskProps) {
 
   const el = useMemo(() => {
     return document.querySelector(`.${containerClassName}`);
-  }, [containerClassName]);
+  }, []);
 
   const curSelectedComponent = useMemo(() => {
     return getComponentById(componentId, components);
