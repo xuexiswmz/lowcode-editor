@@ -4,6 +4,9 @@ import { useComponentConfigStore } from "../stores/component-config";
 import HoverMask from "./HoverMask";
 import SelectedMask from "./SelectedMask";
 
+// 定义不能接受children的组件列表
+const VOID_COMPONENTS = ["Input"];
+
 export default function EditArea() {
   const { components, curComponentId, setCurComponentId } =
     useComponentsStore();
@@ -16,6 +19,23 @@ export default function EditArea() {
       if (!config?.dev) {
         return null;
       }
+
+      // 检查是否是不能接受children的组件
+      const isVoidComponent = VOID_COMPONENTS.includes(component.name);
+
+      // 如果是void组件，不传递children
+      if (isVoidComponent) {
+        return React.createElement(config.dev, {
+          key: component.id,
+          id: component.id,
+          name: component.name,
+          styles: component.styles,
+          ...config.defaultProps,
+          ...component.props,
+        });
+      }
+
+      // 对于可以接受children的组件，正常传递children
       return React.createElement(
         config.dev,
         {

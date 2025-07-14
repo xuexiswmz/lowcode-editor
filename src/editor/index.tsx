@@ -8,6 +8,7 @@ import { useComponentsStore } from "../stores/components";
 import Preview from "../components/Preview";
 export default function LowcodeEditor() {
   const { mode } = useComponentsStore();
+
   return (
     <div className="h-[100vh] flex flex-col">
       <div className="h-[60px] flex items-center border-b-[2px] border-[#a8a2a2]">

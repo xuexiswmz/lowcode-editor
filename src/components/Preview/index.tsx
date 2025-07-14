@@ -4,6 +4,9 @@ import { useComponentConfigStore } from "../../stores/component-config";
 import type { ActionConfig } from "../Setting/ActionModal";
 import { message } from "antd";
 
+// 定义不能接受children的组件列表
+const VOID_COMPONENTS = ["Input"];
+
 export default function Preview() {
   const { components } = useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
@@ -59,6 +62,26 @@ export default function Preview() {
         return null;
       }
 
+      // 检查是否是不能接受children的组件
+      const isVoidComponent = VOID_COMPONENTS.includes(component.name);
+
+      // 如果是void组件，不传递children
+      if (isVoidComponent) {
+        return React.createElement(config.prod, {
+          key: component.id,
+          id: component.id,
+          name: component.name,
+          styles: component.styles,
+          ref: (ref: Record<string, unknown>) => {
+            componentRef.current[component.id] = ref;
+          },
+          ...config.defaultProps,
+          ...component.props,
+          ...handleEvent(component),
+        });
+      }
+
+      // 对于可以接受children的组件，正常传递children
       return React.createElement(
         config.prod,
         {

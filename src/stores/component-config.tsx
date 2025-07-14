@@ -9,6 +9,8 @@ import type { ComponentType } from "react";
 import type { CommonComponentProps } from "../interface";
 import ModalDev from "../materials/Modal/dev";
 import ModalProd from "../materials/Modal/prod";
+import InputDev from "../materials/Input/dev";
+import InputProd from "../materials/Input/prod";
 
 export interface componentSetter {
   name: string;
@@ -187,6 +189,68 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       desc: "弹窗",
       dev: ModalDev,
       prod: ModalProd,
+    },
+    Input: {
+      name: "Input",
+      desc: "输入框",
+      defaultProps: {
+        value: "",
+        placeholder: "请输入内容",
+        disabled: false,
+        maxLength: 10,
+        type: "text",
+      },
+      setter: [
+        {
+          name: "value",
+          label: "值",
+          type: "input",
+        },
+        {
+          name: "placeholder",
+          label: "占位符",
+          type: "input",
+        },
+        {
+          name: "disabled",
+          label: "禁用",
+          type: "switch",
+        },
+        {
+          name: "maxLength",
+          label: "最大长度",
+          type: "inputNumber",
+        },
+        {
+          name: "type",
+          label: "类型",
+          type: "select",
+          options: [
+            { label: "文本", value: "text" },
+            { label: "密码", value: "password" },
+            { label: "数字", value: "number" },
+            { label: "邮箱", value: "email" },
+            { label: "电话", value: "tel" },
+          ],
+        },
+      ],
+      stylesSetter: [],
+      events: [
+        {
+          name: "onChange",
+          label: "值变化事件",
+        },
+        {
+          name: "onFocus",
+          label: "聚焦事件",
+        },
+        {
+          name: "onBlur",
+          label: "失去焦点事件",
+        },
+      ],
+      dev: InputDev,
+      prod: InputProd,
     },
   },
 

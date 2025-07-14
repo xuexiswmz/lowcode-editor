@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useComponentConfigStore } from "../../stores/component-config";
 import MaterialItem from "../MaterialItem";
 
