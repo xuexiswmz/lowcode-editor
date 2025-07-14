@@ -231,6 +231,8 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
             { label: "数字", value: "number" },
             { label: "邮箱", value: "email" },
             { label: "电话", value: "tel" },
+            { label: "搜索", value: "search" },
+            { label: "网址", value: "url" },
           ],
         },
       ],

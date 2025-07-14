@@ -1,9 +1,9 @@
 import { Input as AntdInput } from "antd";
 import { useDrag } from "react-dnd";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { useComponentsStore } from "../../stores/components";
-import { debounce } from "lodash-es";
+import { useDebounceFunction } from "../../hooks/useDebounce";
 
 // 定义Input组件的属性，排除children属性
 type InputProps = Omit<CommonComponentProps, "children">;
@@ -29,14 +29,11 @@ const Input = ({
     setInputValue(value);
   }, [value]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedUpdateProps = useCallback(
-    debounce((newValue: string) => {
-      updateComponentProps(id, { value: newValue });
-      console.log("updateComponentProps", newValue);
-    }, 200),
-    [id, updateComponentProps]
-  );
+  const debouncedUpdateProps = useDebounceFunction((...args: unknown[]) => {
+    const newValue = args[0] as string;
+    updateComponentProps(id, { value: newValue });
+    console.log("updateComponentProps", newValue);
+  }, 300);
 
   const [, drag] = useDrag({
     type: name,
@@ -60,7 +57,7 @@ const Input = ({
 
     setInputValue(newValue);
 
-    debouncedUpdateProps(newValue);
+    debouncedUpdateProps[0](newValue);
 
     if (onChange) {
       onChange(e);

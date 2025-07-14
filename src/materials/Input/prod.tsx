@@ -1,9 +1,9 @@
 import { Input as AntdInput } from "antd";
 import type { CommonComponentProps } from "../../interface";
-import { forwardRef, useState, useEffect, useCallback } from "react";
+import { forwardRef, useState, useEffect } from "react";
 import type { InputRef } from "antd/lib/input";
 import { useComponentsStore } from "../../stores/components";
-import { debounce } from "lodash-es";
+import { useDebounceFunction } from "../../hooks/useDebounce";
 
 // 定义Input组件的属性，排除children属性
 type InputProps = Omit<CommonComponentProps, "children">;
@@ -31,13 +31,10 @@ const Input = forwardRef<InputRef, InputProps>(
       setInputValue(value);
     }, [value]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const debouncedUpdateProps = useCallback(
-      debounce((newValue: string) => {
-        updateComponentProps(id, { value: newValue });
-      }, 200),
-      [id, updateComponentProps]
-    );
+    const debouncedUpdateProps = useDebounceFunction((...args: unknown[]) => {
+      const newValue = args[0] as string;
+      updateComponentProps(id, { value: newValue });
+    }, 300);
 
     // 处理输入变化
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +46,7 @@ const Input = forwardRef<InputRef, InputProps>(
 
       setInputValue(newValue);
 
-      debouncedUpdateProps(newValue);
+      debouncedUpdateProps[0](newValue);
 
       if (onChange) {
         onChange(e);

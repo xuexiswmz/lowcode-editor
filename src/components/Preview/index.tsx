@@ -1,60 +1,33 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useComponentsStore, type Component } from "../../stores/components";
 import { useComponentConfigStore } from "../../stores/component-config";
-import type { ActionConfig } from "../Setting/ActionModal";
-import { message } from "antd";
+import {
+  type ErrorState,
+  type ComponentStyles,
+  getErrorStyle,
+  renderErrorMessage,
+} from "../../utils/validation";
+import { createEventHandlers } from "../../utils/eventHandler";
+import { type ComponentRef } from "../../utils/types";
 
 // 定义不能接受children的组件列表
 const VOID_COMPONENTS = ["Input"];
 
+/**
+ * 预览组件
+ * 负责渲染组件树并处理组件事件
+ */
 export default function Preview() {
   const { components } = useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
-  const componentRef = useRef<Record<string, { [key: string]: unknown }>>({});
+  const componentRef = useRef<ComponentRef>({});
+  const [errors, setErrors] = useState<ErrorState>({});
 
-  function handleEvent(component: Component) {
-    const props: Record<string, unknown> = {};
-    componentConfig[component.name].events?.forEach((event) => {
-      const eventConfig = component.props[event.name];
-      if (eventConfig) {
-        props[event.name] = () => {
-          eventConfig?.actions?.forEach((action: ActionConfig) => {
-            if (action.type === "goToLink" && action.url) {
-              window.location.href = action.url;
-            } else if (action.type === "showMessage" && action.config) {
-              if (action.config.type === "success") {
-                message.success(action.config.text);
-              } else if (action.config.type === "error") {
-                message.error(action.config.text);
-              }
-            } else if (action.type === "customJS") {
-              const func = new Function("context", action.code);
-              func({
-                name: component.name,
-                props: component.props,
-                showMessage(content: string) {
-                  message.success(content);
-                },
-              });
-            } else if (action.type === "componentMethod") {
-              const component = componentRef.current[action.config.componentId];
-              if (component) {
-                if (typeof component[action.config.method] === "function") {
-                  (
-                    component[action.config.method] as (
-                      ...args: unknown[]
-                    ) => unknown
-                  )();
-                }
-              }
-            }
-          });
-        };
-      }
-    });
-    return props;
-  }
-
+  /**
+   * 渲染组件树
+   * @param components 组件列表
+   * @returns React节点
+   */
   function renderComponents(components: Component[]): React.ReactNode {
     return components.map((component: Component) => {
       const config = componentConfig?.[component.name];
@@ -65,40 +38,62 @@ export default function Preview() {
       // 检查是否是不能接受children的组件
       const isVoidComponent = VOID_COMPONENTS.includes(component.name);
 
-      // 如果是void组件，不传递children
-      if (isVoidComponent) {
-        return React.createElement(config.prod, {
-          key: component.id,
-          id: component.id,
-          name: component.name,
-          styles: component.styles,
-          ref: (ref: Record<string, unknown>) => {
-            componentRef.current[component.id] = ref;
-          },
-          ...config.defaultProps,
-          ...component.props,
-          ...handleEvent(component),
-        });
-      }
+      // 为组件添加错误提示样式
+      const errorStyle = getErrorStyle(
+        String(component.id),
+        component.styles as ComponentStyles,
+        errors
+      );
 
-      // 对于可以接受children的组件，正常传递children
-      return React.createElement(
-        config.prod,
-        {
-          key: component.id,
-          id: component.id,
-          name: component.name,
-          styles: component.styles,
-          ref: (ref: Record<string, unknown>) => {
-            componentRef.current[component.id] = ref;
-          },
-          ...config.defaultProps,
-          ...component.props,
-          ...handleEvent(component),
-        },
-        renderComponents(component.children || [])
+      // 创建事件处理函数
+      const eventHandlers = createEventHandlers(
+        component,
+        componentConfig[component.name].events,
+        errors,
+        setErrors,
+        componentRef
+      );
+
+      // 创建组件元素
+      const componentElement = isVoidComponent
+        ? React.createElement(config.prod, {
+            key: component.id,
+            id: component.id,
+            name: component.name,
+            styles: errorStyle,
+            ref: (ref: Record<string, unknown>) => {
+              if (ref) componentRef.current[component.id] = ref;
+            },
+            ...config.defaultProps,
+            ...component.props,
+            ...eventHandlers,
+          })
+        : React.createElement(
+            config.prod,
+            {
+              key: component.id,
+              id: component.id,
+              name: component.name,
+              styles: errorStyle,
+              ref: (ref: Record<string, unknown>) => {
+                if (ref) componentRef.current[component.id] = ref;
+              },
+              ...config.defaultProps,
+              ...component.props,
+              ...eventHandlers,
+            },
+            renderComponents(component.children || [])
+          );
+
+      // 如果有错误信息，添加错误提示
+      return (
+        <React.Fragment key={component.id}>
+          {componentElement}
+          {renderErrorMessage(String(component.id), errors)}
+        </React.Fragment>
       );
     });
   }
+
   return <div>{renderComponents(components)}</div>;
 }

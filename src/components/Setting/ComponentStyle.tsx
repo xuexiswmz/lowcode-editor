@@ -6,8 +6,9 @@ import {
 } from "../../stores/component-config";
 import { useComponentsStore } from "../../stores/components";
 import CssEditor from "./CssEditor";
-import { debounce } from "lodash-es";
 import StyleToObject from "style-to-object";
+import { useDebounceFunction } from "../../hooks/useDebounce";
+import { type EditorProps } from "@monaco-editor/react";
 
 export default function ComponentStyle() {
   const [form] = Form.useForm();
@@ -17,6 +18,43 @@ export default function ComponentStyle() {
   const { componentConfig } = useComponentConfigStore();
 
   const [css, setCss] = useState<string>(`.comp{\n\n}`);
+
+  // 将所有Hook移到组件顶部
+  const debouncedValueChange = useDebounceFunction((...args: unknown[]) => {
+    const styles = args[0] as CSSProperties;
+    if (curComponentId) {
+      updateComponentStyles(curComponentId, styles);
+    }
+  }, 500);
+
+  const handleEditorChangeDebounced = useDebounceFunction(
+    (...args: unknown[]) => {
+      const value = args[0] as string | undefined;
+      if (!curComponentId || !value) return;
+
+      const cssObj: Record<string, unknown> = {};
+      try {
+        const cssStr = value
+          .replace(/\/\*.*\*\//, "")
+          .replace(/(\.?[^{]+{)/, "")
+          .replace("}", "");
+        StyleToObject(cssStr, (name, value) => {
+          cssObj[
+            name.replace(/-\w/, (item) => item.toUpperCase().replace("-", ""))
+          ] = value;
+        });
+        console.log(cssObj);
+        updateComponentStyles(
+          curComponentId,
+          { ...form.getFieldsValue(), ...cssObj },
+          true
+        );
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    500
+  );
 
   useEffect(() => {
     form.resetFields();
@@ -66,12 +104,6 @@ export default function ComponentStyle() {
     return <Input />;
   }
 
-  const debouncedValueChange = debounce((changeValues: CSSProperties) => {
-    if (curComponentId) {
-      updateComponentStyles(curComponentId, changeValues);
-    }
-  }, 500);
-
   function valueChange(changeValues: CSSProperties) {
     // 立即更新 CSS 编辑器显示
     const currentValues = form.getFieldsValue();
@@ -79,30 +111,13 @@ export default function ComponentStyle() {
     setCss(toCSSStr(newStyles));
 
     // 防抖更新组件样式
-    debouncedValueChange(newStyles);
+    debouncedValueChange[0](newStyles);
   }
-  const handleEditorChange = debounce((value) => {
-    const css: Record<string, unknown> = {};
-    try {
-      const cssStr = value
-        .replace(/\/\*.*\*\//, "")
-        .replace(/(\.?[^{]+{)/, "")
-        .replace("}", "");
-      StyleToObject(cssStr, (name, value) => {
-        css[
-          name.replace(/-\w/, (item) => item.toUpperCase().replace("-", ""))
-        ] = value;
-      });
-      console.log(css);
-      updateComponentStyles(
-        curComponentId,
-        { ...form.getFieldsValue(), ...css },
-        true
-      );
-    } catch (e) {
-      console.log(e);
-    }
-  }, 500);
+
+  const handleEditorChange: EditorProps["onChange"] = (value) => {
+    handleEditorChangeDebounced[0](value);
+  };
+
   return (
     <Form
       form={form}
