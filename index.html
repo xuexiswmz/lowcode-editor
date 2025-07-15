@@ -5,9 +5,49 @@
     <link rel="icon" type="image/svg+xml" href="/LCE.svg"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LowCode Editor</title>
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="/LCE.svg" as="image" fetchpriority="high" />
+    <!-- 关键CSS，避免渲染阻塞 -->
+    <style>
+      /* 初始加载状态样式 */
+      #root {
+        height: 100vh;
+        width: 100%;
+      }
+      .initial-loader {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100%;
+        background-color: #f5f5f5;
+      }
+      .initial-loader-content {
+        text-align: center;
+      }
+      .initial-loader-logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 16px;
+        animation: pulse 1.5s infinite ease-in-out;
+      }
+      @keyframes pulse {
+        0% { transform: scale(0.95); opacity: 0.7; }
+        50% { transform: scale(1.05); opacity: 1; }
+        100% { transform: scale(0.95); opacity: 0.7; }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- 初始加载状态，在JS加载前显示 -->
+      <div class="initial-loader">
+        <div class="initial-loader-content">
+          <img src="/LCE.svg" alt="LowCode Editor" class="initial-loader-logo" width="80" height="80" />
+          <div>加载中...</div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

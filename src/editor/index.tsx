@@ -1,11 +1,21 @@
+import { lazy, Suspense } from "react";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import Header from "../components/Header";
-import EditArea from "../components/EditArea";
-import { Setting } from "../components/Setting";
-import MaterialWrapper from "../components/MaterialWrapper";
 import { useComponentsStore } from "../stores/components";
-import Preview from "../components/Preview";
+
+// 懒加载大型组件
+const EditArea = lazy(() => import("../components/EditArea"));
+const Setting = lazy(() =>
+  import("../components/Setting").then((m) => ({ default: m.Setting }))
+);
+const MaterialWrapper = lazy(() => import("../components/MaterialWrapper"));
+const Preview = lazy(() => import("../components/Preview"));
+
+const ComponentLoading = () => (
+  <div className="flex items-center justify-center h-full">加载中...</div>
+);
+
 export default function LowcodeEditor() {
   const { mode } = useComponentsStore();
 
@@ -17,17 +27,25 @@ export default function LowcodeEditor() {
       {mode === "edit" ? (
         <Allotment>
           <Allotment.Pane preferredSize={240} maxSize={300} minSize={200}>
-            <MaterialWrapper />
+            <Suspense fallback={<ComponentLoading />}>
+              <MaterialWrapper />
+            </Suspense>
           </Allotment.Pane>
           <Allotment.Pane>
-            <EditArea />
+            <Suspense fallback={<ComponentLoading />}>
+              <EditArea />
+            </Suspense>
           </Allotment.Pane>
           <Allotment.Pane preferredSize={300} maxSize={500} minSize={375}>
-            <Setting />
+            <Suspense fallback={<ComponentLoading />}>
+              <Setting />
+            </Suspense>
           </Allotment.Pane>
         </Allotment>
       ) : (
-        <Preview />
+        <Suspense fallback={<ComponentLoading />}>
+          <Preview />
+        </Suspense>
       )}
     </div>
   );
