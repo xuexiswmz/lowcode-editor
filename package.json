@@ -25,6 +25,7 @@
     "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/vite": "^4.1.10",
     "allotment": "^1.20.4",
+    "dayjs": "^1.11.13",
     "immer": "^10.1.1",
     "lodash-es": "^4.17.21",
     "react": "^18.2.0",

@@ -1,4 +1,14 @@
-import { Form, Input, Select, Switch, InputNumber } from "antd";
+import {
+  Form,
+  Input,
+  Select,
+  Switch,
+  InputNumber,
+  Radio,
+  Checkbox,
+  DatePicker,
+  TimePicker,
+} from "antd";
 import { useEffect, useState } from "react";
 import { useComponentsStore } from "../../stores/components";
 import {
@@ -58,6 +68,18 @@ export default function ComponentAttr() {
       return <Switch />;
     } else if (type === "inputNumber") {
       return <InputNumber style={{ width: "100%" }} />;
+    } else if (type === "textarea") {
+      return <Input.TextArea />;
+    } else if (type === "radio") {
+      return <Radio.Group />;
+    } else if (type === "checkbox") {
+      return <Checkbox.Group />;
+    } else if (type === "datePicker") {
+      return <DatePicker />;
+    } else if (type === "timePicker") {
+      return <TimePicker />;
+    } else if (type === "dateTimePicker") {
+      return <DatePicker showTime />;
     }
     return <Input />;
   }

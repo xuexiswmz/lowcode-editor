@@ -11,6 +11,10 @@ import ModalDev from "../materials/Modal/dev";
 import ModalProd from "../materials/Modal/prod";
 import InputDev from "../materials/Input/dev";
 import InputProd from "../materials/Input/prod";
+import FormDev from "../materials/Form/dev";
+import FormProd from "../materials/Form/prod";
+import FormItemDev from "../materials/FormItem/dev";
+import FormItemProd from "../materials/FormItem/prod";
 
 export interface componentSetter {
   name: string;
@@ -253,6 +257,78 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       ],
       dev: InputDev,
       prod: InputProd,
+    },
+    Form: {
+      name: "Form",
+      desc: "表单",
+      defaultProps: {
+        title: "表单",
+      },
+      setter: [
+        {
+          name: "title",
+          label: "标题",
+          type: "input",
+        },
+      ],
+      events: [
+        {
+          name: "onFinish",
+          label: "提交事件",
+        },
+      ],
+      methods: [
+        {
+          name: "submit",
+          label: "提交",
+        },
+      ],
+      dev: FormDev,
+      prod: FormProd,
+    },
+    FormItem: {
+      name: "FormItem",
+      desc: "表单项",
+      defaultProps: {
+        name: new Date().getTime(),
+        label: "姓名",
+        type: "input",
+      },
+      setter: [
+        {
+          name: "type",
+          label: "类型",
+          type: "select",
+          options: [
+            {
+              label: "输入框",
+              value: "input",
+            },
+            {
+              label: "日期",
+              value: "date",
+            },
+          ],
+        },
+        {
+          name: "label",
+          label: "标签",
+          type: "input",
+        },
+        {
+          name: "name",
+          label: "字段",
+          type: "input",
+        },
+      ],
+      events: [
+        {
+          name: "onChange",
+          label: "值变化事件",
+        },
+      ],
+      dev: FormItemDev,
+      prod: FormItemProd,
     },
   },
 

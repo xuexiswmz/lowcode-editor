@@ -3,7 +3,7 @@ import type { CommonComponentProps } from "../../interface";
 
 function Modal({ id, children, title, styles }: CommonComponentProps) {
   const { canDrop, drop } = useMaterialDrop(
-    ["Button", "Container", "Input"],
+    ["Button", "Container", "Input", "Form"],
     id
   );
   return (
