@@ -5,21 +5,14 @@ import MaterialItem from "../MaterialItem";
 export default function Material() {
   const { componentConfig } = useComponentConfigStore();
   const components = useMemo(() => {
-    return Object.values(componentConfig).filter(
-      (item) => item.name !== "Page"
-    );
+    return Object.values(componentConfig).filter((item) => item.name !== "Page");
   }, [componentConfig]);
+
   return (
-    <div>
-      {components.map((item, index) => {
-        return (
-          <MaterialItem
-            key={item.name + index}
-            name={item.name}
-            desc={item.desc}
-          />
-        );
-      })}
+    <div className="lce-material-grid">
+      {components.map((item, index) => (
+        <MaterialItem key={item.name + index} name={item.name} desc={item.desc} />
+      ))}
     </div>
   );
 }

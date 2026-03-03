@@ -5,22 +5,29 @@ const Material = lazy(() => import("../Material"));
 const Outline = lazy(() => import("../Outline"));
 const Source = lazy(() => import("../Source"));
 
+const tabs = [
+  { label: "物料", value: "material" },
+  { label: "大纲", value: "outline" },
+  { label: "源码", value: "source" },
+];
+
 export default function MaterialWrapper() {
-  const [key, setKey] = useState<string>("物料");
+  const [key, setKey] = useState<string>("material");
+
   return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
+    <div className="lce-material-wrapper">
+      <Suspense fallback={<div className="lce-loading">Loading...</div>}>
         <Segmented
           value={key}
           onChange={setKey}
           block
-          options={["物料", "大纲", "源码"]}
-          style={{ padding: 5 }}
+          options={tabs}
+          className="lce-segmented"
         />
-        <div className="pt-[20px] h-[calc(100vh-60px-30px-20px)]">
-          {key === "物料" && <Material />}
-          {key === "大纲" && <Outline />}
-          {key === "源码" && <Source />}
+        <div className="lce-material-content">
+          {key === "material" && <Material />}
+          {key === "outline" && <Outline />}
+          {key === "source" && <Source />}
         </div>
       </Suspense>
     </div>

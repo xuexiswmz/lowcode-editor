@@ -1,14 +1,14 @@
+import { Tree, type TreeDataNode } from "antd";
 import { useComponentsStore } from "../../stores/components";
-import { Tree } from "antd";
 
 export default function Outline() {
   const { components, setCurComponentId } = useComponentsStore();
 
   return (
     <Tree
+      className="lce-outline-tree"
       fieldNames={{ title: "desc", key: "id" }}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      treeData={components as any}
+      treeData={components as unknown as TreeDataNode[]}
       showLine
       defaultExpandAll
       onSelect={([selectedKey]) => {

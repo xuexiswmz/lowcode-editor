@@ -1,0 +1,290 @@
+:root {
+  --lce-bg: #f3f5fa;
+  --lce-surface: #ffffff;
+  --lce-surface-soft: #f7f9ff;
+  --lce-border: #d7ddea;
+  --lce-border-strong: #c5cee3;
+  --lce-text: #0f172a;
+  --lce-text-soft: #5b6478;
+  --lce-brand: #1277ef;
+  --lce-brand-strong: #0c5fbe;
+  --lce-radius-lg: 18px;
+  --lce-radius-md: 12px;
+  --lce-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
+  --lce-shadow-soft: 0 10px 20px rgba(15, 23, 42, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--lce-text);
+  font-family: "Manrope", "IBM Plex Sans", "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top left, #f9fbff 0%, var(--lce-bg) 55%, #eef2f8 100%);
+}
+
+.lce-app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 10px;
+}
+
+.lce-header-shell {
+  height: 72px;
+  border: 1px solid var(--lce-border);
+  border-radius: var(--lce-radius-lg);
+  background: linear-gradient(120deg, #ffffff 0%, #f0f5ff 100%);
+  box-shadow: var(--lce-shadow-soft);
+}
+
+.lce-header {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 22px;
+}
+
+.lce-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lce-logo {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 8px 14px rgba(18, 119, 239, 0.3));
+}
+
+.lce-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.lce-preview-btn {
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(120deg, var(--lce-brand) 0%, #2191ff 100%);
+  color: #fff;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 10px 20px rgba(18, 119, 239, 0.25);
+}
+
+.lce-preview-btn:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(120deg, var(--lce-brand-strong) 0%, #1576d6 100%);
+}
+
+.lce-preview-btn:active {
+  transform: translateY(0);
+}
+
+.lce-workspace {
+  flex: 1;
+  min-height: 0;
+}
+
+.lce-workspace .split-view {
+  border-radius: var(--lce-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--lce-border);
+  box-shadow: var(--lce-shadow);
+}
+
+.lce-workspace .sash {
+  background: linear-gradient(180deg, #d3ddf1 0%, #b9c8e6 100%);
+}
+
+.lce-pane {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--lce-surface);
+}
+
+.lce-pane-left,
+.lce-pane-right {
+  background: linear-gradient(180deg, #f8faff 0%, #f1f4fb 100%);
+}
+
+.lce-pane-canvas {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(18, 119, 239, 0.07) 0%, transparent 38%),
+    radial-gradient(circle at 80% 10%, rgba(12, 95, 190, 0.05) 0%, transparent 30%),
+    #f8faff;
+}
+
+.lce-loading {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--lce-text-soft);
+  font-weight: 600;
+}
+
+.lce-material-wrapper,
+.lce-setting-panel {
+  height: 100%;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lce-material-content,
+.lce-setting-content {
+  min-height: 0;
+  flex: 1;
+  overflow: auto;
+  padding: 4px;
+}
+
+.lce-segmented.ant-segmented {
+  background: #e9eef8;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.lce-segmented .ant-segmented-item {
+  border-radius: 8px;
+  color: #3f4b66;
+  font-weight: 600;
+}
+
+.lce-segmented .ant-segmented-item-selected {
+  background: #ffffff;
+  color: #0e4e9d;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+}
+
+.lce-material-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 10px;
+}
+
+.lce-material-item {
+  border: 1px solid var(--lce-border-strong);
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px 12px;
+  text-align: center;
+  font-weight: 700;
+  color: #1f2a40;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.lce-material-item:hover {
+  border-color: var(--lce-brand);
+  box-shadow: 0 8px 16px rgba(18, 119, 239, 0.18);
+  transform: translateY(-2px);
+}
+
+.lce-material-item:active {
+  cursor: grabbing;
+}
+
+.lce-outline-tree {
+  background: transparent;
+  padding: 4px 2px;
+}
+
+.lce-outline-tree .ant-tree-node-content-wrapper {
+  border-radius: 8px;
+}
+
+.lce-outline-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  background: #deecff;
+  color: #0e4e9d;
+}
+
+.lce-source-panel {
+  height: 100%;
+  border: 1px solid var(--lce-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.lce-edit-area {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  border: 1px dashed #c5d1e8;
+  border-radius: 16px;
+  margin: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+  box-shadow: inset 0 2px 6px rgba(15, 23, 42, 0.05);
+}
+
+.lce-edit-area .wrapper {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lce-setting-empty {
+  margin: 16px;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px dashed var(--lce-border-strong);
+  background: var(--lce-surface-soft);
+  color: var(--lce-text-soft);
+  font-weight: 600;
+  text-align: center;
+}
+
+.lce-setting-content .ant-form-item-label > label,
+.lce-setting-content .ant-collapse-header-text,
+.lce-setting-content .ant-input,
+.lce-setting-content .ant-select,
+.lce-setting-content .ant-btn {
+  font-family: "Manrope", "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+.lce-preview-shell {
+  flex: 1;
+  min-height: 0;
+  border-radius: var(--lce-radius-lg);
+  border: 1px solid var(--lce-border);
+  background: #fff;
+  box-shadow: var(--lce-shadow);
+  padding: 14px;
+  overflow: auto;
+}
+
+@media (max-width: 1200px) {
+  .lce-title {
+    font-size: 22px;
+  }
+
+  .lce-header {
+    padding: 0 14px;
+  }
+
+  .lce-app {
+    padding: 8px;
+    gap: 8px;
+  }
+}

@@ -1,29 +1,37 @@
+import { Segmented } from "antd";
 import { useState } from "react";
 import { useComponentsStore } from "../../stores/components";
-import { Segmented } from "antd";
 import ComponentAttr from "./ComponentAttr";
 import ComponentStyle from "./ComponentStyle";
 import ComponentEvent from "./ComponentEvent";
 
+const tabs = [
+  { label: "属性", value: "props" },
+  { label: "样式", value: "styles" },
+  { label: "事件", value: "events" },
+];
+
 export function Setting() {
   const { curComponentId } = useComponentsStore();
-  const [key, setKey] = useState<string>("属性");
+  const [key, setKey] = useState<string>("props");
 
-  if (!curComponentId) return null;
+  if (!curComponentId) {
+    return <div className="lce-setting-empty">Select a component in canvas to edit.</div>;
+  }
 
   return (
-    <div>
+    <div className="lce-setting-panel">
       <Segmented
         value={key}
         onChange={setKey}
         block
-        options={["属性", "样式", "事件"]}
-        style={{ padding: "5px" }}
+        options={tabs}
+        className="lce-segmented"
       />
-      <div className="pt-[20px]">
-        {key === "属性" && <ComponentAttr />}
-        {key === "样式" && <ComponentStyle />}
-        {key === "事件" && <ComponentEvent />}
+      <div className="lce-setting-content">
+        {key === "props" && <ComponentAttr />}
+        {key === "styles" && <ComponentStyle />}
+        {key === "events" && <ComponentEvent />}
       </div>
     </div>
   );
