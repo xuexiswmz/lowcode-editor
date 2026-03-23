@@ -5,7 +5,7 @@ import { useDrag } from "react-dnd";
 
 const Container = ({ id, children, styles, name }: CommonComponentProps) => {
   const { canDrop, drop } = useMaterialDrop(
-    ["Button", "Container", "Input"],
+    ["Button", "Container", "Input", "Form", "Text"],
     id
   );
   const divRef = useRef<HTMLDivElement>(null);
