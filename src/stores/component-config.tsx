@@ -15,6 +15,8 @@ import FormDev from "../materials/Form/dev";
 import FormProd from "../materials/Form/prod";
 import FormItemDev from "../materials/FormItem/dev";
 import FormItemProd from "../materials/FormItem/prod";
+import TextDev from "../materials/Text/dev";
+import TextProd from "../materials/Text/prod";
 
 export interface componentSetter {
   name: string;
@@ -330,6 +332,34 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       dev: FormItemDev,
       prod: FormItemProd,
     },
+    Text:{
+      name: "Text",
+      desc: "文本",
+      defaultProps: {
+        text: "文本",
+      },
+      setter: [
+        {
+          name: "text",
+          label: "文本",
+          type: "input",
+        },
+      ],
+      stylesSetter: [
+        {
+          name: "color",
+          label: "文字颜色",
+          type: "color",
+        },
+        {
+          name: "fontSize",
+          label: "文字大小",
+          type: "input",
+        }
+      ],
+      dev: TextDev,
+      prod: TextProd,
+    }
   },
 
   registerComponent: (name, componentConfig) =>
