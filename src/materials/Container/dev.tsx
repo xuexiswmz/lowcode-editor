@@ -4,10 +4,7 @@ import type { CommonComponentProps } from "../../interface";
 import { useDrag } from "react-dnd";
 
 const Container = ({ id, children, styles, name }: CommonComponentProps) => {
-  const { canDrop, drop } = useMaterialDrop(
-    ["Button", "Container", "Input", "Form", "Text", "Divider", "Image"],
-    id,
-  );
+  const { canDrop, drop } = useMaterialDrop(id);
   const divRef = useRef<HTMLDivElement>(null);
 
   const [, drag] = useDrag({
