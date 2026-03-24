@@ -4,7 +4,7 @@ import { useComponentsStore, type Component } from "../stores/components";
 import HoverMask from "./HoverMask";
 import SelectedMask from "./SelectedMask";
 
-const VOID_COMPONENTS = ["Input"];
+const VOID_COMPONENTS = ["Input","Button", "Text", "Divider"];
 
 export default function EditArea() {
   const { components, curComponentId, setCurComponentId } = useComponentsStore();

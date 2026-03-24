@@ -1,7 +1,6 @@
-import { Input as AntdInput } from "antd";
+import { Input as AntdInput, type InputRef } from "antd";
 import type { CommonComponentProps } from "../../interface";
 import { forwardRef, useState, useEffect } from "react";
-import type { InputRef } from "antd/lib/input";
 import { useComponentsStore } from "../../stores/components";
 import { useDebounceFunction } from "../../hooks/useDebounce";
 
