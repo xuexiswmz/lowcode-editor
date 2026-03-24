@@ -17,6 +17,8 @@ import FormItemDev from "../materials/FormItem/dev";
 import FormItemProd from "../materials/FormItem/prod";
 import TextDev from "../materials/Text/dev";
 import TextProd from "../materials/Text/prod";
+import DividerDev from "../materials/Divider/dev";
+import DividerProd from "../materials/Divider/prod";
 
 export interface componentSetter {
   name: string;
@@ -359,6 +361,72 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       ],
       dev: TextDev,
       prod: TextProd,
+    },
+    Divider:{
+      name: "Divider",
+      desc: "分割线",
+      defaultProps: {
+        dashed: false,
+        plain: false,
+        orientation: "horizontal",
+        titlePlacement:"center",
+        text: "分割线",
+      },
+      setter: [
+        {
+          name: "dashed",
+          label: "虚线",
+          type: "switch",
+        },
+        {
+          name: "plain",
+          label: "普通正文样式",
+          type: "switch",
+        },
+        {
+          name: "orientation",
+          label: "分割线位置",
+          type: "select",
+          options: [
+            { label: "水平", value: "horizontal" },
+            { label: "垂直", value: "vertical" },
+          ]
+        },
+        {
+          name:"titlePlacement",
+          label:"标题位置",
+          type:"select",
+          options:[
+            { label: "居左", value: "start" },
+            { label: "居中", value: "center" },
+            { label: "居右", value: "end" },
+          ]
+        },
+        {
+          name:"text",
+          label:"分割线",
+          type:"input"
+        }
+      ],
+      stylesSetter: [
+        {
+          name: "margin",
+          label: "外边距",
+          type: "input",
+        },
+        {
+          name: "width",
+          label: "宽度",
+          type: "input",
+        },
+        {
+          name: "borderTopWidth",
+          label: "线宽",
+          type: "input",
+        }
+      ],
+      dev: DividerDev,
+      prod: DividerProd,
     }
   },
 

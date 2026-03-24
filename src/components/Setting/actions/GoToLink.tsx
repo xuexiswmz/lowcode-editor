@@ -1,4 +1,4 @@
-import TextArea from "antd/es/input/TextArea";
+import { Input } from "antd";
 import { useComponentsStore } from "../../../stores/components";
 import { useEffect, useState } from "react";
 
@@ -34,7 +34,7 @@ export default function GoToLink(props: GoToLinkProps) {
       <div className="flex items-center gap-[8px]">
         <div>链接：</div>
         <div>
-          <TextArea
+          <Input.TextArea
             style={{ height: 200, width: 500, border: "1px solid #000" }}
             onChange={(e) => {
               urlChange(e.target.value);

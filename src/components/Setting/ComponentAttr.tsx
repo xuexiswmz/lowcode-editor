@@ -27,9 +27,13 @@ export default function ComponentAttr() {
   // 当当前组件或组件列表变化时更新表单
   useEffect(() => {
     if (curComponent) {
-      form.setFieldsValue({ ...curComponent.props });
+      const config = componentConfig[curComponent.name];
+      form.setFieldsValue({
+        ...config?.defaultProps,
+        ...curComponent.props,
+      });
     }
-  }, [curComponent, components, form]);
+  }, [curComponent, components, componentConfig, form]);
 
   // 如果没有选中的组件，不渲染任何内容
   if (!curComponentId || !curComponent) return null;
@@ -113,7 +117,12 @@ export default function ComponentAttr() {
         <Input value={curComponent.desc} disabled />
       </Form.Item>
       {componentConfig[componentName]?.setter?.map((setter) => (
-        <Form.Item key={setter.name} label={setter.label} name={setter.name}>
+        <Form.Item 
+          key={setter.name} 
+          label={setter.label} 
+          name={setter.name}
+          valuePropName={setter.type === "switch" ? "checked" : "value"}
+        >
           {renderFormElement(setter, componentName, currentProps)}
         </Form.Item>
       ))}
