@@ -19,7 +19,8 @@ import TextDev from "../materials/Text/dev";
 import TextProd from "../materials/Text/prod";
 import DividerDev from "../materials/Divider/dev";
 import DividerProd from "../materials/Divider/prod";
-
+import ImageDev from "../materials/Image/dev";
+import ImageProd from "../materials/Image/prod";
 export interface componentSetter {
   name: string;
   label: string;
@@ -334,7 +335,7 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       dev: FormItemDev,
       prod: FormItemProd,
     },
-    Text:{
+    Text: {
       name: "Text",
       desc: "文本",
       defaultProps: {
@@ -357,19 +358,19 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
           name: "fontSize",
           label: "文字大小",
           type: "input",
-        }
+        },
       ],
       dev: TextDev,
       prod: TextProd,
     },
-    Divider:{
+    Divider: {
       name: "Divider",
       desc: "分割线",
       defaultProps: {
         dashed: false,
         plain: false,
         orientation: "horizontal",
-        titlePlacement:"center",
+        titlePlacement: "center",
         text: "分割线",
       },
       setter: [
@@ -390,23 +391,23 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
           options: [
             { label: "水平", value: "horizontal" },
             { label: "垂直", value: "vertical" },
-          ]
+          ],
         },
         {
-          name:"titlePlacement",
-          label:"标题位置",
-          type:"select",
-          options:[
+          name: "titlePlacement",
+          label: "标题位置",
+          type: "select",
+          options: [
             { label: "居左", value: "start" },
             { label: "居中", value: "center" },
             { label: "居右", value: "end" },
-          ]
+          ],
         },
         {
-          name:"text",
-          label:"分割线",
-          type:"input"
-        }
+          name: "text",
+          label: "分割线",
+          type: "input",
+        },
       ],
       stylesSetter: [
         {
@@ -423,11 +424,60 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
           name: "borderTopWidth",
           label: "线宽",
           type: "input",
-        }
+        },
       ],
       dev: DividerDev,
       prod: DividerProd,
-    }
+    },
+    Image: {
+      name: "Image",
+      desc: "图片",
+      defaultProps: {},
+      setter: [
+        {
+          name: "src",
+          label: "图片地址",
+          type: "input",
+        },
+        {
+          name: "alt",
+          label: "图片描述",
+          type: "input",
+        },
+        {
+          name: "height",
+          label: "高度",
+          type: "input",
+        },
+        {
+          name: "width",
+          label: "宽度",
+          type: "input",
+        },
+        {
+          name: "placeholder",
+          label: "占位图",
+          type: "input",
+        },
+        {
+          name: "preview",
+          label: "预览",
+          type: "switch",
+        },
+        {
+          name: "fallback",
+          label: "加载失败图片",
+          type: "input",
+        },
+        {
+          name: "onError",
+          label: "加载失败事件",
+          type: "input",
+        },
+      ],
+      dev: ImageDev,
+      prod: ImageProd,
+    },
   },
 
   registerComponent: (name, componentConfig) =>
