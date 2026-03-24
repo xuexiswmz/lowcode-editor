@@ -4,8 +4,6 @@ import { useComponentsStore, type Component } from "../stores/components";
 import HoverMask from "./HoverMask";
 import SelectedMask from "./SelectedMask";
 
-const VOID_COMPONENTS = ["Input", "Button", "Text", "Divider", "Image"];
-
 export default function EditArea() {
   const { components, curComponentId, setCurComponentId } = useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
@@ -18,7 +16,7 @@ export default function EditArea() {
         return null;
       }
 
-      const isVoidComponent = VOID_COMPONENTS.includes(component.name);
+      const isVoidComponent = !config.isContainer;
 
       if (isVoidComponent) {
         return React.createElement(config.dev, {

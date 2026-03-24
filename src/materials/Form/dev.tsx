@@ -18,7 +18,7 @@ export default function Form({
   onFinish,
 }: CommonComponentProps) {
   const [form] = AntdForm.useForm();
-  const { canDrop, drop } = useMaterialDrop(["FormItem"], id);
+  const { canDrop, drop } = useMaterialDrop(id);
   const divRef = useRef<HTMLDivElement>(null);
   const [, drag] = useDrag({
     type: name,
