@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "generate:material": "node scripts/create-material.mjs",
     "prepare": "husky install",
     "commit": "git-cz"
   },
