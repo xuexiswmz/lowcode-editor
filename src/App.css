@@ -1,17 +1,17 @@
 :root {
-  --lce-bg: #f3f5fa;
+  --lce-bg: #f5f6f8;
   --lce-surface: #ffffff;
-  --lce-surface-soft: #f7f9ff;
-  --lce-border: #d7ddea;
-  --lce-border-strong: #c5cee3;
-  --lce-text: #0f172a;
-  --lce-text-soft: #5b6478;
-  --lce-brand: #1277ef;
-  --lce-brand-strong: #0c5fbe;
-  --lce-radius-lg: 18px;
-  --lce-radius-md: 12px;
-  --lce-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
-  --lce-shadow-soft: 0 10px 20px rgba(15, 23, 42, 0.06);
+  --lce-surface-soft: #fafafa;
+  --lce-border: #e5e7eb;
+  --lce-border-strong: #d1d5db;
+  --lce-text: #111827;
+  --lce-text-soft: #6b7280;
+  --lce-brand: #2563eb;
+  --lce-brand-soft: #eff6ff;
+  --lce-radius-lg: 8px;
+  --lce-radius-md: 6px;
+  --lce-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+  --lce-shadow-soft: 0 1px 4px rgba(15, 23, 42, 0.04);
 }
 
 * {
@@ -25,23 +25,29 @@ body,
   width: 100%;
   height: 100%;
   color: var(--lce-text);
-  font-family: "Manrope", "IBM Plex Sans", "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top left, #f9fbff 0%, var(--lce-bg) 55%, #eef2f8 100%);
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--lce-bg);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .lce-app {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  gap: 10px;
+  padding: 6px;
+  gap: 6px;
+  background: var(--lce-bg);
 }
 
 .lce-header-shell {
-  height: 72px;
+  height: 54px;
   border: 1px solid var(--lce-border);
   border-radius: var(--lce-radius-lg);
-  background: linear-gradient(120deg, #ffffff 0%, #f0f5ff 100%);
+  background: var(--lce-surface);
   box-shadow: var(--lce-shadow-soft);
 }
 
@@ -50,47 +56,52 @@ body,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 22px;
+  padding: 0 12px;
 }
 
 .lce-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .lce-logo {
-  width: 40px;
-  height: 40px;
-  filter: drop-shadow(0 8px 14px rgba(18, 119, 239, 0.3));
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background: transparent;
 }
 
 .lce-title {
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: 0.3px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.lce-title-sub {
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--lce-text-soft);
 }
 
 .lce-preview-btn {
-  border: none;
-  border-radius: 999px;
-  background: linear-gradient(120deg, var(--lce-brand) 0%, #2191ff 100%);
+  min-width: 82px;
+  height: 32px;
+  border: 1px solid var(--lce-brand);
+  border-radius: 6px;
+  background: var(--lce-brand);
   color: #fff;
-  padding: 10px 18px;
-  font-size: 14px;
-  font-weight: 700;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-  box-shadow: 0 10px 20px rgba(18, 119, 239, 0.25);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .lce-preview-btn:hover {
-  transform: translateY(-1px);
-  background: linear-gradient(120deg, var(--lce-brand-strong) 0%, #1576d6 100%);
-}
-
-.lce-preview-btn:active {
-  transform: translateY(0);
+  background: #1d4ed8;
+  border-color: #1d4ed8;
 }
 
 .lce-workspace {
@@ -103,10 +114,11 @@ body,
   overflow: hidden;
   border: 1px solid var(--lce-border);
   box-shadow: var(--lce-shadow);
+  background: var(--lce-surface);
 }
 
 .lce-workspace .sash {
-  background: linear-gradient(180deg, #d3ddf1 0%, #b9c8e6 100%);
+  background: #eceff3;
 }
 
 .lce-pane {
@@ -118,15 +130,9 @@ body,
 }
 
 .lce-pane-left,
-.lce-pane-right {
-  background: linear-gradient(180deg, #f8faff 0%, #f1f4fb 100%);
-}
-
+.lce-pane-right,
 .lce-pane-canvas {
-  background:
-    radial-gradient(circle at 15% 15%, rgba(18, 119, 239, 0.07) 0%, transparent 38%),
-    radial-gradient(circle at 80% 10%, rgba(12, 95, 190, 0.05) 0%, transparent 30%),
-    #f8faff;
+  background: #f8f9fb;
 }
 
 .lce-loading {
@@ -135,16 +141,16 @@ body,
   align-items: center;
   justify-content: center;
   color: var(--lce-text-soft);
-  font-weight: 600;
+  font-size: 13px;
 }
 
 .lce-material-wrapper,
 .lce-setting-panel {
   height: 100%;
-  padding: 12px;
+  padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .lce-material-content,
@@ -152,74 +158,162 @@ body,
   min-height: 0;
   flex: 1;
   overflow: auto;
-  padding: 4px;
+  padding: 0;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .lce-segmented.ant-segmented {
-  background: #e9eef8;
-  border-radius: 10px;
-  padding: 4px;
+  background: #f3f4f6;
+  border: 1px solid var(--lce-border);
+  border-radius: 6px;
+  padding: 2px;
 }
 
 .lce-segmented .ant-segmented-item {
-  border-radius: 8px;
-  color: #3f4b66;
-  font-weight: 600;
+  min-height: 34px;
+  border-radius: 4px;
+  color: #4b5563;
+  font-weight: 500;
 }
 
 .lce-segmented .ant-segmented-item-selected {
   background: #ffffff;
-  color: #0e4e9d;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+  color: var(--lce-text);
+  box-shadow: none;
+}
+
+.lce-panel-segmented {
+  flex-shrink: 0;
+}
+
+.lce-material-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lce-material-section {
+  border: 1px solid var(--lce-border);
+  border-radius: 6px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.lce-material-section-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 1px solid var(--lce-border);
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lce-material-section-head[aria-expanded="false"] {
+  border-bottom-color: transparent;
+}
+
+.lce-material-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.lce-material-section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.lce-material-section-meta {
+  font-size: 12px;
+  color: var(--lce-text-soft);
+}
+
+.lce-material-section-arrow {
+  color: var(--lce-text-soft);
+  font-size: 24px;
+  transition: transform 0.2s ease;
+}
+
+.lce-material-section-arrow.is-open {
+  transform: rotate(180deg);
 }
 
 .lce-material-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 8px;
 }
 
 .lce-material-item {
-  border: 1px solid var(--lce-border-strong);
-  border-radius: 10px;
-  background: #fff;
-  padding: 10px 12px;
-  text-align: center;
-  font-weight: 700;
-  color: #1f2a40;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  border: 1px solid var(--lce-border);
+  border-radius: 4px;
+  background: #ffffff;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--lce-text);
   cursor: grab;
   user-select: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .lce-material-item:hover {
-  border-color: var(--lce-brand);
-  box-shadow: 0 8px 16px rgba(18, 119, 239, 0.18);
-  transform: translateY(-2px);
+  border-color: #93c5fd;
+  background: #f9fbff;
 }
 
 .lce-material-item:active {
   cursor: grabbing;
 }
 
+.lce-material-item-icon {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5563;
+  font-size: 18px;
+}
+
+.lce-material-item-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .lce-outline-tree {
-  background: transparent;
-  padding: 4px 2px;
+  background: #ffffff;
+  border: 1px solid var(--lce-border);
+  border-radius: 6px;
+  padding: 6px 4px;
 }
 
 .lce-outline-tree .ant-tree-node-content-wrapper {
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 .lce-outline-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
-  background: #deecff;
-  color: #0e4e9d;
+  background: var(--lce-brand-soft);
+  color: var(--lce-brand);
 }
 
 .lce-source-panel {
   height: 100%;
   border: 1px solid var(--lce-border);
-  border-radius: 12px;
+  border-radius: 6px;
   overflow: hidden;
   background: #0f172a;
 }
@@ -228,14 +322,15 @@ body,
   position: relative;
   height: 100%;
   min-height: 0;
-  border: 1px dashed #c5d1e8;
-  border-radius: 16px;
-  margin: 12px;
+  margin: 8px;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-gutter: stable;
-  background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-  box-shadow: inset 0 2px 6px rgba(15, 23, 42, 0.05);
+  border: 1px solid var(--lce-border);
+  border-radius: 6px;
+  background: #ffffff;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .lce-edit-area .wrapper {
@@ -245,14 +340,25 @@ body,
 }
 
 .lce-setting-empty {
-  margin: 16px;
-  padding: 18px;
-  border-radius: 12px;
+  margin: 0;
+  padding: 12px 10px;
   border: 1px dashed var(--lce-border-strong);
-  background: var(--lce-surface-soft);
+  border-radius: 6px;
+  background: #ffffff;
   color: var(--lce-text-soft);
-  font-weight: 600;
+  font-size: 13px;
   text-align: center;
+}
+
+.lce-setting-content .ant-form {
+  padding: 10px;
+  border: 1px solid var(--lce-border);
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.lce-setting-content .ant-form-item {
+  margin-bottom: 14px;
 }
 
 .lce-setting-content .ant-form-item-label > label,
@@ -260,7 +366,7 @@ body,
 .lce-setting-content .ant-input,
 .lce-setting-content .ant-select,
 .lce-setting-content .ant-btn {
-  font-family: "Manrope", "IBM Plex Sans", "Segoe UI", sans-serif;
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 .lce-preview-shell {
@@ -268,10 +374,20 @@ body,
   min-height: 0;
   border-radius: var(--lce-radius-lg);
   border: 1px solid var(--lce-border);
-  background: #fff;
+  background: #ffffff;
   box-shadow: var(--lce-shadow);
-  padding: 14px;
+  padding: 10px;
   overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.lce-material-content::-webkit-scrollbar,
+.lce-setting-content::-webkit-scrollbar,
+.lce-edit-area::-webkit-scrollbar,
+.lce-preview-shell::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 @keyframes lce-icon-spin {
@@ -285,16 +401,20 @@ body,
 }
 
 @media (max-width: 1200px) {
-  .lce-title {
-    font-size: 22px;
+  .lce-app {
+    padding: 4px;
+    gap: 4px;
   }
 
   .lce-header {
-    padding: 0 14px;
+    padding: 0 8px;
   }
 
-  .lce-app {
-    padding: 8px;
-    gap: 8px;
+  .lce-title {
+    font-size: 14px;
+  }
+
+  .lce-title-sub {
+    display: none;
   }
 }

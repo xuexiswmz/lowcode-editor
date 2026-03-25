@@ -22,7 +22,7 @@ export default function MaterialWrapper() {
           onChange={setKey}
           block
           options={tabs}
-          className="lce-segmented"
+          className="lce-segmented lce-panel-segmented"
         />
         <div className="lce-material-content">
           {key === "material" && <Material />}

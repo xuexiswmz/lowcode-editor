@@ -16,11 +16,23 @@ const Header = memo(function Header() {
   return (
     <header className="lce-header">
       <div className="lce-brand">
-        <img src="/LCE.svg" alt="logo" className="lce-logo" width={40} height={40} />
-        <div className="lce-title">LowCodeEditor</div>
+        <img
+          src="/LCE.svg"
+          alt="logo"
+          className="lce-logo"
+          width={28}
+          height={28}
+        />
+        <div>
+          <div className="lce-title">低代码编辑器</div>
+        </div>
       </div>
-      <button onClick={handleModeToggle} className="lce-preview-btn" type="button">
-        {mode === "edit" ? "Preview" : "Exit Preview"}
+      <button
+        onClick={handleModeToggle}
+        className="lce-preview-btn"
+        type="button"
+      >
+        {mode === "edit" ? "预览" : "退出预览"}
       </button>
     </header>
   );

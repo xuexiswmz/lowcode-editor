@@ -7,7 +7,7 @@ import ComponentEvent from "./ComponentEvent";
 
 const tabs = [
   { label: "属性", value: "props" },
-  { label: "样式", value: "styles" },
+  { label: "外观", value: "styles" },
   { label: "事件", value: "events" },
 ];
 
@@ -16,7 +16,7 @@ export function Setting() {
   const [key, setKey] = useState<string>("props");
 
   if (!curComponentId) {
-    return <div className="lce-setting-empty">Select a component in canvas to edit.</div>;
+    return <div className="lce-setting-empty">在画布中选中组件后即可编辑。</div>;
   }
 
   return (
@@ -26,7 +26,7 @@ export function Setting() {
         onChange={setKey}
         block
         options={tabs}
-        className="lce-segmented"
+        className="lce-segmented lce-panel-segmented"
       />
       <div className="lce-setting-content">
         {key === "props" && <ComponentAttr />}

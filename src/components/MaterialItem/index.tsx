@@ -1,9 +1,38 @@
+import {
+  AppstoreOutlined,
+  BorderOutlined,
+  FileImageOutlined,
+  FontSizeOutlined,
+  FormOutlined,
+  InsertRowBelowOutlined,
+  LayoutOutlined,
+  LinkOutlined,
+  MenuOutlined,
+  PicLeftOutlined,
+  PictureOutlined,
+  RadiusSettingOutlined,
+} from "@ant-design/icons";
 import { useDrag } from "react-dnd";
 
 export interface MaterialItemProps {
   name: string;
   desc: string;
 }
+
+const iconMap = {
+  Button: BorderOutlined,
+  Container: LayoutOutlined,
+  Divider: InsertRowBelowOutlined,
+  Form: FormOutlined,
+  FormItem: PicLeftOutlined,
+  Icon: AppstoreOutlined,
+  Image: PictureOutlined,
+  Input: RadiusSettingOutlined,
+  Link: LinkOutlined,
+  Modal: FileImageOutlined,
+  Text: FontSizeOutlined,
+  Page: MenuOutlined,
+} as const;
 
 export default function MaterialItem(props: MaterialItemProps) {
   const { name, desc } = props;
@@ -14,9 +43,14 @@ export default function MaterialItem(props: MaterialItemProps) {
     },
   });
 
+  const Icon = iconMap[name as keyof typeof iconMap] ?? AppstoreOutlined;
+
   return (
-    <div ref={drag} className="lce-material-item">
-      {desc}
+    <div ref={drag} className="lce-material-item" title={name}>
+      <span className="lce-material-item-icon" aria-hidden="true">
+        <Icon />
+      </span>
+      <span className="lce-material-item-text">{desc}</span>
     </div>
   );
 }
