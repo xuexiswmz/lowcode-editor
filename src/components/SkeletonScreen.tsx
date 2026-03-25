@@ -26,7 +26,7 @@ const SkeletonScreen = memo(function SkeletonScreen() {
         {/* 左侧物料面板 */}
         <div className="w-[240px] border-r p-4">
           <Skeleton active paragraph={{ rows: 1 }} title={{ width: "100%" }} />
-          <Space direction="vertical" className="w-full mt-4">
+          <Space orientation="vertical" className="w-full mt-4">
             <Skeleton.Button active block className="h-[50px]" />
             <Skeleton.Button active block className="h-[50px]" />
             <Skeleton.Button active block className="h-[50px]" />

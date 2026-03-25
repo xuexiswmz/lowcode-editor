@@ -16,6 +16,7 @@ interface State {
 
 interface Action {
   registerComponent: (name: string, componentConfig: ComponentConfig) => void;
+  syncBuiltinComponentConfig: (componentConfig: ComponentConfigMap) => void;
 }
 
 export const useComponentConfigStore = create<State & Action>((set) => ({
@@ -28,16 +29,8 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
         [name]: componentConfig,
       },
     })),
-}));
-
-if (import.meta.hot) {
-  import.meta.hot.accept("../materials/registry", (newModule) => {
-    if (!newModule) {
-      return;
-    }
-
-    useComponentConfigStore.setState((state) => {
-      const nextBuiltinConfig = newModule.builtinComponentConfig;
+  syncBuiltinComponentConfig: (nextBuiltinConfig) =>
+    set((state) => {
       const customConfig = Object.fromEntries(
         Object.entries(state.componentConfig).filter(
           ([name]) => !(name in nextBuiltinConfig),
@@ -50,6 +43,17 @@ if (import.meta.hot) {
           ...customConfig,
         },
       };
-    });
+    }),
+}));
+
+if (import.meta.hot) {
+  import.meta.hot.accept("../materials/registry", (newModule) => {
+    if (!newModule) {
+      return;
+    }
+
+    useComponentConfigStore
+      .getState()
+      .syncBuiltinComponentConfig(newModule.builtinComponentConfig);
   });
 }
