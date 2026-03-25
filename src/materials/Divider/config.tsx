@@ -5,6 +5,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "Divider",
+  category: "layout",
   desc: "分割线",
   defaultProps: {
     dashed: false,

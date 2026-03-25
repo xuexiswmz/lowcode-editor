@@ -5,6 +5,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "Input",
+  category: "form",
   desc: "输入框",
   defaultProps: {
     value: "",

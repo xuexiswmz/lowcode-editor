@@ -5,6 +5,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "Button",
+  category: "common",
   desc: "按钮",
   defaultProps: {
     type: "primary",

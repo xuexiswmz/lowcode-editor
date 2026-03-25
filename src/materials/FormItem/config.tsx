@@ -4,6 +4,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "FormItem",
+  category: "form",
   desc: "表单项",
   defaultProps: {
     label: "姓名",

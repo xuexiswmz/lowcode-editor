@@ -6,6 +6,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "Icon",
+  category: "common",
   desc: "图标",
   defaultProps: {
     source: "antd",

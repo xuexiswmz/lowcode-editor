@@ -4,6 +4,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "Modal",
+  category: "feedback",
   desc: "弹窗",
   defaultProps: {
     title: "弹窗",
