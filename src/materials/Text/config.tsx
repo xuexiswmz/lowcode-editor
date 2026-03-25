@@ -5,6 +5,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "Text",
+  category: "display",
   desc: "文本",
   defaultProps: {
     text: "文本",

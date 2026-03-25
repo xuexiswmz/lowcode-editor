@@ -4,6 +4,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "Link",
+  category: "navigation",
   desc: "Link",
   defaultProps: {
     text: "Link",

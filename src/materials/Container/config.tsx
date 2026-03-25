@@ -5,6 +5,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "Container",
+  category: "layout",
   desc: "容器",
   defaultProps: {},
   isContainer: true,

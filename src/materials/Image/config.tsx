@@ -5,6 +5,7 @@ import type { ComponentConfig } from "../types";
 
 const config: ComponentConfig = {
   name: "Image",
+  category: "display",
   desc: "图片",
   defaultProps: {
     width: 220,

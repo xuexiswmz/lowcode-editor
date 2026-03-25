@@ -21,9 +21,18 @@ export interface ComponentMethod {
   label: string;
 }
 
+export type MaterialCategory =
+  | "common"
+  | "navigation"
+  | "layout"
+  | "form"
+  | "display"
+  | "feedback";
+
 export interface ComponentConfig<T = CommonComponentProps> {
   name: string;
   desc: string;
+  category?: MaterialCategory;
   setter?: ComponentSetter[];
   stylesSetter?: ComponentSetter[];
   defaultProps: Record<string, unknown>;
