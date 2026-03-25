@@ -29,3 +29,27 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       },
     })),
 }));
+
+if (import.meta.hot) {
+  import.meta.hot.accept("../materials/registry", (newModule) => {
+    if (!newModule) {
+      return;
+    }
+
+    useComponentConfigStore.setState((state) => {
+      const nextBuiltinConfig = newModule.builtinComponentConfig;
+      const customConfig = Object.fromEntries(
+        Object.entries(state.componentConfig).filter(
+          ([name]) => !(name in nextBuiltinConfig),
+        ),
+      );
+
+      return {
+        componentConfig: {
+          ...nextBuiltinConfig,
+          ...customConfig,
+        },
+      };
+    });
+  });
+}
