@@ -1,6 +1,8 @@
-import PageDev from "./dev";
-import PageProd from "./prod";
+import { lazy } from "react";
 import type { ComponentConfig } from "../types";
+
+const PageDev = lazy(() => import("./dev"));
+const PageProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Page",

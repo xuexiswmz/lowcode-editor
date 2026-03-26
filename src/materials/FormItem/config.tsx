@@ -1,6 +1,8 @@
-import FormItemDev from "./dev";
-import FormItemProd from "./prod";
+import { lazy } from "react";
 import type { ComponentConfig } from "../types";
+
+const FormItemDev = lazy(() => import("./dev"));
+const FormItemProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "FormItem",

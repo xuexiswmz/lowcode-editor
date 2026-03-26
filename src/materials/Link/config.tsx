@@ -1,6 +1,8 @@
-import LinkDev from "./dev";
-import LinkProd from "./prod";
+import { lazy } from "react";
 import type { ComponentConfig } from "../types";
+
+const LinkDev = lazy(() => import("./dev"));
+const LinkProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Link",

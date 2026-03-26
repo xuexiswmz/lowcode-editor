@@ -1,8 +1,10 @@
-import IconDev from "./dev";
-import IconProd from "./prod";
+import { lazy } from "react";
 import { allIconOptions, sourceOptions } from "./shared";
 import { SURFACE_PARENTS } from "../constants";
 import type { ComponentConfig } from "../types";
+
+const IconDev = lazy(() => import("./dev"));
+const IconProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Icon",
