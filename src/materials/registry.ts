@@ -1,3 +1,4 @@
+import AvatarConfig from "./Avatar/config";
 import ButtonConfig from "./Button/config";
 import ContainerConfig from "./Container/config";
 import DividerConfig from "./Divider/config";
@@ -14,6 +15,7 @@ import TagConfig from "./Tag/config";
 import type { ComponentConfig, ComponentConfigMap } from "./types";
 
 const builtinConfigs: ComponentConfig[] = [
+  AvatarConfig,
   ButtonConfig,
   ContainerConfig,
   DividerConfig,
