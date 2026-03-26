@@ -4,6 +4,7 @@ export const MATERIAL_CATEGORY_ORDER = [
   "common",
   "navigation",
   "layout",
+  "dataEntry",
   "form",
   "display",
   "feedback",
@@ -16,4 +17,5 @@ export const MATERIAL_CATEGORY_LABELS = {
   form: "表单",
   display: "展示",
   feedback: "反馈",
+  dataEntry: "数据录入",
 } as const;
