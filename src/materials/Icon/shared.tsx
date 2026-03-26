@@ -88,6 +88,78 @@ export interface IconMaterialProps {
   style?: CSSProperties;
 }
 
+export function normalizeIconInput(
+  icon: unknown,
+  fallbackSize = 16,
+): IconMaterialProps | undefined {
+  if (!icon) {
+    return undefined;
+  }
+
+  if (typeof icon === "string") {
+    const trimmedIcon = icon.trim();
+
+    if (!trimmedIcon) {
+      return undefined;
+    }
+
+    if (trimmedIcon.startsWith("{")) {
+      try {
+        return normalizeIconInput(JSON.parse(trimmedIcon), fallbackSize);
+      } catch {
+        return {
+          source: trimmedIcon in localIconRegistry ? "local" : "antd",
+          iconName: trimmedIcon,
+          size: fallbackSize,
+        };
+      }
+    }
+
+    return {
+      source: trimmedIcon in localIconRegistry ? "local" : "antd",
+      iconName: trimmedIcon,
+      size: fallbackSize,
+    };
+  }
+
+  if (typeof icon !== "object" || Array.isArray(icon)) {
+    return undefined;
+  }
+
+  const iconConfig = icon as Record<string, unknown>;
+  const iconName =
+    typeof iconConfig.iconName === "string"
+      ? iconConfig.iconName
+      : typeof iconConfig.name === "string"
+        ? iconConfig.name
+        : typeof iconConfig.value === "string"
+          ? iconConfig.value
+          : undefined;
+
+  return {
+    source:
+      iconConfig.source === "antd" || iconConfig.source === "local"
+        ? iconConfig.source
+        : iconName && iconName in localIconRegistry
+          ? "local"
+          : "antd",
+    iconName,
+    localPath:
+      typeof iconConfig.localPath === "string" ? iconConfig.localPath : "",
+    size: typeof iconConfig.size === "number" ? iconConfig.size : fallbackSize,
+    spin: Boolean(iconConfig.spin),
+    rotate: typeof iconConfig.rotate === "number" ? iconConfig.rotate : 0,
+    className:
+      typeof iconConfig.className === "string" ? iconConfig.className : undefined,
+    style:
+      typeof iconConfig.style === "object" &&
+      iconConfig.style !== null &&
+      !Array.isArray(iconConfig.style)
+        ? (iconConfig.style as CSSProperties)
+        : undefined,
+  };
+}
+
 function getCommonStyle({
   size,
   style,
@@ -172,4 +244,8 @@ export function renderIcon({
       <IconComponent spin={spin} style={mergedStyle} />
     </span>
   );
+}
+
+export function IconRenderer(props: IconMaterialProps) {
+  return renderIcon(props);
 }
