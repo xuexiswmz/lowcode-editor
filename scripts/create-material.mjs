@@ -254,9 +254,11 @@ export default ${name};
 
 function createConfigTemplate(name, desc, parents, isContainer) {
   const allowedParents = parents.map((item) => `"${item}"`).join(", ");
-  return `import ${name}Dev from "./dev";
-import ${name}Prod from "./prod";
+  return `import { lazy } from "react";
 import type { ComponentConfig } from "../types";
+
+const ${name}Dev = lazy(() => import("./dev"));
+const ${name}Prod = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "${name}",
