@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import type { ComponentConfig } from "../types";
+import { SURFACE_PARENTS } from "../constants";
 
 const LinkDev = lazy(() => import("./dev"));
 const LinkProd = lazy(() => import("./prod"));
@@ -13,7 +14,7 @@ const config: ComponentConfig = {
     underline: true,
     disabled: false,
   },
-  allowedParents: ["Page", "Container", "Modal"],
+  allowedParents: SURFACE_PARENTS,
   setter: [
     {
       name: "href",

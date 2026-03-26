@@ -11,6 +11,8 @@ import {
   PicLeftOutlined,
   PictureOutlined,
   RadiusSettingOutlined,
+  TagOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { useDrag } from "react-dnd";
 
@@ -32,6 +34,8 @@ const iconMap = {
   Modal: FileImageOutlined,
   Text: FontSizeOutlined,
   Page: MenuOutlined,
+  Tag: TagOutlined,
+  Avatar: UserOutlined
 } as const;
 
 export default function MaterialItem(props: MaterialItemProps) {
