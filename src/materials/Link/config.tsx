@@ -7,7 +7,7 @@ const LinkProd = lazy(() => import("./prod"));
 const config: ComponentConfig = {
   name: "Link",
   category: "navigation",
-  desc: "Link",
+  desc: "链接",
   defaultProps: {
     text: "Link",
     underline: true,

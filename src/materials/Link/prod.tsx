@@ -1,15 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-
-function normalizeHref(href: string) {
-  if (!href) {
-    return "#";
-  }
-  if (href.startsWith("http://") || href.startsWith("https://")) {
-    return href;
-  }
-  return `http://${href}`;
-}
+import { LinkRenderer } from "./shared";
 
 const Link = forwardRef<HTMLDivElement, CommonComponentProps>(
   (
@@ -24,21 +15,15 @@ const Link = forwardRef<HTMLDivElement, CommonComponentProps>(
     },
     ref,
   ) => {
-    const normalizedHref = normalizeHref(href);
-    const linkStyle = {
-      color: disabled ? "#bfbfbf" : "#1890ff",
-      cursor: disabled ? "not-allowed" : "pointer",
-      textDecoration: underline ? "underline" : "none",
-      pointerEvents: disabled ? "none" : "auto",
-    } as const;
-
     return (
-      <div ref={ref} data-component-id={id} style={styles}>
-        <a
-          href={disabled ? undefined : normalizedHref}
+      <div ref={ref} data-component-id={id}>
+        <LinkRenderer
+          href={href}
           target={target}
-          aria-disabled={disabled}
-          tabIndex={disabled ? -1 : undefined}
+          text={text}
+          underline={underline}
+          disabled={disabled}
+          styles={styles}
           onClick={
             disabled
               ? (e) => {
@@ -47,10 +32,7 @@ const Link = forwardRef<HTMLDivElement, CommonComponentProps>(
                 }
               : undefined
           }
-          style={linkStyle}
-        >
-          {text}
-        </a>
+        />
       </div>
     );
   },
