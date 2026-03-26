@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { renderIcon } from "./shared";
+import { IconRenderer } from "./shared";
 
 const Icon = forwardRef<HTMLDivElement, CommonComponentProps>(
   ({ id, styles, source, iconName, localPath, size, spin, rotate }, ref) => {
@@ -16,14 +16,14 @@ const Icon = forwardRef<HTMLDivElement, CommonComponentProps>(
           ...styles,
         }}
       >
-        {renderIcon({
-          source,
-          iconName,
-          localPath,
-          size,
-          spin,
-          rotate,
-        })}
+        <IconRenderer
+          source={source}
+          iconName={iconName}
+          localPath={localPath}
+          size={size}
+          spin={spin}
+          rotate={rotate}
+        />
       </div>
     );
   },

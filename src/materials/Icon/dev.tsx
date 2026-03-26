@@ -1,6 +1,6 @@
 import { useDrag } from "react-dnd";
 import type { CommonComponentProps } from "../../interface";
-import { renderIcon } from "./shared";
+import { IconRenderer } from "./shared";
 
 export default function Icon({
   id,
@@ -34,14 +34,14 @@ export default function Icon({
         ...styles,
       }}
     >
-      {renderIcon({
-        source,
-        iconName,
-        localPath,
-        size,
-        spin,
-        rotate,
-      })}
+      <IconRenderer
+        source={source}
+        iconName={iconName}
+        localPath={localPath}
+        size={size}
+        spin={spin}
+        rotate={rotate}
+      />
     </div>
   );
 }

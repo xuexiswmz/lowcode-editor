@@ -10,6 +10,7 @@ import LinkConfig from "./Link/config";
 import ModalConfig from "./Modal/config";
 import PageConfig from "./Page/config";
 import TextConfig from "./Text/config";
+import TagConfig from "./Tag/config";
 import type { ComponentConfig, ComponentConfigMap } from "./types";
 
 const builtinConfigs: ComponentConfig[] = [
@@ -25,6 +26,7 @@ const builtinConfigs: ComponentConfig[] = [
   ModalConfig,
   PageConfig,
   TextConfig,
+  TagConfig,
 ];
 
 export const builtinComponentConfig = builtinConfigs.reduce<ComponentConfigMap>(
