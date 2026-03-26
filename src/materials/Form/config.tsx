@@ -1,7 +1,9 @@
-import FormDev from "./dev";
-import FormProd from "./prod";
+import { lazy } from "react";
 import { SURFACE_PARENTS } from "../constants";
 import type { ComponentConfig } from "../types";
+
+const FormDev = lazy(() => import("./dev"));
+const FormProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Form",

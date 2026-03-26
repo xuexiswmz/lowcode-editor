@@ -1,7 +1,9 @@
-import ImageDev from "./dev";
-import ImageProd from "./prod";
+import { lazy } from "react";
 import { SURFACE_PARENTS } from "../constants";
 import type { ComponentConfig } from "../types";
+
+const ImageDev = lazy(() => import("./dev"));
+const ImageProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Image",

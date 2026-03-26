@@ -1,7 +1,9 @@
-import TextDev from "./dev";
-import TextProd from "./prod";
+import { lazy } from "react";
 import { SURFACE_PARENTS } from "../constants";
 import type { ComponentConfig } from "../types";
+
+const TextDev = lazy(() => import("./dev"));
+const TextProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Text",

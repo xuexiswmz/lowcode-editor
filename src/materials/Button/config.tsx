@@ -1,7 +1,9 @@
-import ButtonDev from "./dev";
-import ButtonProd from "./prod";
+import { lazy } from "react";
 import { SURFACE_PARENTS } from "../constants";
 import type { ComponentConfig } from "../types";
+
+const ButtonDev = lazy(() => import("./dev"));
+const ButtonProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Button",

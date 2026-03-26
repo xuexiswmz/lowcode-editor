@@ -1,7 +1,9 @@
-import InputDev from "./dev";
-import InputProd from "./prod";
+import { lazy } from "react";
 import { SURFACE_PARENTS } from "../constants";
 import type { ComponentConfig } from "../types";
+
+const InputDev = lazy(() => import("./dev"));
+const InputProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Input",

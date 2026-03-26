@@ -1,7 +1,9 @@
-import ContainerDev from "./dev";
-import ContainerProd from "./prod";
+import { lazy } from "react";
 import { SURFACE_PARENTS } from "../constants";
 import type { ComponentConfig } from "../types";
+
+const ContainerDev = lazy(() => import("./dev"));
+const ContainerProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Container",

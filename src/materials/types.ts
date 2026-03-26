@@ -1,5 +1,9 @@
-import type { ComponentType } from "react";
+import type { ComponentType, LazyExoticComponent } from "react";
 import type { CommonComponentProps } from "../interface";
+
+type MaterialComponent<T = CommonComponentProps> =
+  | ComponentType<T>
+  | LazyExoticComponent<ComponentType<T>>;
 
 export interface ComponentSetter {
   name: string;
@@ -37,8 +41,8 @@ export interface ComponentConfig<T = CommonComponentProps> {
   stylesSetter?: ComponentSetter[];
   defaultProps: Record<string, unknown>;
   getDefaultProps?: () => Record<string, unknown>;
-  dev: ComponentType<T>;
-  prod: ComponentType<T>;
+  dev: MaterialComponent<T>;
+  prod: MaterialComponent<T>;
   events?: ComponentEvent[];
   methods?: ComponentMethod[];
   isContainer?: boolean;

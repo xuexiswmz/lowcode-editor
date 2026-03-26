@@ -1,6 +1,8 @@
-import ModalDev from "./dev";
-import ModalProd from "./prod";
+import { lazy } from "react";
 import type { ComponentConfig } from "../types";
+
+const ModalDev = lazy(() => import("./dev"));
+const ModalProd = lazy(() => import("./prod"));
 
 const config: ComponentConfig = {
   name: "Modal",
