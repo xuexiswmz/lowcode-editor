@@ -46,8 +46,7 @@ export default function Material() {
             aria-expanded={expandedMap[group.category]}
           >
             <div className="lce-material-section-heading">
-              <div className="lce-material-section-title">{group.label}</div>
-              <div className="lce-material-section-meta">{group.items.length} 个</div>
+              <div className="lce-material-section-title">{group.label}组件</div>
             </div>
             <span
               className={`lce-material-section-arrow ${
