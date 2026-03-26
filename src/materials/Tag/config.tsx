@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import type { ComponentConfig } from "../types";
 import { allIconOptions } from "../Icon/shared";
+import { SURFACE_PARENTS } from "../constants";
 
 const TagDev = lazy(() => import("./dev"));
 const TagProd = lazy(() => import("./prod"));
@@ -15,7 +16,7 @@ const config: ComponentConfig = {
     disabled: false,
     variant: "filled",
   },
-  allowedParents: ["Page", "Container", "Modal"],
+  allowedParents: SURFACE_PARENTS,
   setter: [
     {
       name: "text",

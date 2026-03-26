@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import type { ComponentConfig } from "../types";
 import { allIconOptions } from "../Icon/shared";
+import { SURFACE_PARENTS } from "../constants";
 
 const AvatarDev = lazy(() => import("./dev"));
 const AvatarProd = lazy(() => import("./prod"));
@@ -16,7 +17,7 @@ const config: ComponentConfig = {
     size: "medium",
     text: "A",
   },
-  allowedParents: ["Page", "Container", "Modal"],
+  allowedParents: SURFACE_PARENTS,
   setter: [
     {
       name:'src',
