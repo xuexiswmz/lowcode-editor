@@ -1,5 +1,6 @@
 import {
   Form,
+  Image as AntdImage,
   Input,
   Select,
   Switch,
@@ -16,6 +17,45 @@ import {
   type componentSetter,
 } from "../../stores/component-config";
 
+interface SetterInputProps<TValue> {
+  value?: TValue;
+  onChange?: (value: TValue) => void;
+}
+
+function ImageSetterInput({
+  value,
+  onChange,
+}: SetterInputProps<string | { src?: string }>) {
+  const imageSrc =
+    typeof value === "string"
+      ? value
+      : value && typeof value === "object" && "src" in value
+        ? value.src || ""
+        : "";
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      <Input
+        placeholder="https://example.com/cover.png"
+        value={imageSrc}
+        onChange={(event) => onChange?.(event.target.value)}
+      />
+      {imageSrc ? (
+        <AntdImage
+          src={imageSrc}
+          alt="preview"
+          style={{
+            width: "100%",
+            maxHeight: 160,
+            objectFit: "cover",
+            borderRadius: 8,
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -26,17 +66,20 @@ export default function ComponentAttr() {
 
   // 当当前组件或组件列表变化时更新表单
   useEffect(() => {
-    if (curComponent) {
-      const config = componentConfig[curComponent.name];
-      form.setFieldsValue({
-        ...config?.defaultProps,
-        ...curComponent.props,
-      });
+    if (!curComponent) {
+      return;
     }
+
+    const config = componentConfig[curComponent.name];
+    form.setFieldsValue({
+      ...config?.defaultProps,
+      ...curComponent.props,
+    });
   }, [curComponent, components, componentConfig, form]);
 
-  // 如果没有选中的组件，不渲染任何内容
-  if (!curComponentId || !curComponent) return null;
+  if (!curComponentId || !curComponent) {
+    return null;
+  }
 
   // 渲染表单元素
   function renderFormElement(
@@ -62,38 +105,64 @@ export default function ComponentAttr() {
 
     if (type === "select") {
       return <Select options={options} />;
-    } else if (type === "input") {
-      // 如果是value字段且有maxLength限制，则应用最大长度限制
+    }
+
+    if (type === "input") {
       if (name === "value" && maxLength !== undefined) {
         return <Input maxLength={maxLength} />;
       }
+
       return <Input />;
-    } else if (type === "switch") {
+    }
+
+    if (type === "image") {
+      return <ImageSetterInput />;
+    }
+
+    if (type === "switch") {
       return <Switch />;
-    } else if (type === "inputNumber") {
+    }
+
+    if (type === "inputNumber") {
       return <InputNumber style={{ width: "100%" }} />;
-    } else if (type === "textarea") {
+    }
+
+    if (type === "textarea") {
       return <Input.TextArea />;
-    } else if (type === "radio") {
+    }
+
+    if (type === "radio") {
       return <Radio.Group />;
-    } else if (type === "checkbox") {
+    }
+
+    if (type === "checkbox") {
       return <Checkbox.Group />;
-    } else if (type === "datePicker") {
+    }
+
+    if (type === "datePicker") {
       return <DatePicker />;
-    } else if (type === "timePicker") {
+    }
+
+    if (type === "timePicker") {
       return <TimePicker />;
-    } else if (type === "dateTimePicker") {
+    }
+
+    if (type === "dateTimePicker") {
       return <DatePicker showTime />;
     }
+
     return <Input />;
   }
 
   function valueChange(changeValues: Record<string, unknown>) {
-    if (curComponentId) {
-      updateComponentProps(curComponentId, changeValues);
-      // 强制更新组件以反映最新的props
-      setForceUpdate({});
+    if (!curComponentId) {
+      return;
     }
+
+    updateComponentProps(curComponentId, changeValues);
+      // 强制更新组件以反映最新的props
+    setForceUpdate({});
+    
   }
 
   // 获取组件名称和当前属性
@@ -117,9 +186,9 @@ export default function ComponentAttr() {
         <Input value={curComponent.desc} disabled />
       </Form.Item>
       {componentConfig[componentName]?.setter?.map((setter) => (
-        <Form.Item 
-          key={setter.name} 
-          label={setter.label} 
+        <Form.Item
+          key={setter.name}
+          label={setter.label}
           name={setter.name}
           valuePropName={setter.type === "switch" ? "checked" : "value"}
         >

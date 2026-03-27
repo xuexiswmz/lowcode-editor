@@ -1,5 +1,6 @@
 import AvatarConfig from "./Avatar/config";
 import ButtonConfig from "./Button/config";
+import CardConfig from "./Card/config"
 import ContainerConfig from "./Container/config";
 import DividerConfig from "./Divider/config";
 import FormConfig from "./Form/config";
@@ -18,6 +19,7 @@ import type { ComponentConfig, ComponentConfigMap } from "./types";
 const builtinConfigs: ComponentConfig[] = [
   AvatarConfig,
   ButtonConfig,
+  CardConfig,
   ContainerConfig,
   DividerConfig,
   FormConfig,
