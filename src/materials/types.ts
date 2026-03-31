@@ -50,3 +50,9 @@ export interface ComponentConfig<T = CommonComponentProps> {
 }
 
 export type ComponentConfigMap = Record<string, ComponentConfig>;
+
+export interface ComponentDefinition<T = CommonComponentProps>
+  extends Omit<ComponentConfig<T>, "dev" | "prod"> {
+  render: MaterialComponent<T>;
+  renderInEditor?: MaterialComponent<T>;
+}

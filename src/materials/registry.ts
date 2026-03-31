@@ -1,6 +1,6 @@
 import AvatarConfig from "./Avatar/config";
-import ButtonConfig from "./Button/config";
-import CardConfig from "./Card/config"
+import ButtonConfig from "./Button/material";
+import CardConfig from "./Card/material";
 import ContainerConfig from "./Container/config";
 import DividerConfig from "./Divider/config";
 import FormConfig from "./Form/config";
@@ -12,7 +12,7 @@ import LinkConfig from "./Link/config";
 import ModalConfig from "./Modal/config";
 import PageConfig from "./Page/config";
 import SpaceConfig from './Space/config'
-import TextConfig from "./Text/config";
+import TextConfig from "./Text/material";
 import TagConfig from "./Tag/config";
 import type { ComponentConfig, ComponentConfigMap } from "./types";
 
