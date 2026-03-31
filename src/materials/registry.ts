@@ -1,19 +1,19 @@
-import AvatarConfig from "./Avatar/config";
+import AvatarConfig from "./Avatar/material";
 import ButtonConfig from "./Button/material";
 import CardConfig from "./Card/material";
-import ContainerConfig from "./Container/config";
-import DividerConfig from "./Divider/config";
-import FormConfig from "./Form/config";
-import FormItemConfig from "./FormItem/config";
-import IconConfig from "./Icon/config";
-import ImageConfig from "./Image/config";
-import InputConfig from "./Input/config";
-import LinkConfig from "./Link/config";
-import ModalConfig from "./Modal/config";
-import PageConfig from "./Page/config";
-import SpaceConfig from './Space/config'
+import ContainerConfig from "./Container/material";
+import DividerConfig from "./Divider/material";
+import FormConfig from "./Form/material";
+import FormItemConfig from "./FormItem/material";
+import IconConfig from "./Icon/material";
+import ImageConfig from "./Image/material";
+import InputConfig from "./Input/material";
+import LinkConfig from "./Link/material";
+import ModalConfig from "./Modal/material";
+import PageConfig from "./Page/material";
+import SpaceConfig from "./Space/material";
 import TextConfig from "./Text/material";
-import TagConfig from "./Tag/config";
+import TagConfig from "./Tag/material";
 import type { ComponentConfig, ComponentConfigMap } from "./types";
 
 const builtinConfigs: ComponentConfig[] = [
