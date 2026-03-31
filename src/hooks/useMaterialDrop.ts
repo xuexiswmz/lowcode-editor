@@ -3,7 +3,7 @@ import { useDrop } from "react-dnd";
 import {
   getAllowedComponentNames,
   getComponentDefaultProps,
-} from "../materials/registry";
+} from "../materials/config-utils";
 import { useComponentConfigStore } from "../stores/component-config";
 import { getComponentById, useComponentsStore } from "../stores/components";
 

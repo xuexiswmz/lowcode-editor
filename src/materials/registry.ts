@@ -15,6 +15,10 @@ import SpaceConfig from "./Space/material";
 import TextConfig from "./Text/material";
 import TagConfig from "./Tag/material";
 import type { ComponentConfig, ComponentConfigMap } from "./types";
+export {
+  getAllowedComponentNames,
+  getComponentDefaultProps,
+} from "./config-utils";
 
 const builtinConfigs: ComponentConfig[] = [
   AvatarConfig,
@@ -42,25 +46,3 @@ export const builtinComponentConfig = builtinConfigs.reduce<ComponentConfigMap>(
   },
   {},
 );
-
-export function getComponentDefaultProps(config: ComponentConfig) {
-  return {
-    ...config.defaultProps,
-    ...config.getDefaultProps?.(),
-  };
-}
-
-export function getAllowedComponentNames(
-  componentConfig: ComponentConfigMap,
-  parentName?: string,
-) {
-  if (!parentName) {
-    return [];
-  }
-
-  return Object.values(componentConfig)
-    .filter(
-      (item) => item.name !== "Page" && item.allowedParents?.includes(parentName),
-    )
-    .map((item) => item.name);
-}
