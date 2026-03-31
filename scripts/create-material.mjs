@@ -151,116 +151,33 @@ function parseArgs(argv) {
   return result;
 }
 
-function createLeafDevTemplate(name) {
-  return `import { useDrag } from "react-dnd";
-import type { CommonComponentProps } from "../../interface";
-
-export default function ${name}({ id, name, styles }: CommonComponentProps) {
-  const [, drag] = useDrag({
-    type: name,
-    item: {
-      type: name,
-      dragType: "move",
-      id,
-    },
-  });
-
-  return (
-    <div ref={drag} data-component-id={id} style={styles}>
-      ${name}
-    </div>
-  );
-}
-`;
-}
-
-function createContainerDevTemplate(name) {
-  return `import { useEffect, useRef } from "react";
-import { useDrag } from "react-dnd";
-import { useMaterialDrop } from "../../hooks/useMaterialDrop";
-import type { CommonComponentProps } from "../../interface";
-
-const ${name} = ({ id, children, styles, name }: CommonComponentProps) => {
-  const { canDrop, drop } = useMaterialDrop(id);
-  const divRef = useRef<HTMLDivElement>(null);
-
-  const [, drag] = useDrag({
-    type: name,
-    item: {
-      type: name,
-      dragType: "move",
-      id,
-    },
-  });
-
-  useEffect(() => {
-    drop(divRef);
-    drag(divRef);
-  }, [drag, drop]);
-
-  return (
-    <div
-      ref={divRef}
-      data-component-id={id}
-      style={styles}
-      className={\`min-h-[120px] rounded-md border p-[20px] \${
-        canDrop ? "border-blue-500 border-2" : "border-black border"
-      }\`}
-    >
+function createMaterialTemplate(name, desc, parents, isContainer) {
+  const allowedParents = parents.map((item) => `"${item}"`).join(", ");
+  const factoryImport = isContainer
+    ? 'import { createContainerMaterial } from "../factories";'
+    : 'import { createLeafMaterial } from "../factories";';
+  const factoryCall = isContainer ? "createContainerMaterial" : "createLeafMaterial";
+  const renderBody = isContainer
+    ? `  ({ id, children, styles }, ref) => (
+    <div ref={ref} data-component-id={id} style={styles}>
       {children}
     </div>
-  );
-};
+  ),`
+    : `  ({ id, styles }, ref) => (
+    <div ref={ref} data-component-id={id} style={styles}>
+      ${name}
+    </div>
+  ),`;
 
-export default ${name};
-`;
-}
-
-function createLeafProdTemplate(name) {
   return `import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
+${factoryImport}
 
-const ${name} = forwardRef<HTMLDivElement, CommonComponentProps>(
-  ({ id, styles }, ref) => {
-    return (
-      <div ref={ref} data-component-id={id} style={styles}>
-        ${name}
-      </div>
-    );
-  },
+const ${name}Renderer = forwardRef<HTMLDivElement, CommonComponentProps>(
+${renderBody}
 );
 
-export default ${name};
-`;
-}
-
-function createContainerProdTemplate(name) {
-  return `import { forwardRef } from "react";
-import type { CommonComponentProps } from "../../interface";
-
-const ${name} = forwardRef<HTMLDivElement, CommonComponentProps>(
-  ({ id, children, styles }, ref) => {
-    return (
-      <div ref={ref} data-component-id={id} style={styles}>
-        {children}
-      </div>
-    );
-  },
-);
-
-export default ${name};
-`;
-}
-
-function createConfigTemplate(name, desc, parents, isContainer) {
-  const allowedParents = parents.map((item) => `"${item}"`).join(", ");
-  return `import { lazy } from "react";
-import type { ComponentConfig } from "../types";
-
-const ${name}Dev = lazy(() => import("./dev"));
-const ${name}Prod = lazy(() => import("./prod"));
-
-const config: ComponentConfig = {
+export default ${factoryCall}({
   name: "${name}",
   desc: "${desc}",
   defaultProps: {},
@@ -269,11 +186,8 @@ ${isContainer ? "  isContainer: true,\n" : ""}  setter: [],
   stylesSetter: [],
   events: [],
   methods: [],
-  dev: ${name}Dev,
-  prod: ${name}Prod,
-};
-
-export default config;
+  render: ${name}Renderer,
+});
 `;
 }
 
@@ -299,13 +213,7 @@ async function main() {
   }
 
   const files = {
-    "dev.tsx": options.isContainer
-      ? createContainerDevTemplate(name)
-      : createLeafDevTemplate(name),
-    "prod.tsx": options.isContainer
-      ? createContainerProdTemplate(name)
-      : createLeafProdTemplate(name),
-    "config.tsx": createConfigTemplate(
+    "material.tsx": createMaterialTemplate(
       name,
       desc,
       options.parents,
