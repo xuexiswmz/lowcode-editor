@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
-import { Tag as AntdTag } from "antd";
 import { IconRenderer, normalizeIconInput } from "../Icon/shared";
+import { Tag, materials } from "../ui";
 
 interface TagRendererProps {
     color?: string;
@@ -39,16 +39,21 @@ export function TagRenderer({
     const iconConfig = normalizeIconInput(icon, getFontSizeValue(styles));
     const iconNode = iconConfig?.iconName ? <IconRenderer {...iconConfig} /> : undefined;
     return (
-        <AntdTag
-            color={color}
-            disabled={disabled}
-            target={target}
-            href={href}
-            icon={iconNode}
-            variant={variant}
-            style={{ display:"inline-flex", alignItems: "center", gap:"5px", ...styles }}
+        <Tag
+            {...materials.Tag.mapProps(
+              {
+                color,
+                disabled,
+                target,
+                href,
+                icon: iconNode,
+                variant,
+                styles,
+              },
+              { mode: "preview" },
+            )}
         >
             {text}
-        </AntdTag>
+        </Tag>
     );
 }

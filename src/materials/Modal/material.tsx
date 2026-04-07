@@ -1,16 +1,17 @@
 import type React from "react";
-import { Modal as AntdModal } from "antd";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
+import type { MaterialComponent } from "../types";
+import { Modal, materials } from "../ui";
 
 export interface ModalRef {
   open: () => void;
   close: () => void;
 }
 
-interface ModalProps extends Omit<CommonComponentProps, "ref"> {
+interface ModalProps extends CommonComponentProps {
   title?: string;
   onOk?: () => void;
   onCancel?: () => void;
@@ -35,21 +36,26 @@ const ModalRenderer = forwardRef<ModalRef, ModalProps>(
     );
 
     return (
-      <AntdModal
-        title={title}
-        open={open}
-        style={styles}
-        onOk={() => {
-          onOk?.();
-        }}
-        onCancel={() => {
-          onCancel?.();
-          setOpen(false);
-        }}
-        destroyOnHidden
+      <Modal
+        {...materials.Modal.mapProps(
+          {
+            title,
+            open,
+            styles,
+            onOk: () => {
+              onOk?.();
+            },
+            onCancel: () => {
+              onCancel?.();
+              setOpen(false);
+            },
+            destroyOnHidden: true,
+          },
+          { mode: "preview" },
+        )}
       >
         {children}
-      </AntdModal>
+      </Modal>
     );
   },
 );
@@ -87,6 +93,6 @@ export default createContainerMaterial({
     { name: "open", label: "打开弹窗" },
     { name: "close", label: "关闭弹窗" },
   ],
-  render: ModalRenderer as any,
+  render: ModalRenderer as MaterialComponent<CommonComponentProps>,
   renderInEditor: ModalEditorRenderer,
 });

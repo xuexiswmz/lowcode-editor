@@ -1,8 +1,8 @@
-import { Card as AntCard } from "antd";
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
+import { Card, materials } from "../ui";
 import { resolveCardCover } from "./shared";
 
 const cardSizeOptions = [
@@ -31,16 +31,21 @@ const CardRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
     ref,
   ) => (
     <div ref={ref} data-component-id={id} style={styles}>
-      <AntCard
-        title={title}
-        cover={resolveCardCover(cover, title)}
-        hoverable={hoverable}
-        loading={loading}
-        size={size}
-        variant={variant}
+      <Card
+        {...materials.Card.mapProps(
+          {
+            title,
+            cover: resolveCardCover(cover, title),
+            hoverable,
+            loading,
+            size,
+            variant,
+          },
+          { mode: "preview" },
+        )}
       >
         {children}
-      </AntCard>
+      </Card>
     </div>
   ),
 );

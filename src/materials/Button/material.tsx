@@ -1,9 +1,9 @@
-import { Button as AntdButton } from "antd";
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { SURFACE_PARENTS } from "../constants";
+import { Button, materials } from "../ui";
 
 const buttonTypeOptions = [
   { label: "主按钮", value: "primary" },
@@ -33,18 +33,15 @@ const ButtonRenderer = forwardRef<HTMLButtonElement, CommonComponentProps>(
     },
     ref,
   ) => (
-    <AntdButton
+    <Button
       ref={ref}
-      type={type}
-      size={size}
-      disabled={disabled}
-      loading={loading}
-      style={styles}
-      {...props}
-      id={id?.toString()}
+      {...materials.Button.mapProps(
+        { id, type, size, disabled, loading, styles, ...props },
+        { mode: "preview" },
+      )}
     >
       {text}
-    </AntdButton>
+    </Button>
   ),
 );
 
@@ -69,15 +66,14 @@ const ButtonEditorRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
       ref={ref}
       data-component-id={id}
     >
-      <AntdButton
-        type={type}
-        size={size}
-        disabled={disabled}
-        loading={loading}
-        style={styles}
+      <Button
+        {...materials.Button.mapProps(
+          { id, type, size, disabled, loading, styles },
+          { mode: "editor" },
+        )}
       >
         {text}
-      </AntdButton>
+      </Button>
       {disabled ? (
         <div
           style={{

@@ -1,9 +1,9 @@
-import { Divider as AntdDivider } from "antd";
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { SURFACE_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import { Divider, materials } from "../ui";
 
 const orientationOptions = [
   { label: "水平", value: "horizontal" },
@@ -22,15 +22,14 @@ const DividerRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
     ref,
   ) => (
     <div ref={ref} data-component-id={id}>
-      <AntdDivider
-        style={styles}
-        dashed={dashed}
-        plain={plain}
-        orientation={orientation}
-        titlePlacement={titlePlacement}
+      <Divider
+        {...materials.Divider.mapProps(
+          { styles, dashed, plain, orientation, titlePlacement },
+          { mode: "preview" },
+        )}
       >
         {text}
-      </AntdDivider>
+      </Divider>
     </div>
   ),
 );

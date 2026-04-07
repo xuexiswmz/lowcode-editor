@@ -1,9 +1,9 @@
-import { Space as AntdSpace } from "antd";
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { SURFACE_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
+import { Space, materials } from "../ui";
 
 const alignOptions = [
   { label: "start", value: "start" },
@@ -31,15 +31,14 @@ const SpaceRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
       style={styles}
       className="min-h-[100px] p-[20px] rounded-md mt-[10px] mb-[10px]"
     >
-      <AntdSpace
-        align={align}
-        orientation={orientation}
-        size={size}
-        separator={separator}
-        wrap={wrap}
+      <Space
+        {...materials.Space.mapProps(
+          { align, orientation, size, separator, wrap },
+          { mode: "preview" },
+        )}
       >
         {children}
-      </AntdSpace>
+      </Space>
     </div>
   ),
 );
@@ -52,15 +51,14 @@ const SpaceEditorRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
       style={styles}
       className="min-h-[120px] rounded-md border border-black p-[20px]"
     >
-      <AntdSpace
-        align={align}
-        orientation={orientation}
-        size={size}
-        separator={separator}
-        wrap={wrap}
+      <Space
+        {...materials.Space.mapProps(
+          { align, orientation, size, separator, wrap },
+          { mode: "editor" },
+        )}
       >
         {children}
-      </AntdSpace>
+      </Space>
     </div>
   ),
 );

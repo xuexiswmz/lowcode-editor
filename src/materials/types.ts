@@ -1,7 +1,7 @@
 import type { ComponentType, LazyExoticComponent } from "react";
 import type { CommonComponentProps } from "../interface";
 
-type MaterialComponent<T = CommonComponentProps> =
+export type MaterialComponent<T = CommonComponentProps> =
   | ComponentType<T>
   | LazyExoticComponent<ComponentType<T>>;
 

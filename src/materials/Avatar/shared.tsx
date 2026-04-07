@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
-import { Avatar as AntdAvatar } from "antd";
 import { IconRenderer, normalizeIconInput } from "../Icon/shared";
+import { Avatar, materials } from "../ui";
 
 interface AvatarRendererProps {
   alt?: string;
@@ -55,16 +55,21 @@ export function AvatarRenderer({
   const iconNode = iconConfig?.iconName ? <IconRenderer {...iconConfig} /> : undefined;
 
   return (
-    <AntdAvatar
-      alt={alt}
-      gap={normalizeGap(gap)}
-      icon={iconNode}
-      shape={shape}
-      size={size === "medium" ? "default" : size}
-      src={src}
-      style={styles}
+    <Avatar
+      {...materials.Avatar.mapProps(
+        {
+          alt,
+          gap: normalizeGap(gap),
+          icon: iconNode,
+          shape,
+          size,
+          src,
+          styles,
+        },
+        { mode: "preview" },
+      )}
     >
       {text}
-    </AntdAvatar>
+    </Avatar>
   );
 }

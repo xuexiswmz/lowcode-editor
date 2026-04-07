@@ -1,16 +1,19 @@
 import React, {
+  type CSSProperties,
+  type ForwardedRef,
   forwardRef,
+  type ReactNode,
   useImperativeHandle,
   useMemo,
-  type ForwardRefRenderFunction,
   type ReactElement,
 } from "react";
-import { DatePicker, Form as AntdForm, Input } from "antd";
 import dayjs from "dayjs";
 import type { CommonComponentProps } from "../../interface";
 import { SURFACE_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
+import type { MaterialComponent } from "../types";
+import { DatePicker, Form, Input, materials } from "../ui";
 
 export interface FormRef {
   submit: () => void;
@@ -35,13 +38,18 @@ interface FormItemProps {
   formItems?: FormItem[];
 }
 
-interface FormProps extends Omit<CommonComponentProps, "id" | "name"> {
+interface FormProps {
+  id: number;
+  name: string;
+  children?: ReactNode;
+  styles?: CSSProperties;
+  onFinish: (values: FormValues) => void;
   formItems?: FormItem[];
 }
 
-const FormRenderer: ForwardRefRenderFunction<FormRef, FormProps> = (props, ref) => {
+const FormRenderer = (props: FormProps, ref: ForwardedRef<FormRef>) => {
   const { children, onFinish, formItems: propFormItems } = props;
-  const [form] = AntdForm.useForm();
+  const [form] = materials.Form.useForm();
 
   useImperativeHandle(
     ref,
@@ -103,30 +111,37 @@ const FormRenderer: ForwardRefRenderFunction<FormRef, FormProps> = (props, ref) 
   }
 
   return (
-    <AntdForm
-      name="form"
-      labelCol={{ span: 6 }}
-      wrapperCol={{ span: 18 }}
-      form={form}
-      onFinish={save}
+    <Form
+      {...materials.Form.mapProps(
+        {
+          form,
+          onFinish: save,
+        },
+        { mode: "preview" },
+      )}
     >
       {formItems && formItems.length > 0 ? (
         formItems.map((item: FormItem) => (
-          <AntdForm.Item key={item.name} name={item.name} label={item.label}>
-            {item.type === "input" && <Input />}
-            {item.type === "date" && <DatePicker />}
-          </AntdForm.Item>
+          <Form.Item
+            {...materials.Form.mapItemProps(item, { mode: "preview" })}
+          >
+            {materials.Form.getFieldType(item.type, { mode: "preview" }) === "date" ? (
+              <DatePicker />
+            ) : (
+              <Input />
+            )}
+          </Form.Item>
         ))
       ) : (
         <div>请添加表单项</div>
       )}
-    </AntdForm>
+    </Form>
   );
 };
 
 const FormEditorRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
   ({ id, children, onFinish }, ref) => {
-    const [form] = AntdForm.useForm();
+    const [form] = materials.Form.useForm();
 
     const formItems = useMemo(() => {
       return React.Children.toArray(children)
@@ -145,25 +160,39 @@ const FormEditorRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
         ref={ref}
         data-component-id={id}
       >
-        <AntdForm
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
-          form={form}
-          onFinish={(values) => {
-            onFinish(values);
-          }}
+        <Form
+          {...materials.Form.mapProps(
+            {
+              form,
+              onFinish: (values) => {
+                onFinish(values);
+              },
+            },
+            { mode: "editor" },
+          )}
         >
           {formItems.map((item: FormItem) => (
-            <AntdForm.Item
-              key={item.name}
-              label={item.label}
+            <Form.Item
               data-component-id={item.id}
-              name={item.name}
+              {...materials.Form.mapItemProps(item, { mode: "editor" })}
             >
-              <Input style={{ pointerEvents: "none" }} />
-            </AntdForm.Item>
+              {materials.Form.getFieldType(item.type, { mode: "editor" }) ===
+              "date" ? (
+                <DatePicker
+                  style={materials.Form.getPreviewInputStyle(undefined, {
+                    mode: "editor",
+                  })}
+                />
+              ) : (
+                <Input
+                  style={materials.Form.getPreviewInputStyle(undefined, {
+                    mode: "editor",
+                  })}
+                />
+              )}
+            </Form.Item>
           ))}
-        </AntdForm>
+        </Form>
       </div>
     );
   },
@@ -181,6 +210,6 @@ export default createContainerMaterial({
   setter: [field.input("title", "标题")],
   events: [{ name: "onFinish", label: "提交事件" }],
   methods: [{ name: "submit", label: "提交" }],
-  render: forwardRef(FormRenderer) as any,
+  render: forwardRef(FormRenderer) as MaterialComponent<CommonComponentProps>,
   renderInEditor: FormEditorRenderer,
 });

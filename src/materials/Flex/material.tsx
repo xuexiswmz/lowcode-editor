@@ -1,10 +1,10 @@
-import { Flex as AntdFlex } from "antd";
 import type { CSSProperties } from "react";
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { SURFACE_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
+import { Flex, materials } from "../ui";
 
 type FlexMaterialProps = CommonComponentProps & {
   vertical?: boolean;
@@ -47,17 +47,15 @@ const wrapOptions = [
 const FlexRenderer = forwardRef<HTMLDivElement, FlexMaterialProps>(
   ({ id, children, styles, vertical, wrap, justify, align, flex, gap }, ref) => (
     <div ref={ref} data-component-id={id} style={styles}>
-      <AntdFlex
-        vertical={vertical}
-        wrap={wrap}
-        justify={justify}
-        align={align}
-        flex={flex}
-        gap={gap}
+      <Flex
+        {...materials.Flex.mapProps(
+          { vertical, wrap, justify, align, flex, gap },
+          { mode: "preview" },
+        )}
         className="min-h-[100px] rounded-md p-[20px]"
       >
         {children}
-      </AntdFlex>
+      </Flex>
     </div>
   ),
 );
@@ -65,17 +63,15 @@ const FlexRenderer = forwardRef<HTMLDivElement, FlexMaterialProps>(
 const FlexEditorRenderer = forwardRef<HTMLDivElement, FlexMaterialProps>(
   ({ id, children, styles, vertical, wrap, justify, align, flex, gap }, ref) => (
     <div ref={ref} data-component-id={id} style={styles} className="min-h-[100px] p-[20px] rounded-md mt-[10px] mb-[10px] border-[1px] border-[#000]">
-      <AntdFlex
-        vertical={vertical}
-        wrap={wrap}
-        justify={justify}
-        align={align}
-        flex={flex}
-        gap={gap}
+      <Flex
+        {...materials.Flex.mapProps(
+          { vertical, wrap, justify, align, flex, gap },
+          { mode: "editor" },
+        )}
         className="min-h-[60px] w-full"
       >
         {children}
-      </AntdFlex>
+      </Flex>
     </div>
   ),
 );

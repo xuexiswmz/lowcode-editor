@@ -1,4 +1,3 @@
-import { Input as AntdInput, type InputRef } from "antd";
 import { forwardRef, useEffect, useState } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { useDebounceFunction } from "../../hooks/useDebounce";
@@ -6,6 +5,7 @@ import { useComponentsStore } from "../../stores/components";
 import { SURFACE_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import { Input, materials, type MaterialInputRef } from "../ui";
 
 type InputProps = Omit<CommonComponentProps, "children">;
 
@@ -39,7 +39,7 @@ function useManagedInputValue(id: number, value: unknown) {
   };
 }
 
-const InputRenderer = forwardRef<InputRef, InputProps>(
+const InputRenderer = forwardRef<MaterialInputRef, InputProps>(
   (
     {
       id,
@@ -70,17 +70,23 @@ const InputRenderer = forwardRef<InputRef, InputProps>(
     };
 
     return (
-      <AntdInput
+      <Input
         ref={ref}
-        data-component-id={id}
-        value={inputValue}
-        placeholder={placeholder}
-        onChange={handleChange}
-        style={styles}
-        type={type}
-        disabled={disabled}
-        maxLength={maxLength}
-        {...props}
+        {...materials.Input.mapProps(
+          {
+            dataComponentId: id,
+            "data-component-id": id,
+            value: inputValue,
+            placeholder,
+            onChange: handleChange,
+            styles,
+            type,
+            disabled,
+            maxLength,
+            ...props,
+          },
+          { mode: "preview" },
+        )}
       />
     );
   },
@@ -118,15 +124,20 @@ const InputEditorRenderer = forwardRef<HTMLDivElement, InputProps>(
 
     return (
       <div ref={ref} style={{ position: "relative" }} data-component-id={id}>
-        <AntdInput
-          value={inputValue}
-          type={type}
-          placeholder={placeholder}
-          disabled={disabled}
-          maxLength={maxLength}
-          style={styles}
-          onChange={handleChange}
-          {...props}
+        <Input
+          {...materials.Input.mapProps(
+            {
+              value: inputValue,
+              type,
+              placeholder,
+              disabled,
+              maxLength,
+              styles,
+              onChange: handleChange,
+              ...props,
+            },
+            { mode: "editor" },
+          )}
         />
         {disabled ? (
           <div

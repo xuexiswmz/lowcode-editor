@@ -1,9 +1,9 @@
-import { Image as AntdImage } from "antd";
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { SURFACE_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import { Image, materials } from "../ui";
 import ImagePlaceholder from "./Placeholder";
 
 const ImageRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
@@ -24,16 +24,21 @@ const ImageRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
   ) => (
     <div ref={ref} data-component-id={id}>
       {src ? (
-        <AntdImage
-          style={styles}
-          src={src}
-          alt={alt}
-          fallback={fallback}
-          height={height}
-          width={width}
-          placeholder={placeholder}
-          preview={preview}
-          onError={onError}
+        <Image
+          {...materials.Image.mapProps(
+            {
+              styles,
+              src,
+              alt,
+              fallback,
+              height,
+              width,
+              placeholder,
+              preview,
+              onError,
+            },
+            { mode: "preview" },
+          )}
         />
       ) : (
         <ImagePlaceholder width={width} height={height} styles={styles} />

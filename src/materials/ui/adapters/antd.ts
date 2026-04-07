@@ -1,0 +1,159 @@
+import {
+  Avatar,
+  Button,
+  Card,
+  DatePicker,
+  Divider,
+  Flex,
+  Form,
+  Image,
+  Input,
+  Modal,
+  Space,
+  Tag,
+} from "antd";
+import type { MaterialUIAdapter } from "../types";
+
+const antdMaterialBindings: MaterialUIAdapter["materials"] = {
+  Avatar: {
+    mapProps: ({ alt, gap, icon, shape, size, src, styles }) => ({
+      alt,
+      gap,
+      icon,
+      shape,
+      size: size === "medium" ? "default" : size,
+      src,
+      style: styles,
+    }),
+  },
+  Button: {
+    mapProps: ({ id, type, size, disabled, loading, styles, ...rest }) => ({
+      ...rest,
+      id: id?.toString(),
+      type,
+      size,
+      disabled,
+      loading,
+      style: styles,
+    }),
+  },
+  Card: {
+    mapProps: ({ title, cover, hoverable, loading, size, variant }) => ({
+      title,
+      cover,
+      hoverable,
+      loading,
+      size,
+      variant,
+    }),
+  },
+  Divider: {
+    mapProps: ({ styles, dashed, plain, orientation, titlePlacement }) => ({
+      style: styles,
+      dashed,
+      plain,
+      orientation,
+      titlePlacement,
+    }),
+  },
+  Flex: {
+    mapProps: ({ vertical, wrap, justify, align, flex, gap }) => ({
+      vertical,
+      wrap,
+      justify,
+      align,
+      flex,
+      gap,
+    }),
+  },
+  Form: {
+    useForm: Form.useForm,
+    mapProps: ({ form, onFinish }) => ({
+      name: "form",
+      labelCol: { span: 6 },
+      wrapperCol: { span: 18 },
+      form,
+      onFinish,
+    }),
+    mapItemProps: (item) => ({
+      key: item.name,
+      name: item.name,
+      label: item.label,
+    }),
+    getFieldType: (type) => (type === "date" ? "date" : "input"),
+    getPreviewInputStyle: (styles) => ({
+      ...styles,
+      pointerEvents: "none",
+    }),
+  },
+  Image: {
+    mapProps: ({ styles, src, alt, fallback, height, width, placeholder, preview, onError }) => ({
+      style: styles,
+      src,
+      alt,
+      fallback,
+      height,
+      width,
+      placeholder,
+      preview,
+      onError,
+    }),
+  },
+  Input: {
+    mapProps: ({ styles, ...rest }) => ({
+      ...rest,
+      style: styles,
+    }),
+  },
+  Modal: {
+    mapProps: ({ title, open, styles, onOk, onCancel, destroyOnHidden }) => ({
+      title,
+      open,
+      style: styles,
+      onOk,
+      onCancel,
+      destroyOnHidden,
+    }),
+  },
+  Space: {
+    mapProps: ({ align, orientation, size, separator, wrap }) => ({
+      align,
+      orientation,
+      size,
+      separator,
+      wrap,
+    }),
+  },
+  Tag: {
+    mapProps: ({ color, disabled, target, href, icon, variant, styles }) => ({
+      color,
+      disabled,
+      target,
+      href,
+      icon,
+      variant,
+      style: {
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "5px",
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
+};
+
+export const antdMaterialUIAdapter: MaterialUIAdapter = {
+  Avatar,
+  Button,
+  Card,
+  DatePicker,
+  Divider,
+  Flex,
+  Form,
+  Image,
+  Input,
+  Modal,
+  Space,
+  Tag,
+  materials: antdMaterialBindings,
+};
