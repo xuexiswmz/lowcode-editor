@@ -3,6 +3,7 @@ import ButtonConfig from "./Button/material";
 import CardConfig from "./Card/material";
 import ContainerConfig from "./Container/material";
 import DividerConfig from "./Divider/material";
+import FlexConfig from "./Flex/material";
 import FormConfig from "./Form/material";
 import FormItemConfig from "./FormItem/material";
 import IconConfig from "./Icon/material";
@@ -26,6 +27,7 @@ const builtinConfigs: ComponentConfig[] = [
   CardConfig,
   ContainerConfig,
   DividerConfig,
+  FlexConfig,
   FormConfig,
   FormItemConfig,
   IconConfig,

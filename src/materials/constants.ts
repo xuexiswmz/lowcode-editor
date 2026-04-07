@@ -1,4 +1,4 @@
-export const SURFACE_PARENTS = ["Page", "Container", "Modal","Space"];
+export const SURFACE_PARENTS = ["Page", "Container", "Modal","Space", "Flex"];
 
 export const MATERIAL_CATEGORY_ORDER = [
   "common",
