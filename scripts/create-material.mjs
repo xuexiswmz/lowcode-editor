@@ -1,7 +1,17 @@
 import { mkdir, access, writeFile } from "node:fs/promises";
+import { mkdir, access, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+const DEFAULT_CATEGORY = "common";
 const DEFAULT_PARENTS = ["Page", "Container", "Modal"];
+const VALID_CATEGORIES = [
+  "common",
+  "navigation",
+  "layout",
+  "form",
+  "display",
+  "feedback",
+];
 
 function parseParents(value) {
   return value
@@ -16,17 +26,18 @@ function printHelp() {
 
 Options:
   --name <text>         Material name, useful when using npm config style
-  --desc <text>         Display name used in config.tsx
+  --desc <text>         Display name shown in the material panel
+  --category <value>    Material category: ${VALID_CATEGORIES.join(", ")}
   --parents <list>      Comma-separated parent names, e.g. Page,Container,Modal
-  --container           Generate a container component with drop support
+  --container           Generate a container material
   --dry-run             Print generated files without writing them
   --force               Overwrite an existing material directory
   --help                Show this help message
 
 Examples:
-  npm run generate:material -- ImageCard --desc 图片卡片
-  npm run generate:material -- FormSection --container --parents Page,Container,Modal
-  npm run generate:material -- --name=ImageCard --desc=图片卡片 --dry-run
+  npm run generate:material -- EmptyState --desc 空状态
+  npm run generate:material -- Stack --desc 堆叠布局 --category layout --container
+  npm run generate:material -- --name=ActionCard --desc=操作卡片 --category=display --parents=Page,Container,Modal,Card
 `);
 }
 
@@ -55,6 +66,7 @@ function parseArgs(argv) {
   const result = {
     name: process.env.npm_config_name ?? "",
     desc: process.env.npm_config_desc ?? "",
+    category: process.env.npm_config_category ?? DEFAULT_CATEGORY,
     parents: process.env.npm_config_parents
       ? parseParents(process.env.npm_config_parents)
       : [...DEFAULT_PARENTS],
@@ -71,9 +83,7 @@ function parseArgs(argv) {
 
   while (args.length > 0) {
     const arg = args.shift();
-    if (!arg) {
-      continue;
-    }
+    if (!arg) continue;
 
     if (!arg.startsWith("--") && !result.name) {
       result.name = arg;
@@ -115,6 +125,11 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (arg.startsWith("--category=")) {
+      result.category = arg.slice("--category=".length);
+      continue;
+    }
+
     if (arg.startsWith("--parents=")) {
       result.parents = parseParents(arg.slice("--parents=".length));
       continue;
@@ -130,9 +145,13 @@ function parseArgs(argv) {
       continue;
     }
 
+    if (arg === "--category") {
+      result.category = args.shift() ?? "";
+      continue;
+    }
+
     if (arg === "--parents") {
-      const value = args.shift() ?? "";
-      result.parents = parseParents(value);
+      result.parents = parseParents(args.shift() ?? "");
       continue;
     }
 
@@ -144,6 +163,12 @@ function parseArgs(argv) {
     throw new Error("Missing material name.");
   }
 
+  if (!VALID_CATEGORIES.includes(result.category)) {
+    throw new Error(
+      `Invalid category "${result.category}". Expected one of: ${VALID_CATEGORIES.join(", ")}.`,
+    );
+  }
+
   if (result.parents.length === 0) {
     throw new Error("At least one parent is required.");
   }
@@ -151,43 +176,69 @@ function parseArgs(argv) {
   return result;
 }
 
-function createMaterialTemplate(name, desc, parents, isContainer) {
+function createMaterialTemplate({ name, desc, category, parents, isContainer }) {
   const allowedParents = parents.map((item) => `"${item}"`).join(", ");
   const factoryImport = isContainer
-    ? 'import { createContainerMaterial } from "../factories";'
-    : 'import { createLeafMaterial } from "../factories";';
-  const factoryCall = isContainer ? "createContainerMaterial" : "createLeafMaterial";
-  const renderBody = isContainer
+    ? "createContainerMaterial"
+    : "createLeafMaterial";
+  const rendererName = `${name}Renderer`;
+  const editorRendererName = `${name}EditorRenderer`;
+  const editorFlag = isContainer ? "true" : "false";
+  const previewBody = isContainer
     ? `  ({ id, children, styles }, ref) => (
     <div ref={ref} data-component-id={id} style={styles}>
       {children}
     </div>
   ),`
-    : `  ({ id, styles }, ref) => (
+    : `  ({ id, text = "${desc}", styles }, ref) => (
     <div ref={ref} data-component-id={id} style={styles}>
-      ${name}
+      {text}
+    </div>
+  ),`;
+  const editorBody = isContainer
+    ? `  ({ id, children, styles }, ref) => (
+    <div
+      ref={ref}
+      data-component-id={id}
+      style={styles}
+      className="min-h-[100px] rounded-md border border-black p-[20px]"
+    >
+      {children}
+    </div>
+  ),`
+    : `  ({ id, text = "${desc}", styles }, ref) => (
+    <div ref={ref} data-component-id={id} style={styles}>
+      {text}
     </div>
   ),`;
 
   return `import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-${factoryImport}
+import { createLeafMaterial, createContainerMaterial } from "../factories";
 
-const ${name}Renderer = forwardRef<HTMLDivElement, CommonComponentProps>(
-${renderBody}
+const ${rendererName} = forwardRef<HTMLDivElement, CommonComponentProps>(
+${previewBody}
 );
 
-export default ${factoryCall}({
+const ${editorRendererName} = forwardRef<HTMLDivElement, CommonComponentProps>(
+${editorBody}
+);
+
+const ${name}Material = ${factoryImport}({
   name: "${name}",
+  category: "${category}",
   desc: "${desc}",
-  defaultProps: {},
+  defaultProps: ${isContainer ? "{}" : `{ text: "${desc}" }`},
   allowedParents: [${allowedParents}],
 ${isContainer ? "  isContainer: true,\n" : ""}  setter: [],
   stylesSetter: [],
   events: [],
   methods: [],
-  render: ${name}Renderer,
+  render: ${rendererName},
+  renderInEditor: ${editorRendererName},
 });
+
+export default ${name}Material;
 `;
 }
 
@@ -213,12 +264,13 @@ async function main() {
   }
 
   const files = {
-    "material.tsx": createMaterialTemplate(
+    "material.tsx": createMaterialTemplate({
       name,
       desc,
-      options.parents,
-      options.isContainer,
-    ),
+      category: options.category,
+      parents: options.parents,
+      isContainer: options.isContainer,
+    }),
   };
 
   if (options.dryRun) {

@@ -6,11 +6,12 @@
 
 当前项目已经具备以下基础能力：
 
-- 材料组件按目录拆分，支持 `dev.tsx / prod.tsx / config.tsx`
+- 材料组件按目录拆分，当前以 `material.tsx` 为主入口
 - 组件配置支持 `setter / stylesSetter / events / methods`
 - 组件配置支持 `allowedParents / isContainer`
-- 材料注册支持自动扫描 `src/materials/*/config.tsx`
+- 材料注册由 `src/materials/registry.ts` 统一维护
 - 画布拖拽、属性面板、样式面板、事件面板已具备基础能力
+- 物料渲染已接入 `src/materials/ui` 适配层，可逐步脱离具体组件库
 
 当前已完成的基础组件：
 
@@ -46,6 +47,8 @@
 - 布尔值统一使用 `switch`
 - 数组型配置尽量复用统一 setter 设计
 - 涉及复杂嵌套结构时，优先建设通用配置编辑器，再做组件
+- schema 字段优先表达低代码语义，不要在物料层直接绑定具体 UI 库 props
+- 组件库差异优先收敛到 `src/materials/ui` 适配层，而不是散落在每个物料里
 
 ## 3. 推荐整体排期
 
@@ -95,6 +98,13 @@
 - `props` 只列建议优先支持的核心字段
 - `前置依赖` 指组件实现前建议先具备的编辑器或基础能力
 - `脚手架` 表示是否建议先通过 `npm run generate:material` 生成基础文件
+
+当前脚手架会生成新的物料模板：
+
+- 单文件 `material.tsx`
+- 包含 `render` 和 `renderInEditor`
+- 使用 `createLeafMaterial / createContainerMaterial`
+- 默认不直接依赖具体组件库
 
 ### 4.1 第一批：通用类 + 简单布局类
 

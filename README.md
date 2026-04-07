@@ -60,6 +60,13 @@
    - 表单验证
    - 自定义 JS 执行
 
+7. **物料协议层** (`src/materials`)
+
+   - 物料 schema 与渲染实现分离
+   - 物料通过 `factories` 统一注册 `render / renderInEditor`
+   - 底层 UI 库适配集中在 `src/materials/ui`
+   - 未来替换组件库时，优先改适配器而不是改每个物料 schema
+
 ## 自定义 Hooks
 
 ### useDebounce
@@ -165,3 +172,17 @@ pnpm build
 ```bash
 pnpm preview
 ```
+
+### 生成新物料
+
+```bash
+pnpm generate:material -- EmptyState --desc 空状态 --category display
+pnpm generate:material -- Stack --desc 堆叠布局 --category layout --container
+```
+
+脚手架会生成符合当前重构后规范的 `material.tsx`：
+
+- 使用 `createLeafMaterial / createContainerMaterial`
+- 同时生成 `render` 和 `renderInEditor`
+- 保持 schema-first 结构，不直接绑定具体组件库
+- 如果新物料需要对接组件库差异，优先在 `src/materials/ui` 里补适配映射

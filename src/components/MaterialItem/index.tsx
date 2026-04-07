@@ -1,6 +1,7 @@
 import {
   AppstoreOutlined,
   BorderOutlined,
+  ColumnWidthOutlined,
   FileImageOutlined,
   FontSizeOutlined,
   FormOutlined,
@@ -11,6 +12,7 @@ import {
   PicLeftOutlined,
   PictureOutlined,
   RadiusSettingOutlined,
+  TableOutlined,
   TagOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -23,6 +25,7 @@ export interface MaterialItemProps {
 
 const iconMap = {
   Button: BorderOutlined,
+  Col: ColumnWidthOutlined,
   Container: LayoutOutlined,
   Divider: InsertRowBelowOutlined,
   Form: FormOutlined,
@@ -34,6 +37,7 @@ const iconMap = {
   Modal: FileImageOutlined,
   Text: FontSizeOutlined,
   Page: MenuOutlined,
+  Row: TableOutlined,
   Tag: TagOutlined,
   Avatar: UserOutlined
 } as const;
