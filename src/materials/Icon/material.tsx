@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { ICON_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { allIconOptions, IconRenderer, sourceOptions } from "./shared";
@@ -42,7 +42,7 @@ export default createLeafMaterial({
     spin: false,
     rotate: 0,
   },
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...ICON_ALLOWED_PARENTS],
   setter: [
     field.select("source", "资源来源", sourceOptions),
     field.select("iconName", "图标名称", allIconOptions),

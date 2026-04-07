@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { DIVIDER_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { Divider, materials } from "../ui";
@@ -45,7 +45,7 @@ export default createLeafMaterial({
     titlePlacement: "center",
     text: "分割线",
   },
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...DIVIDER_ALLOWED_PARENTS],
   setter: [
     field.switch("dashed", "虚线"),
     field.switch("plain", "普通正文样式"),

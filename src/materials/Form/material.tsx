@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import dayjs from "dayjs";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { FORM_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
 import type { MaterialComponent } from "../types";
@@ -206,7 +206,7 @@ export default createContainerMaterial({
     title: "表单",
   },
   isContainer: true,
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...FORM_ALLOWED_PARENTS],
   setter: [field.input("title", "标题")],
   events: [{ name: "onFinish", label: "提交事件" }],
   methods: [{ name: "submit", label: "提交" }],

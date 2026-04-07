@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
-import { SURFACE_PARENTS } from "../constants";
+import { BUTTON_ALLOWED_PARENTS } from "../constants";
 import { Button, materials } from "../ui";
 
 const buttonTypeOptions = [
@@ -99,7 +99,7 @@ export default createLeafMaterial({
     disabled: false,
     loading: false,
   },
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...BUTTON_ALLOWED_PARENTS],
   setter: [
     field.select("type", "类型", buttonTypeOptions),
     field.input("text", "文本"),

@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { IMAGE_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { Image, materials } from "../ui";
@@ -56,7 +56,7 @@ export default createLeafMaterial({
     height: 140,
     preview: false,
   },
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...IMAGE_ALLOWED_PARENTS],
   setter: [
     field.input("src", "图片地址"),
     field.input("alt", "图片描述"),

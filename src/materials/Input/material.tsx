@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useState } from "react";
 import type { CommonComponentProps } from "../../interface";
 import { useDebounceFunction } from "../../hooks/useDebounce";
 import { useComponentsStore } from "../../stores/components";
-import { SURFACE_PARENTS } from "../constants";
+import { INPUT_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { Input, materials, type MaterialInputRef } from "../ui";
@@ -168,7 +168,7 @@ export default createLeafMaterial({
     maxLength: 10,
     type: "text",
   },
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...INPUT_ALLOWED_PARENTS],
   setter: [
     field.input("value", "值"),
     field.input("placeholder", "占位符"),

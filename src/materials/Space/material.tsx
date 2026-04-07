@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { SPACE_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
 import { Space, materials } from "../ui";
@@ -68,7 +68,7 @@ export default createContainerMaterial({
   category: "layout",
   desc: "间距",
   defaultProps: {},
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...SPACE_ALLOWED_PARENTS],
   isContainer: true,
   setter: [
     field.select("align", "对齐方式", alignOptions),

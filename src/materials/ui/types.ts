@@ -9,6 +9,8 @@ import type {
   Image as AntdImage,
   Input as AntdInput,
   Modal as AntdModal,
+  Col as AntdCol,
+  Row as AntdRow,
   Space as AntdSpace,
   Tag as AntdTag,
   InputRef,
@@ -99,6 +101,18 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  Col: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
+  Row: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   Space: {
     mapProps: (
       props: Record<string, unknown>,
@@ -124,6 +138,8 @@ export interface MaterialUIAdapter {
   Image: typeof AntdImage;
   Input: typeof AntdInput;
   Modal: typeof AntdModal;
+  Col: typeof AntdCol;
+  Row: typeof AntdRow;
   Space: typeof AntdSpace;
   Tag: typeof AntdTag;
   materials: MaterialBindings;

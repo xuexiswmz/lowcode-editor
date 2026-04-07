@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { LINK_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { LinkRenderer } from "./shared";
@@ -85,7 +85,7 @@ export default createLeafMaterial({
     underline: true,
     disabled: false,
   },
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...LINK_ALLOWED_PARENTS],
   setter: [
     field.input("href", "链接地址"),
     field.select("target", "打开方式", targetOptions),

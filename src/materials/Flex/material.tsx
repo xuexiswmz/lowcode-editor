@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { FLEX_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
 import { Flex, materials } from "../ui";
@@ -87,7 +87,7 @@ export default createContainerMaterial({
     align: "flex-start",
     gap: "small",
   },
-  allowedParents: [...SURFACE_PARENTS, "Card"],
+  allowedParents: [...FLEX_ALLOWED_PARENTS],
   isContainer: true,
   setter: [
     field.switch("vertical", "垂直"),

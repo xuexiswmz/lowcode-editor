@@ -2,6 +2,7 @@ import {
   Avatar,
   Button,
   Card,
+  Col,
   DatePicker,
   Divider,
   Flex,
@@ -9,6 +10,7 @@ import {
   Image,
   Input,
   Modal,
+  Row,
   Space,
   Tag,
 } from "antd";
@@ -115,6 +117,22 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       destroyOnHidden,
     }),
   },
+  Col: {
+    mapProps: ({ span, offset, order, flex }) => ({
+      span,
+      offset,
+      order,
+      flex,
+    }),
+  },
+  Row: {
+    mapProps: ({ gutter, justify, align, wrap }) => ({
+      gutter,
+      justify,
+      align,
+      wrap,
+    }),
+  },
   Space: {
     mapProps: ({ align, orientation, size, separator, wrap }) => ({
       align,
@@ -146,6 +164,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Avatar,
   Button,
   Card,
+  Col,
   DatePicker,
   Divider,
   Flex,
@@ -153,6 +172,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Image,
   Input,
   Modal,
+  Row,
   Space,
   Tag,
   materials: antdMaterialBindings,

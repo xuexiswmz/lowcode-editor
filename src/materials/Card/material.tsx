@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
+import { CARD_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
 import { Card, materials } from "../ui";
@@ -62,7 +63,7 @@ export default createContainerMaterial({
     variant: "outlined",
     cover: "",
   },
-  allowedParents: ["Page", "Container", "Modal"],
+  allowedParents: [...CARD_ALLOWED_PARENTS],
   isContainer: true,
   setter: [
     field.input("title", "标题"),

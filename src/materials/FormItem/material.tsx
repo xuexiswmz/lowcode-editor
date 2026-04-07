@@ -1,5 +1,6 @@
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import { FORM_ITEM_ALLOWED_PARENTS } from "../constants";
 
 export default createLeafMaterial({
   name: "FormItem",
@@ -12,7 +13,7 @@ export default createLeafMaterial({
   getDefaultProps: () => ({
     name: `field_${Date.now()}`,
   }),
-  allowedParents: ["Form"],
+  allowedParents: [...FORM_ITEM_ALLOWED_PARENTS],
   setter: [
     field.select("type", "类型", [
       { label: "输入框", value: "input" },

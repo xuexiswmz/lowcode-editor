@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { CONTAINER_ALLOWED_PARENTS } from "../constants";
 import { createContainerMaterial } from "../factories";
 
 const ContainerRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
@@ -35,7 +35,7 @@ export default createContainerMaterial({
   desc: "容器",
   defaultProps: {},
   isContainer: true,
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...CONTAINER_ALLOWED_PARENTS],
   render: ContainerRenderer,
   renderInEditor: ContainerEditorRenderer,
 });

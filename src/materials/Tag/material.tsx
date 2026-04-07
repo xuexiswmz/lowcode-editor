@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { TAG_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { allIconOptions } from "../Icon/shared";
@@ -56,7 +56,7 @@ export default createLeafMaterial({
     disabled: false,
     variant: "filled",
   },
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...TAG_ALLOWED_PARENTS],
   setter: [
     field.input("text", "标签内容"),
     field.select("color", "状态颜色", tagColorOptions),

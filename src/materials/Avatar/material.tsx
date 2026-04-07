@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { AVATAR_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { allIconOptions } from "../Icon/shared";
@@ -49,7 +49,7 @@ export default createLeafMaterial({
     size: "medium",
     text: "A",
   },
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...AVATAR_ALLOWED_PARENTS],
   setter: [
     field.input("src", "图片地址"),
     field.input("alt", "替代文本"),

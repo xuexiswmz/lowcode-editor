@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { SURFACE_PARENTS } from "../constants";
+import { TEXT_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 
@@ -19,7 +19,7 @@ export default createLeafMaterial({
   defaultProps: {
     text: "文本",
   },
-  allowedParents: SURFACE_PARENTS,
+  allowedParents: [...TEXT_ALLOWED_PARENTS],
   setter: [field.input("text", "文本")],
   stylesSetter: [
     field.input("color", "文字颜色"),

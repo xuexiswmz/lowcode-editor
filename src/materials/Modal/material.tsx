@@ -1,6 +1,7 @@
 import type React from "react";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import type { CommonComponentProps } from "../../interface";
+import { MODAL_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createContainerMaterial } from "../factories";
 import type { MaterialComponent } from "../types";
@@ -82,7 +83,7 @@ export default createContainerMaterial({
     title: "弹窗",
   },
   isContainer: true,
-  allowedParents: ["Page"],
+  allowedParents: [...MODAL_ALLOWED_PARENTS],
   setter: [field.input("title", "标题")],
   stylesSetter: [],
   events: [
