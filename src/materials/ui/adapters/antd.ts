@@ -16,6 +16,8 @@ import {
 } from "antd";
 import type { MaterialUIAdapter } from "../types";
 
+const TextArea = Input.TextArea;
+
 const antdMaterialBindings: MaterialUIAdapter["materials"] = {
   Avatar: {
     mapProps: ({ alt, gap, icon, shape, size, src, styles }) => ({
@@ -107,6 +109,22 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       style: styles,
     }),
   },
+  TextArea: {
+    mapProps: ({ styles, rows, value, autoSize, ...rest }) => ({
+      ...rest,
+      value: typeof value === "string" ? value : String(value ?? ""),
+      rows,
+      autoSize:
+        autoSize ??
+        (typeof rows === "number"
+          ? { minRows: rows, maxRows: rows }
+          : undefined),
+      style: {
+        width: "100%",
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
   Modal: {
     mapProps: ({ title, open, styles, onOk, onCancel, destroyOnHidden }) => ({
       title,
@@ -171,6 +189,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Form,
   Image,
   Input,
+  TextArea,
   Modal,
   Row,
   Space,

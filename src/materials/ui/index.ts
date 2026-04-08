@@ -13,6 +13,7 @@ export const {
   Form,
   Image,
   Input,
+  TextArea,
   Modal,
   Row,
   Space,
@@ -20,4 +21,8 @@ export const {
   materials,
 } = materialUI;
 
-export type { MaterialUIAdapter, MaterialInputRef } from "./types";
+export type {
+  MaterialUIAdapter,
+  MaterialInputRef,
+  MaterialTextAreaRef,
+} from "./types";

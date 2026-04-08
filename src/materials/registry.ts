@@ -17,6 +17,7 @@ import RowConfig from "./Row/material";
 import SpaceConfig from "./Space/material";
 import TextConfig from "./Text/material";
 import TagConfig from "./Tag/material";
+import TextareaConfig from "./Textarea/material";
 import type { ComponentConfig, ComponentConfigMap } from "./types";
 export {
   getAllowedComponentNames,
@@ -43,6 +44,7 @@ const builtinConfigs: ComponentConfig[] = [
   TextConfig,
   TagConfig,
   SpaceConfig,
+  TextareaConfig,
 ];
 
 export const builtinComponentConfig = builtinConfigs.reduce<ComponentConfigMap>(

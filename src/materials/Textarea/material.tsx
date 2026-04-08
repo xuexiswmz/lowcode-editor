@@ -1,24 +1,16 @@
 import { forwardRef } from "react";
-import type { CommonComponentProps } from "../../interface";
-import { INPUT_ALLOWED_PARENTS } from "../constants";
+import { TEXTAREA_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
-import { Input, materials, type MaterialInputRef } from "../ui";
-import { useManagedInputValue } from "./shared";
+import { TextArea, materials, type MaterialTextAreaRef } from "../ui";
+import type { InputProps } from "../Input/material";
+import { useManagedInputValue } from "../Input/shared";
 
-export type InputProps = Omit<CommonComponentProps, "children">;
+type TextareaProps = Omit<InputProps, "type"> & {
+  rows?: number;
+};
 
-const inputTypeOptions = [
-  { label: "文本", value: "text" },
-  { label: "密码", value: "password" },
-  { label: "数字", value: "number" },
-  { label: "邮箱", value: "email" },
-  { label: "电话", value: "tel" },
-  { label: "搜索", value: "search" },
-  { label: "网址", value: "url" },
-];
-
-const InputRenderer = forwardRef<MaterialInputRef, InputProps>(
+const TextareaRenderer = forwardRef<MaterialTextAreaRef, TextareaProps>(
   (
     {
       id,
@@ -26,9 +18,9 @@ const InputRenderer = forwardRef<MaterialInputRef, InputProps>(
       placeholder = "请输入内容",
       onChange,
       styles,
-      type,
       disabled = false,
       maxLength,
+      rows = 4,
       ...props
     },
     ref,
@@ -36,7 +28,7 @@ const InputRenderer = forwardRef<MaterialInputRef, InputProps>(
     const { inputValue, setInputValue, debouncedUpdateValue } =
       useManagedInputValue(id, value);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const nextValue = e.target.value;
 
       if (maxLength && nextValue.length > maxLength) {
@@ -49,19 +41,22 @@ const InputRenderer = forwardRef<MaterialInputRef, InputProps>(
     };
 
     return (
-      <Input
+      <TextArea
         ref={ref}
-        {...materials.Input.mapProps(
+        {...materials.TextArea.mapProps(
           {
-            dataComponentId: id,
             "data-component-id": id,
             value: inputValue,
             placeholder,
             onChange: handleChange,
             styles,
-            type,
             disabled,
             maxLength,
+            rows,
+            autoSize: {
+              minRows: rows,
+              maxRows: rows,
+            },
             ...props,
           },
           { mode: "preview" },
@@ -71,7 +66,7 @@ const InputRenderer = forwardRef<MaterialInputRef, InputProps>(
   },
 );
 
-const InputEditorRenderer = forwardRef<HTMLDivElement, InputProps>(
+const TextareaEditorRenderer = forwardRef<HTMLDivElement, TextareaProps>(
   (
     {
       id,
@@ -79,9 +74,9 @@ const InputEditorRenderer = forwardRef<HTMLDivElement, InputProps>(
       placeholder = "请输入内容",
       onChange,
       styles,
-      type,
       disabled = false,
       maxLength,
+      rows = 4,
       ...props
     },
     ref,
@@ -89,7 +84,7 @@ const InputEditorRenderer = forwardRef<HTMLDivElement, InputProps>(
     const { inputValue, setInputValue, debouncedUpdateValue } =
       useManagedInputValue(id, value);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const nextValue = e.target.value;
 
       if (maxLength && nextValue.length > maxLength) {
@@ -103,14 +98,18 @@ const InputEditorRenderer = forwardRef<HTMLDivElement, InputProps>(
 
     return (
       <div ref={ref} style={{ position: "relative" }} data-component-id={id}>
-        <Input
-          {...materials.Input.mapProps(
+        <TextArea
+          {...materials.TextArea.mapProps(
             {
               value: inputValue,
-              type,
               placeholder,
               disabled,
               maxLength,
+              rows,
+              autoSize: {
+                minRows: rows,
+                maxRows: rows,
+              },
               styles,
               onChange: handleChange,
               ...props,
@@ -133,33 +132,37 @@ const InputEditorRenderer = forwardRef<HTMLDivElement, InputProps>(
   },
 );
 
-InputRenderer.displayName = "InputRenderer";
-InputEditorRenderer.displayName = "InputEditorRenderer";
+TextareaRenderer.displayName = "TextareaRenderer";
+TextareaEditorRenderer.displayName = "TextareaEditorRenderer";
 
 export default createLeafMaterial({
-  name: "Input",
+  name: "Textarea",
   category: "form",
-  desc: "输入框",
+  desc: "多行输入",
   defaultProps: {
     value: "",
     placeholder: "请输入内容",
+    rows: 4,
     disabled: false,
-    maxLength: 10,
-    type: "text",
+    maxLength: 200,
   },
-  allowedParents: [...INPUT_ALLOWED_PARENTS],
+  allowedParents: [...TEXTAREA_ALLOWED_PARENTS],
   setter: [
     field.input("value", "值"),
     field.input("placeholder", "占位符"),
+    field.inputNumber("rows", "行数"),
     field.switch("disabled", "禁用"),
     field.inputNumber("maxLength", "最大长度"),
-    field.select("type", "类型", inputTypeOptions),
   ],
   events: [
     { name: "onChange", label: "值变化事件" },
     { name: "onFocus", label: "聚焦事件" },
     { name: "onBlur", label: "失焦事件" },
   ],
-  render: InputRenderer,
-  renderInEditor: InputEditorRenderer,
+  methods: [
+    { name: "focus", label: "聚焦" },
+    { name: "blur", label: "失焦" },
+  ],
+  render: TextareaRenderer,
+  renderInEditor: TextareaEditorRenderer,
 });

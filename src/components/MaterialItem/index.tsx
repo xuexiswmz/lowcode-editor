@@ -33,6 +33,7 @@ const iconMap = {
   Icon: AppstoreOutlined,
   Image: PictureOutlined,
   Input: RadiusSettingOutlined,
+  Textarea: RadiusSettingOutlined,
   Link: LinkOutlined,
   Modal: FileImageOutlined,
   Text: FontSizeOutlined,

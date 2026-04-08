@@ -30,12 +30,8 @@ interface FormValues {
   [key: string]: unknown;
 }
 
-interface FormItemProps {
-  label?: string;
-  name?: string;
-  type?: string;
-  id?: number;
-  formItems?: FormItem[];
+function isFormItemElement(child: ReactElement) {
+  return child.props?.name === "FormItem";
 }
 
 interface FormProps {
@@ -61,37 +57,29 @@ const FormRenderer = (props: FormProps, ref: ForwardedRef<FormRef>) => {
     [form],
   );
 
-  const childFormItems = useMemo(() => {
-    if (Array.isArray(children)) {
-      return children
-        .filter((child): child is ReactElement => React.isValidElement(child))
-        .map((item) => ({
-          label: item.props?.label,
-          name: item.props?.name,
-          type: item.props?.type,
-          id: item.props?.id,
-        }));
-    }
+  const validChildren = useMemo(
+    () =>
+      React.Children.toArray(children).filter((child): child is ReactElement =>
+        React.isValidElement(child),
+      ),
+    [children],
+  );
 
-    if (React.isValidElement(children)) {
-      const childProps = children.props as FormItemProps;
-      return [
-        {
-          label: childProps?.label,
-          name: childProps?.name,
-          type: childProps?.type,
-          id: childProps?.id,
-        } as FormItem,
-      ];
-    }
+  const childFormItems = useMemo(
+    () =>
+      validChildren.filter(isFormItemElement).map((item) => ({
+        label: item.props?.label,
+        name: item.props?.name,
+        type: item.props?.type,
+        id: item.props?.id,
+      })),
+    [validChildren],
+  );
 
-    const childrenProps = (children as { props?: FormItemProps })?.props;
-    if (Array.isArray(childrenProps?.formItems)) {
-      return childrenProps.formItems;
-    }
-
-    return [];
-  }, [children]);
+  const normalChildren = useMemo(
+    () => validChildren.filter((child) => !isFormItemElement(child)),
+    [validChildren],
+  );
 
   const formItems = useMemo(() => {
     if (propFormItems && propFormItems.length > 0) {
@@ -132,6 +120,8 @@ const FormRenderer = (props: FormProps, ref: ForwardedRef<FormRef>) => {
             )}
           </Form.Item>
         ))
+      ) : normalChildren.length > 0 ? (
+        normalChildren
       ) : (
         <div>请添加表单项</div>
       )}
@@ -143,16 +133,29 @@ const FormEditorRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
   ({ id, children, onFinish }, ref) => {
     const [form] = materials.Form.useForm();
 
-    const formItems = useMemo(() => {
-      return React.Children.toArray(children)
-        .filter((child): child is ReactElement => React.isValidElement(child))
-        .map((item) => ({
+    const validChildren = useMemo(
+      () =>
+        React.Children.toArray(children).filter((child): child is ReactElement =>
+          React.isValidElement(child),
+        ),
+      [children],
+    );
+
+    const formItems = useMemo(
+      () =>
+        validChildren.filter(isFormItemElement).map((item) => ({
           label: item.props?.label,
           name: item.props?.name,
           type: item.props?.type,
           id: item.props?.id,
-        } as FormItem));
-    }, [children]);
+        } as FormItem)),
+      [validChildren],
+    );
+
+    const normalChildren = useMemo(
+      () => validChildren.filter((child) => !isFormItemElement(child)),
+      [validChildren],
+    );
 
     return (
       <div
@@ -192,6 +195,7 @@ const FormEditorRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
               )}
             </Form.Item>
           ))}
+          {normalChildren}
         </Form>
       </div>
     );

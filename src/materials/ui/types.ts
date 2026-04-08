@@ -15,6 +15,7 @@ import type {
   Tag as AntdTag,
   InputRef,
 } from "antd";
+import type { TextAreaRef } from "antd/es/input/TextArea";
 import type { CSSProperties } from "react";
 
 export type MaterialRenderMode = "preview" | "editor";
@@ -95,6 +96,12 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  TextArea: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   Modal: {
     mapProps: (
       props: Record<string, unknown>,
@@ -137,6 +144,7 @@ export interface MaterialUIAdapter {
   Form: typeof AntdForm;
   Image: typeof AntdImage;
   Input: typeof AntdInput;
+  TextArea: typeof AntdInput.TextArea;
   Modal: typeof AntdModal;
   Col: typeof AntdCol;
   Row: typeof AntdRow;
@@ -146,3 +154,4 @@ export interface MaterialUIAdapter {
 }
 
 export type MaterialInputRef = InputRef;
+export type MaterialTextAreaRef = TextAreaRef;

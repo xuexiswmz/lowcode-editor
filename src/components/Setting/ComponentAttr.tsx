@@ -94,7 +94,7 @@ export default function ComponentAttr() {
 
     // 获取最大长度限制，优先使用组件当前的props中的maxLength
     let maxLength: number | undefined;
-    if (componentName === "Input" && name === "value") {
+    if ((componentName === "Input" || componentName === "Textarea") && name === "value") {
       // 对于Input组件的value字段，使用当前组件的maxLength属性
       maxLength = currentProps.maxLength as number | undefined;
       // 如果没有设置，则使用默认值
@@ -108,6 +108,14 @@ export default function ComponentAttr() {
     }
 
     if (type === "input") {
+      if (componentName === "Textarea" && name === "value") {
+        const rows =
+          (currentProps.rows as number | undefined) ??
+          (config?.defaultProps?.rows as number | undefined) ??
+          4;
+        return <Input.TextArea maxLength={maxLength} rows={rows} />;
+      }
+
       if (name === "value" && maxLength !== undefined) {
         return <Input maxLength={maxLength} />;
       }
