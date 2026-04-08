@@ -113,7 +113,6 @@ function HoverMask({ containerClassName, componentId }: HoverMaskProps) {
           left: position.left,
           width: position.width,
           height: position.height,
-          backgroundColor: "rgba(0, 0, 255, 0.1)",
           border: "1px dashed blue",
           pointerEvents: "none",
           zIndex: 12,

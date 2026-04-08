@@ -134,7 +134,6 @@ function SelectedMask({ containerClassName, componentId }: SelectedMaskProps) {
           position: "absolute",
           left: position.left,
           top: position.top,
-          backgroundColor: "rgba(0, 0, 255, 0.1)",
           border: "1px dashed blue",
           pointerEvents: "none",
           width: position.width,
