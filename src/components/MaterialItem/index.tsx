@@ -1,6 +1,7 @@
 import {
   AppstoreOutlined,
   BorderOutlined,
+  CheckCircleOutlined,
   ColumnWidthOutlined,
   FileImageOutlined,
   FontSizeOutlined,
@@ -38,6 +39,7 @@ const iconMap = {
   Modal: FileImageOutlined,
   Text: FontSizeOutlined,
   Page: MenuOutlined,
+  Radio: CheckCircleOutlined,
   Row: TableOutlined,
   Tag: TagOutlined,
   Avatar: UserOutlined

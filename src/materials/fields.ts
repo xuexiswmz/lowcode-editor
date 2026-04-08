@@ -37,4 +37,6 @@ export const field = {
     createSetter("image", name, label, extra),
   textarea: (name: string, label: string, extra?: SetterExtra) =>
     createSetter("textarea", name, label, extra),
+  optionList: (name: string, label: string, extra?: SetterExtra) =>
+    createSetter("optionList", name, label, extra),
 };

@@ -1,4 +1,5 @@
 import {
+  Button,
   Form,
   Image as AntdImage,
   Input,
@@ -20,6 +21,104 @@ import {
 interface SetterInputProps<TValue> {
   value?: TValue;
   onChange?: (value: TValue) => void;
+}
+
+interface OptionItem {
+  label: string;
+  value: string;
+}
+
+function normalizeOptionItems(value: unknown): OptionItem[] {
+  if (Array.isArray(value)) {
+    return value
+      .filter(
+        (item): item is OptionItem =>
+          typeof item === "object" &&
+          item !== null &&
+          "label" in item &&
+          "value" in item,
+      )
+      .map((item) => ({
+        label: String(item.label),
+        value: String(item.value),
+      }));
+  }
+
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeOptionItems(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  return [];
+}
+
+function getCurrentOptionSelectOptions(currentProps: Record<string, unknown>) {
+  return normalizeOptionItems(currentProps.options).map((item) => ({
+    label: `${item.label} (${item.value})`,
+    value: item.value,
+  }));
+}
+
+function OptionsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeOptionItems(value);
+
+  function updateAt(index: number, key: keyof OptionItem, nextValue: string) {
+    const nextOptions = normalizedValue.map((item, itemIndex) =>
+      itemIndex === index ? { ...item, [key]: nextValue } : item,
+    );
+    onChange?.(nextOptions);
+  }
+
+  function addOption() {
+    onChange?.([
+      ...normalizedValue,
+      {
+        label: `选项${normalizedValue.length + 1}`,
+        value: `option${normalizedValue.length + 1}`,
+      },
+    ]);
+  }
+
+  function removeOption(index: number) {
+    const nextOptions = normalizedValue.filter((_, itemIndex) => itemIndex !== index);
+    onChange?.(nextOptions.length > 0 ? nextOptions : []);
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 8,
+            gridTemplateColumns: "1fr 1fr auto",
+            alignItems: "center",
+          }}
+        >
+          <Input
+            placeholder="标签"
+            value={item.label}
+            onChange={(event) => updateAt(index, "label", event.target.value)}
+          />
+          <Input
+            placeholder="值"
+            value={item.value}
+            onChange={(event) => updateAt(index, "value", event.target.value)}
+          />
+          <Button danger type="text" onClick={() => removeOption(index)}>
+            删除
+          </Button>
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addOption}>
+        新增选项
+      </Button>
+    </div>
+  );
 }
 
 function ImageSetterInput({
@@ -104,6 +203,16 @@ export default function ComponentAttr() {
     }
 
     if (type === "select") {
+      if (componentName === "Radio" && name === "value") {
+        return (
+          <Select
+            options={getCurrentOptionSelectOptions(currentProps)}
+            placeholder="请先配置选项"
+            allowClear
+          />
+        );
+      }
+
       return <Select options={options} />;
     }
 
@@ -139,6 +248,10 @@ export default function ComponentAttr() {
       return <Input.TextArea />;
     }
 
+    if (type === "optionList") {
+      return <OptionsSetterInput />;
+    }
+
     if (type === "radio") {
       return <Radio.Group />;
     }
@@ -167,7 +280,15 @@ export default function ComponentAttr() {
       return;
     }
 
-    updateComponentProps(curComponentId, changeValues);
+    const normalizedChangeValues = { ...changeValues };
+
+    if ("options" in normalizedChangeValues) {
+      normalizedChangeValues.options = normalizeOptionItems(
+        normalizedChangeValues.options,
+      );
+    }
+
+    updateComponentProps(curComponentId, normalizedChangeValues);
       // 强制更新组件以反映最新的props
     setForceUpdate({});
     

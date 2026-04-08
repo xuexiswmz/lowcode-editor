@@ -13,6 +13,7 @@ import InputConfig from "./Input/material";
 import LinkConfig from "./Link/material";
 import ModalConfig from "./Modal/material";
 import PageConfig from "./Page/material";
+import RadioConfig from "./Radio/material";
 import RowConfig from "./Row/material";
 import SpaceConfig from "./Space/material";
 import TextConfig from "./Text/material";
@@ -40,6 +41,7 @@ const builtinConfigs: ComponentConfig[] = [
   LinkConfig,
   ModalConfig,
   PageConfig,
+  RadioConfig,
   RowConfig,
   TextConfig,
   TagConfig,

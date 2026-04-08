@@ -14,6 +14,7 @@ export const {
   Image,
   Input,
   TextArea,
+  RadioGroup,
   Modal,
   Row,
   Space,

@@ -56,6 +56,13 @@ export const TEXTAREA_ALLOWED_PARENTS = [
   "Card",
   "Form",
 ] as const;
+export const RADIO_ALLOWED_PARENTS = [
+  "Page",
+  "Container",
+  "Modal",
+  "Card",
+  "Form",
+] as const;
 export const FORM_ALLOWED_PARENTS = [
   "Page",
   "Container",
@@ -148,6 +155,7 @@ export const MATERIAL_ALLOWED_PARENTS = {
   Divider: DIVIDER_ALLOWED_PARENTS,
   Input: INPUT_ALLOWED_PARENTS,
   Textarea: TEXTAREA_ALLOWED_PARENTS,
+  Radio: RADIO_ALLOWED_PARENTS,
   Form: FORM_ALLOWED_PARENTS,
   FormItem: FORM_ITEM_ALLOWED_PARENTS,
   Image: IMAGE_ALLOWED_PARENTS,

@@ -9,6 +9,7 @@ import type {
   Image as AntdImage,
   Input as AntdInput,
   Modal as AntdModal,
+  Radio as AntdRadio,
   Col as AntdCol,
   Row as AntdRow,
   Space as AntdSpace,
@@ -102,6 +103,12 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  RadioGroup: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   Modal: {
     mapProps: (
       props: Record<string, unknown>,
@@ -145,6 +152,7 @@ export interface MaterialUIAdapter {
   Image: typeof AntdImage;
   Input: typeof AntdInput;
   TextArea: typeof AntdInput.TextArea;
+  RadioGroup: typeof AntdRadio.Group;
   Modal: typeof AntdModal;
   Col: typeof AntdCol;
   Row: typeof AntdRow;

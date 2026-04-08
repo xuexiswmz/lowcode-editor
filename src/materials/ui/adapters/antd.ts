@@ -10,6 +10,7 @@ import {
   Image,
   Input,
   Modal,
+  Radio,
   Row,
   Space,
   Tag,
@@ -17,6 +18,7 @@ import {
 import type { MaterialUIAdapter } from "../types";
 
 const TextArea = Input.TextArea;
+const RadioGroup = Radio.Group;
 
 const antdMaterialBindings: MaterialUIAdapter["materials"] = {
   Avatar: {
@@ -125,6 +127,17 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       },
     }),
   },
+  RadioGroup: {
+    mapProps: ({ value, options, optionType, disabled, onChange, styles, ...rest }) => ({
+      ...rest,
+      value,
+      options,
+      optionType,
+      disabled,
+      onChange,
+      style: styles,
+    }),
+  },
   Modal: {
     mapProps: ({ title, open, styles, onOk, onCancel, destroyOnHidden }) => ({
       title,
@@ -190,6 +203,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Image,
   Input,
   TextArea,
+  RadioGroup,
   Modal,
   Row,
   Space,

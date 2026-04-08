@@ -23,7 +23,7 @@ export default function LowcodeEditor() {
       </div>
       {mode === "edit" ? (
         <Allotment className="lce-workspace">
-          <Allotment.Pane preferredSize={260} maxSize={360} minSize={220}>
+          <Allotment.Pane preferredSize={240} maxSize={1500} minSize={240}>
             <section className="lce-pane lce-pane-left">
               <Suspense fallback={<ComponentLoading />}>
                 <MaterialWrapper />
