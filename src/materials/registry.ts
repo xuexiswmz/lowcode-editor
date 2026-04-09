@@ -1,6 +1,7 @@
 import AvatarConfig from "./Avatar/material";
 import ButtonConfig from "./Button/material";
 import CardConfig from "./Card/material";
+import CheckboxConfig from "./Checkbox/material";
 import ColConfig from "./Col/material";
 import ContainerConfig from "./Container/material";
 import DividerConfig from "./Divider/material";
@@ -29,6 +30,7 @@ const builtinConfigs: ComponentConfig[] = [
   AvatarConfig,
   ButtonConfig,
   CardConfig,
+  CheckboxConfig,
   ColConfig,
   ContainerConfig,
   DividerConfig,

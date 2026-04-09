@@ -213,6 +213,16 @@ export default function ComponentAttr() {
         );
       }
 
+      if (componentName === "Checkbox" && name === "value") {
+        return (
+          <Select
+            mode="multiple"
+            options={getCurrentOptionSelectOptions(currentProps)}
+            placeholder="请先配置选项"
+          />
+        );
+      }
+
       return <Select options={options} />;
     }
 

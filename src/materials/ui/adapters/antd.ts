@@ -2,6 +2,7 @@ import {
   Avatar,
   Button,
   Card,
+  Checkbox,
   Col,
   DatePicker,
   Divider,
@@ -19,6 +20,7 @@ import type { MaterialUIAdapter } from "../types";
 
 const TextArea = Input.TextArea;
 const RadioGroup = Radio.Group;
+const CheckboxGroup = Checkbox.Group;
 
 const antdMaterialBindings: MaterialUIAdapter["materials"] = {
   Avatar: {
@@ -138,6 +140,16 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       style: styles,
     }),
   },
+  CheckboxGroup: {
+    mapProps: ({ value, options, disabled, onChange, styles, ...rest }) => ({
+      ...rest,
+      value,
+      options,
+      disabled,
+      onChange,
+      style: styles,
+    }),
+  },
   Modal: {
     mapProps: ({ title, open, styles, onOk, onCancel, destroyOnHidden }) => ({
       title,
@@ -195,6 +207,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Avatar,
   Button,
   Card,
+  CheckboxGroup,
   Col,
   DatePicker,
   Divider,

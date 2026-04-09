@@ -6,6 +6,7 @@ export const {
   Avatar,
   Button,
   Card,
+  CheckboxGroup,
   Col,
   DatePicker,
   Divider,

@@ -25,7 +25,9 @@ export interface MaterialItemProps {
 }
 
 const iconMap = {
+  Avatar: UserOutlined,
   Button: BorderOutlined,
+  Checkbox: CheckCircleOutlined,
   Col: ColumnWidthOutlined,
   Container: LayoutOutlined,
   Divider: InsertRowBelowOutlined,
@@ -42,7 +44,6 @@ const iconMap = {
   Radio: CheckCircleOutlined,
   Row: TableOutlined,
   Tag: TagOutlined,
-  Avatar: UserOutlined
 } as const;
 
 export default function MaterialItem(props: MaterialItemProps) {

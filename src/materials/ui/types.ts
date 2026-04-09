@@ -2,6 +2,7 @@ import type {
   Avatar as AntdAvatar,
   Button as AntdButton,
   Card as AntdCard,
+  Checkbox as AntdCheckbox,
   DatePicker as AntdDatePicker,
   Divider as AntdDivider,
   Flex as AntdFlex,
@@ -109,6 +110,12 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  CheckboxGroup: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   Modal: {
     mapProps: (
       props: Record<string, unknown>,
@@ -153,6 +160,7 @@ export interface MaterialUIAdapter {
   Input: typeof AntdInput;
   TextArea: typeof AntdInput.TextArea;
   RadioGroup: typeof AntdRadio.Group;
+  CheckboxGroup: typeof AntdCheckbox.Group;
   Modal: typeof AntdModal;
   Col: typeof AntdCol;
   Row: typeof AntdRow;
