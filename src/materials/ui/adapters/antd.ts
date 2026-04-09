@@ -12,8 +12,10 @@ import {
   Input,
   Modal,
   Radio,
+  Select,
   Row,
   Space,
+  Switch,
   Tag,
 } from "antd";
 import type { MaterialUIAdapter } from "../types";
@@ -150,6 +152,55 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       style: styles,
     }),
   },
+  Select: {
+    mapProps: ({
+      value,
+      options,
+      mode,
+      placeholder,
+      disabled,
+      allowClear,
+      onChange,
+      onSelect,
+      onSearch,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      value,
+      options,
+      mode,
+      placeholder,
+      disabled,
+      allowClear,
+      onChange,
+      onSelect,
+      onSearch,
+      style: {
+        minWidth: 160,
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
+  Switch: {
+    mapProps: ({
+      checked,
+      checkedChildren,
+      unCheckedChildren,
+      disabled,
+      onChange,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      checked,
+      checkedChildren,
+      unCheckedChildren,
+      disabled,
+      onChange,
+      style: styles,
+    }),
+  },
   Modal: {
     mapProps: ({ title, open, styles, onOk, onCancel, destroyOnHidden }) => ({
       title,
@@ -217,6 +268,8 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Input,
   TextArea,
   RadioGroup,
+  Select,
+  Switch,
   Modal,
   Row,
   Space,

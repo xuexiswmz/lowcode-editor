@@ -1,90 +1,25 @@
-import { forwardRef, useEffect, useMemo } from "react";
+import { forwardRef } from "react";
 import type { CommonComponentProps } from "../../interface";
-import { useComponentsStore } from "../../stores/components";
 import { CHECKBOX_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import {
+  normalizeChoiceOptions,
+  useManagedChoiceValue,
+  type ChoiceOption,
+} from "../shared/choice";
 import { CheckboxGroup, materials } from "../ui";
-
-interface CheckboxOption {
-  label: string;
-  value: string;
-}
 
 type CheckboxProps = Omit<CommonComponentProps, "children"> & {
   value?: string[];
-  options?: CheckboxOption[];
+  options?: ChoiceOption[];
   disabled?: boolean;
 };
 
-const defaultOptions: CheckboxOption[] = [
+const defaultOptions: ChoiceOption[] = [
   { label: "选项一", value: "option1" },
   { label: "选项二", value: "option2" },
 ];
-
-function normalizeCheckboxOptions(options: unknown): CheckboxOption[] {
-  if (!Array.isArray(options)) {
-    return [];
-  }
-
-  return options
-    .filter(
-      (item): item is CheckboxOption =>
-        typeof item === "object" &&
-        item !== null &&
-        "label" in item &&
-        "value" in item,
-    )
-    .map((item) => ({
-      label: String(item.label),
-      value: String(item.value),
-    }))
-    .filter((item) => item.value.trim());
-}
-
-function normalizeCheckboxValue(value: unknown, options: CheckboxOption[]) {
-  if (!Array.isArray(value)) {
-    return [];
-  }
-
-  const optionValues = new Set(options.map((option) => option.value));
-
-  return value
-    .map((item) => String(item))
-    .filter((item) => optionValues.has(item));
-}
-
-function useManagedCheckboxValue(
-  id: number,
-  value: unknown,
-  options: CheckboxOption[],
-) {
-  const { updateComponentProps } = useComponentsStore();
-  const checkboxValue = useMemo(
-    () => normalizeCheckboxValue(value, options),
-    [options, value],
-  );
-
-  useEffect(() => {
-    const rawValue = Array.isArray(value) ? value.map((item) => String(item)) : [];
-    const hasChanged =
-      rawValue.length !== checkboxValue.length ||
-      rawValue.some((item, index) => item !== checkboxValue[index]);
-
-    if (hasChanged) {
-      updateComponentProps(id, { value: checkboxValue });
-    }
-  }, [checkboxValue, id, updateComponentProps, value]);
-
-  function updateValue(nextValue: string[]) {
-    updateComponentProps(id, { value: nextValue });
-  }
-
-  return {
-    checkboxValue,
-    updateValue,
-  };
-}
 
 const CheckboxRenderer = forwardRef<HTMLDivElement, CheckboxProps>(
   (
@@ -99,11 +34,12 @@ const CheckboxRenderer = forwardRef<HTMLDivElement, CheckboxProps>(
     },
     ref,
   ) => {
-    const normalizedOptions = normalizeCheckboxOptions(options);
-    const { checkboxValue, updateValue } = useManagedCheckboxValue(
+    const normalizedOptions = normalizeChoiceOptions(options ?? defaultOptions);
+    const { normalizedValue: checkboxValue, updateValue } = useManagedChoiceValue(
       id,
       value,
       normalizedOptions,
+      "multiple",
     );
 
     const handleChange = (checkedValues: Array<string | number | boolean>) => {
@@ -145,11 +81,12 @@ const CheckboxEditorRenderer = forwardRef<HTMLDivElement, CheckboxProps>(
     },
     ref,
   ) => {
-    const normalizedOptions = normalizeCheckboxOptions(options);
-    const { checkboxValue, updateValue } = useManagedCheckboxValue(
+    const normalizedOptions = normalizeChoiceOptions(options ?? defaultOptions);
+    const { normalizedValue: checkboxValue, updateValue } = useManagedChoiceValue(
       id,
       value,
       normalizedOptions,
+      "multiple",
     );
 
     const handleChange = (checkedValues: Array<string | number | boolean>) => {

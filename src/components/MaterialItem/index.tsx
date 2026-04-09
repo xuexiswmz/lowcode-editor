@@ -2,6 +2,7 @@ import {
   AppstoreOutlined,
   BorderOutlined,
   CheckCircleOutlined,
+  DownSquareOutlined,
   ColumnWidthOutlined,
   FileImageOutlined,
   FontSizeOutlined,
@@ -13,6 +14,7 @@ import {
   PicLeftOutlined,
   PictureOutlined,
   RadiusSettingOutlined,
+  DeploymentUnitOutlined,
   TableOutlined,
   TagOutlined,
   UserOutlined,
@@ -43,6 +45,8 @@ const iconMap = {
   Page: MenuOutlined,
   Radio: CheckCircleOutlined,
   Row: TableOutlined,
+  Select: DownSquareOutlined,
+  Switch: DeploymentUnitOutlined,
   Tag: TagOutlined,
 } as const;
 

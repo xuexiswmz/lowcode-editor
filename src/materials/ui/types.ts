@@ -11,9 +11,11 @@ import type {
   Input as AntdInput,
   Modal as AntdModal,
   Radio as AntdRadio,
+  Select as AntdSelect,
   Col as AntdCol,
   Row as AntdRow,
   Space as AntdSpace,
+  Switch as AntdSwitch,
   Tag as AntdTag,
   InputRef,
 } from "antd";
@@ -116,6 +118,18 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  Select: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
+  Switch: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   Modal: {
     mapProps: (
       props: Record<string, unknown>,
@@ -161,6 +175,8 @@ export interface MaterialUIAdapter {
   TextArea: typeof AntdInput.TextArea;
   RadioGroup: typeof AntdRadio.Group;
   CheckboxGroup: typeof AntdCheckbox.Group;
+  Select: typeof AntdSelect;
+  Switch: typeof AntdSwitch;
   Modal: typeof AntdModal;
   Col: typeof AntdCol;
   Row: typeof AntdRow;

@@ -1,79 +1,27 @@
-import { forwardRef, useEffect, useMemo } from "react";
+import { forwardRef } from "react";
 import type { RadioChangeEvent } from "antd";
 import type { CommonComponentProps } from "../../interface";
-import { useComponentsStore } from "../../stores/components";
 import { RADIO_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import {
+  normalizeChoiceOptions,
+  useManagedChoiceValue,
+  type ChoiceOption,
+} from "../shared/choice";
 import { RadioGroup, materials } from "../ui";
-
-interface RadioOption {
-  label: string;
-  value: string;
-}
 
 type RadioProps = Omit<CommonComponentProps, "children"> & {
   value?: string;
-  options?: RadioOption[];
+  options?: ChoiceOption[];
   optionType?: "default" | "button";
   disabled?: boolean;
 };
 
-const defaultOptions: RadioOption[] = [
+const defaultOptions: ChoiceOption[] = [
   { label: "选项一", value: "option1" },
   { label: "选项二", value: "option2" },
 ];
-
-function normalizeRadioOptions(options: unknown): RadioOption[] {
-  if (!Array.isArray(options)) {
-    return [];
-  }
-
-  const normalizedOptions = options
-    .filter(
-      (item): item is RadioOption =>
-        typeof item === "object" &&
-        item !== null &&
-        "label" in item &&
-        "value" in item,
-    )
-    .map((item) => ({
-      label: String(item.label),
-      value: String(item.value),
-    }))
-    .filter((item) => item.value.trim());
-
-  return normalizedOptions;
-}
-
-function useManagedRadioValue(id: number, value: unknown, options: RadioOption[]) {
-  const { updateComponentProps } = useComponentsStore();
-  const radioValue = useMemo(() => {
-    const normalizedValue = String(value ?? "");
-    const hasMatchingOption = options.some((option) => option.value === normalizedValue);
-
-    if (hasMatchingOption) {
-      return normalizedValue;
-    }
-
-    return options[0]?.value ?? "";
-  }, [options, value]);
-
-  useEffect(() => {
-    if (radioValue !== String(value ?? "")) {
-      updateComponentProps(id, { value: radioValue });
-    }
-  }, [id, radioValue, updateComponentProps, value]);
-
-  function updateValue(nextValue: string) {
-    updateComponentProps(id, { value: nextValue });
-  }
-
-  return {
-    radioValue,
-    updateValue,
-  };
-}
 
 const RadioRenderer = forwardRef<HTMLDivElement, RadioProps>(
   (
@@ -89,8 +37,8 @@ const RadioRenderer = forwardRef<HTMLDivElement, RadioProps>(
     },
     ref,
   ) => {
-    const normalizedOptions = normalizeRadioOptions(options);
-    const { radioValue, updateValue } = useManagedRadioValue(
+    const normalizedOptions = normalizeChoiceOptions(options ?? defaultOptions);
+    const { normalizedValue: radioValue, updateValue } = useManagedChoiceValue(
       id,
       value,
       normalizedOptions,
@@ -137,8 +85,8 @@ const RadioEditorRenderer = forwardRef<HTMLDivElement, RadioProps>(
     },
     ref,
   ) => {
-    const normalizedOptions = normalizeRadioOptions(options);
-    const { radioValue, updateValue } = useManagedRadioValue(
+    const normalizedOptions = normalizeChoiceOptions(options ?? defaultOptions);
+    const { normalizedValue: radioValue, updateValue } = useManagedChoiceValue(
       id,
       value,
       normalizedOptions,

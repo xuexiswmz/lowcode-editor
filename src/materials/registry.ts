@@ -16,7 +16,9 @@ import ModalConfig from "./Modal/material";
 import PageConfig from "./Page/material";
 import RadioConfig from "./Radio/material";
 import RowConfig from "./Row/material";
+import SelectConfig from "./Select/material";
 import SpaceConfig from "./Space/material";
+import SwitchConfig from "./Switch/material";
 import TextConfig from "./Text/material";
 import TagConfig from "./Tag/material";
 import TextareaConfig from "./Textarea/material";
@@ -45,9 +47,11 @@ const builtinConfigs: ComponentConfig[] = [
   PageConfig,
   RadioConfig,
   RowConfig,
+  SelectConfig,
   TextConfig,
   TagConfig,
   SpaceConfig,
+  SwitchConfig,
   TextareaConfig,
 ];
 

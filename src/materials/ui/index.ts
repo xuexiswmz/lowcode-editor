@@ -16,6 +16,8 @@ export const {
   Input,
   TextArea,
   RadioGroup,
+  Select,
+  Switch,
   Modal,
   Row,
   Space,

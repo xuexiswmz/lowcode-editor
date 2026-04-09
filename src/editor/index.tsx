@@ -37,7 +37,7 @@ export default function LowcodeEditor() {
               </Suspense>
             </section>
           </Allotment.Pane>
-          <Allotment.Pane preferredSize={340} maxSize={520} minSize={320}>
+          <Allotment.Pane preferredSize={420} maxSize={520} minSize={420}>
             <section className="lce-pane lce-pane-right">
               <Suspense fallback={<ComponentLoading />}>
                 <Setting />

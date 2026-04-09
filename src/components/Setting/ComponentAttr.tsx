@@ -12,6 +12,15 @@ import {
   TimePicker,
 } from "antd";
 import { useEffect, useState } from "react";
+import {
+  normalizeChoiceMode,
+  normalizeChoiceModeFieldValue,
+  normalizeChoiceOptions,
+  normalizeChoiceValue,
+  normalizeMultipleChoiceValue,
+  normalizeSingleChoiceValue,
+  type ChoiceOption,
+} from "../../materials/shared/choice";
 import { useComponentsStore } from "../../stores/components";
 import {
   useComponentConfigStore,
@@ -23,36 +32,18 @@ interface SetterInputProps<TValue> {
   onChange?: (value: TValue) => void;
 }
 
-interface OptionItem {
-  label: string;
-  value: string;
-}
+type OptionItem = ChoiceOption;
 
 function normalizeOptionItems(value: unknown): OptionItem[] {
-  if (Array.isArray(value)) {
-    return value
-      .filter(
-        (item): item is OptionItem =>
-          typeof item === "object" &&
-          item !== null &&
-          "label" in item &&
-          "value" in item,
-      )
-      .map((item) => ({
-        label: String(item.label),
-        value: String(item.value),
-      }));
-  }
-
   if (typeof value === "string" && value.trim()) {
     try {
-      return normalizeOptionItems(JSON.parse(value));
+      return normalizeChoiceOptions(JSON.parse(value));
     } catch {
       return [];
     }
   }
 
-  return [];
+  return normalizeChoiceOptions(value);
 }
 
 function getCurrentOptionSelectOptions(currentProps: Record<string, unknown>) {
@@ -60,6 +51,72 @@ function getCurrentOptionSelectOptions(currentProps: Record<string, unknown>) {
     label: `${item.label} (${item.value})`,
     value: item.value,
   }));
+}
+
+function getSelectMode(currentProps: Record<string, unknown>) {
+  return normalizeChoiceMode(currentProps.mode);
+}
+
+function getNormalizedComponentValue(
+  componentName: string,
+  currentProps: Record<string, unknown>,
+  changeValues: Record<string, unknown>,
+) {
+  const mergedProps = {
+    ...currentProps,
+    ...changeValues,
+  };
+  const options = normalizeOptionItems(mergedProps.options);
+
+  if (componentName === "Radio") {
+    return normalizeSingleChoiceValue(mergedProps.value, options);
+  }
+
+  if (componentName === "Checkbox") {
+    return normalizeMultipleChoiceValue(mergedProps.value, options);
+  }
+
+  if (componentName === "Select") {
+    return normalizeChoiceValue(
+      mergedProps.value,
+      options,
+      normalizeChoiceMode(mergedProps.mode),
+    );
+  }
+
+  return mergedProps.value;
+}
+
+function getFormValues(
+  componentName: string,
+  defaultProps: Record<string, unknown>,
+  currentProps: Record<string, unknown>,
+) {
+  const formValues = {
+    ...defaultProps,
+    ...currentProps,
+  };
+
+  if (componentName === "Select") {
+    return {
+      ...formValues,
+      mode: normalizeChoiceModeFieldValue(formValues.mode),
+      value: normalizeChoiceValue(
+        formValues.value,
+        normalizeOptionItems(formValues.options),
+        normalizeChoiceMode(formValues.mode),
+      ),
+    };
+  }
+
+  if (componentName === "Radio" || componentName === "Checkbox") {
+    return {
+      ...formValues,
+      value: getNormalizedComponentValue(componentName, formValues, {}),
+    };
+  }
+
+  return formValues;
 }
 
 function OptionsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
@@ -170,10 +227,13 @@ export default function ComponentAttr() {
     }
 
     const config = componentConfig[curComponent.name];
-    form.setFieldsValue({
-      ...config?.defaultProps,
-      ...curComponent.props,
-    });
+    form.setFieldsValue(
+      getFormValues(
+        curComponent.name,
+        (config?.defaultProps as Record<string, unknown>) ?? {},
+        curComponent.props as Record<string, unknown>,
+      ),
+    );
   }, [curComponent, components, componentConfig, form]);
 
   if (!curComponentId || !curComponent) {
@@ -219,6 +279,28 @@ export default function ComponentAttr() {
             mode="multiple"
             options={getCurrentOptionSelectOptions(currentProps)}
             placeholder="请先配置选项"
+          />
+        );
+      }
+
+      if (componentName === "Select" && name === "value") {
+        return (
+          <Select
+            mode={getSelectMode(currentProps)}
+            options={getCurrentOptionSelectOptions(currentProps)}
+            placeholder="请先配置选项"
+            allowClear
+          />
+        );
+      }
+
+      if (componentName === "Select" && name === "mode") {
+        return (
+          <Select
+            options={[
+              { label: "单选", value: "single" },
+              { label: "多选", value: "multiple" },
+            ]}
           />
         );
       }
@@ -295,6 +377,23 @@ export default function ComponentAttr() {
     if ("options" in normalizedChangeValues) {
       normalizedChangeValues.options = normalizeOptionItems(
         normalizedChangeValues.options,
+      );
+    }
+
+    if (componentName === "Select" && "mode" in normalizedChangeValues) {
+      normalizedChangeValues.mode =
+        normalizedChangeValues.mode === "multiple" ? "multiple" : undefined;
+    }
+
+    if (
+      componentName === "Radio" ||
+      componentName === "Checkbox" ||
+      componentName === "Select"
+    ) {
+      normalizedChangeValues.value = getNormalizedComponentValue(
+        componentName,
+        currentProps as Record<string, unknown>,
+        normalizedChangeValues,
       );
     }
 

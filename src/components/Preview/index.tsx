@@ -11,7 +11,17 @@ import { createEventHandlers } from "../../utils/eventHandler";
 import { type ComponentRef } from "../../utils/types";
 
 // 定义不能接受children的组件列表
-const VOID_COMPONENTS = ["Input", "Textarea", "Button", "Text", "Divider", "Radio", "Checkbox"];
+const VOID_COMPONENTS = [
+  "Input",
+  "Textarea",
+  "Button",
+  "Text",
+  "Divider",
+  "Radio",
+  "Checkbox",
+  "Switch",
+  "Select",
+];
 
 // 定义不需要在预览中渲染的组件列表
 const HIDDEN_COMPONENTS = ["FormItem"];
