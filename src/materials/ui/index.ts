@@ -17,6 +17,7 @@ export const {
   TextArea,
   RadioGroup,
   Select,
+  Upload,
   Switch,
   Modal,
   Row,

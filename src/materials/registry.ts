@@ -23,6 +23,7 @@ import SwitchConfig from "./Switch/material";
 import TextConfig from "./Text/material";
 import TagConfig from "./Tag/material";
 import TextareaConfig from "./Textarea/material";
+import UploadConfig from "./Upload/material";
 import type { ComponentConfig, ComponentConfigMap } from "./types";
 export {
   getAllowedComponentNames,
@@ -55,6 +56,7 @@ const builtinConfigs: ComponentConfig[] = [
   SpaceConfig,
   SwitchConfig,
   TextareaConfig,
+  UploadConfig,
 ];
 
 export const builtinComponentConfig = builtinConfigs.reduce<ComponentConfigMap>(

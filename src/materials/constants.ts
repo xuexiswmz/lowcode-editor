@@ -91,6 +91,13 @@ export const DATE_PICKER_ALLOWED_PARENTS = [
   "Card",
   "Form",
 ] as const;
+export const UPLOAD_ALLOWED_PARENTS = [
+  "Page",
+  "Container",
+  "Modal",
+  "Card",
+  "Form",
+] as const;
 export const FORM_ALLOWED_PARENTS = [
   "Page",
   "Container",
@@ -188,6 +195,7 @@ export const MATERIAL_ALLOWED_PARENTS = {
   Switch: SWITCH_ALLOWED_PARENTS,
   Select: SELECT_ALLOWED_PARENTS,
   DatePicker: DATE_PICKER_ALLOWED_PARENTS,
+  Upload: UPLOAD_ALLOWED_PARENTS,
   Form: FORM_ALLOWED_PARENTS,
   FormItem: FORM_ITEM_ALLOWED_PARENTS,
   Image: IMAGE_ALLOWED_PARENTS,

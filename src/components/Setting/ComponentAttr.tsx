@@ -235,6 +235,16 @@ function ImageSetterInput({
   );
 }
 
+function ReadonlyJsonSetterInput({ value }: SetterInputProps<unknown>) {
+  return (
+    <Input.TextArea
+      value={JSON.stringify(value ?? [], null, 2)}
+      autoSize={{ minRows: 4, maxRows: 10 }}
+      readOnly
+    />
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -361,6 +371,10 @@ export default function ComponentAttr() {
 
     if (type === "textarea") {
       return <Input.TextArea />;
+    }
+
+    if (type === "readonlyJson") {
+      return <ReadonlyJsonSetterInput />;
     }
 
     if (type === "optionList") {

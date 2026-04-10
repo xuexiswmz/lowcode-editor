@@ -41,4 +41,6 @@ export const field = {
     createSetter("textarea", name, label, extra),
   optionList: (name: string, label: string, extra?: SetterExtra) =>
     createSetter("optionList", name, label, extra),
+  readonlyJson: (name: string, label: string, extra?: SetterExtra) =>
+    createSetter("readonlyJson", name, label, extra),
 };

@@ -17,6 +17,7 @@ import {
   Space,
   Switch,
   Tag,
+  Upload,
 } from "antd";
 import type { MaterialUIAdapter } from "../types";
 
@@ -80,6 +81,39 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       style: {
         width: "100%",
         minWidth: 160,
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
+  Upload: {
+    mapProps: ({
+      action,
+      listType,
+      maxCount,
+      accept,
+      multiple,
+      fileList,
+      onChange,
+      onPreview,
+      onRemove,
+      openFileDialogOnClick,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      action,
+      listType,
+      maxCount,
+      accept,
+      multiple,
+      fileList,
+      onChange,
+      onPreview,
+      onRemove,
+      openFileDialogOnClick,
+      style: {
+        width: "100%",
+        minWidth: 180,
         ...(typeof styles === "object" && styles !== null ? styles : {}),
       },
     }),
@@ -296,6 +330,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   TextArea,
   RadioGroup,
   Select,
+  Upload,
   Switch,
   Modal,
   Row,

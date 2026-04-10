@@ -18,6 +18,7 @@ import {
   DeploymentUnitOutlined,
   TableOutlined,
   TagOutlined,
+  UploadOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { useDrag } from "react-dnd";
@@ -50,6 +51,7 @@ const iconMap = {
   Select: DownSquareOutlined,
   Switch: DeploymentUnitOutlined,
   Tag: TagOutlined,
+  Upload: UploadOutlined,
 } as const;
 
 export default function MaterialItem(props: MaterialItemProps) {
