@@ -11,6 +11,7 @@ import {
   DatePicker,
   TimePicker,
 } from "antd";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import {
   normalizeChoiceMode,
@@ -113,6 +114,28 @@ function getFormValues(
     return {
       ...formValues,
       value: getNormalizedComponentValue(componentName, formValues, {}),
+    };
+  }
+
+  if (componentName === "DatePicker") {
+    const format = String(formValues.format ?? "YYYY-MM-DD");
+    const rawValue = formValues.value;
+    const dateValue =
+      typeof rawValue === "string" && rawValue
+        ? (() => {
+            const parsedValue = dayjs(rawValue, format);
+            if (parsedValue.isValid()) {
+              return parsedValue;
+            }
+
+            const fallbackValue = dayjs(rawValue);
+            return fallbackValue.isValid() ? fallbackValue : undefined;
+          })()
+        : undefined;
+
+    return {
+      ...formValues,
+      value: dateValue,
     };
   }
 
@@ -378,6 +401,18 @@ export default function ComponentAttr() {
       normalizedChangeValues.options = normalizeOptionItems(
         normalizedChangeValues.options,
       );
+    }
+
+    if (componentName === "DatePicker" && "value" in normalizedChangeValues) {
+      const mergedFormat = String(
+        normalizedChangeValues.format ?? currentProps.format ?? "YYYY-MM-DD",
+      );
+      const nextValue = normalizedChangeValues.value;
+
+      normalizedChangeValues.value =
+        nextValue && dayjs.isDayjs(nextValue) && nextValue.isValid()
+          ? nextValue.format(mergedFormat)
+          : undefined;
     }
 
     if (componentName === "Select" && "mode" in normalizedChangeValues) {

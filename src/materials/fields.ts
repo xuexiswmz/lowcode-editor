@@ -35,6 +35,8 @@ export const field = {
     createSetter("switch", name, label, extra),
   image: (name: string, label: string, extra?: SetterExtra) =>
     createSetter("image", name, label, extra),
+  datePicker: (name: string, label: string, extra?: SetterExtra) =>
+    createSetter("datePicker", name, label, extra),
   textarea: (name: string, label: string, extra?: SetterExtra) =>
     createSetter("textarea", name, label, extra),
   optionList: (name: string, label: string, extra?: SetterExtra) =>

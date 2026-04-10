@@ -1,6 +1,7 @@
 import {
   AppstoreOutlined,
   BorderOutlined,
+  CalendarOutlined,
   CheckCircleOutlined,
   DownSquareOutlined,
   ColumnWidthOutlined,
@@ -32,6 +33,7 @@ const iconMap = {
   Checkbox: CheckCircleOutlined,
   Col: ColumnWidthOutlined,
   Container: LayoutOutlined,
+  DatePicker: CalendarOutlined,
   Divider: InsertRowBelowOutlined,
   Form: FormOutlined,
   FormItem: PicLeftOutlined,

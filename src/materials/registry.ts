@@ -4,6 +4,7 @@ import CardConfig from "./Card/material";
 import CheckboxConfig from "./Checkbox/material";
 import ColConfig from "./Col/material";
 import ContainerConfig from "./Container/material";
+import DatePickerConfig from "./DatePicker/material";
 import DividerConfig from "./Divider/material";
 import FlexConfig from "./Flex/material";
 import FormConfig from "./Form/material";
@@ -35,6 +36,7 @@ const builtinConfigs: ComponentConfig[] = [
   CheckboxConfig,
   ColConfig,
   ContainerConfig,
+  DatePickerConfig,
   DividerConfig,
   FlexConfig,
   FormConfig,

@@ -21,6 +21,7 @@ const VOID_COMPONENTS = [
   "Checkbox",
   "Switch",
   "Select",
+  "DatePicker",
 ];
 
 // 定义不需要在预览中渲染的组件列表

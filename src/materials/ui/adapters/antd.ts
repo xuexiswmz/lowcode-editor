@@ -57,6 +57,33 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       variant,
     }),
   },
+  DatePicker: {
+    mapProps: ({
+      value,
+      picker,
+      format,
+      placeholder,
+      disabled,
+      onChange,
+      onOpenChange,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      value,
+      picker,
+      format,
+      placeholder,
+      disabled,
+      onChange,
+      onOpenChange,
+      style: {
+        width: "100%",
+        minWidth: 160,
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
   Divider: {
     mapProps: ({ styles, dashed, plain, orientation, titlePlacement }) => ({
       style: styles,

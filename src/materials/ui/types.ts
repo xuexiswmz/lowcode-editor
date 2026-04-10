@@ -54,6 +54,12 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  DatePicker: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   Divider: {
     mapProps: (
       props: Record<string, unknown>,
