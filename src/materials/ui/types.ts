@@ -1,5 +1,6 @@
 import type {
   Avatar as AntdAvatar,
+  Breadcrumb as AntdBreadcrumb,
   Button as AntdButton,
   Card as AntdCard,
   Checkbox as AntdCheckbox,
@@ -44,6 +45,12 @@ export interface MaterialBindings {
     ) => Record<string, unknown>;
   };
   Button: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
+  Breadcrumb: {
     mapProps: (
       props: Record<string, unknown>,
       context?: MaterialBindingContext,
@@ -177,6 +184,7 @@ export interface MaterialBindings {
 
 export interface MaterialUIAdapter {
   Avatar: typeof AntdAvatar;
+  Breadcrumb: typeof AntdBreadcrumb;
   Button: typeof AntdButton;
   Card: typeof AntdCard;
   DatePicker: typeof AntdDatePicker;

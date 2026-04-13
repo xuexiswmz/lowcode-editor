@@ -34,6 +34,10 @@ interface SetterInputProps<TValue> {
 }
 
 type OptionItem = ChoiceOption;
+interface BreadcrumbItem {
+  title: string;
+  href?: string;
+}
 
 function normalizeOptionItems(value: unknown): OptionItem[] {
   if (typeof value === "string" && value.trim()) {
@@ -45,6 +49,34 @@ function normalizeOptionItems(value: unknown): OptionItem[] {
   }
 
   return normalizeChoiceOptions(value);
+}
+
+function normalizeBreadcrumbItems(value: unknown): BreadcrumbItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeBreadcrumbItems(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is BreadcrumbItem =>
+        typeof item === "object" && item !== null && "title" in item,
+    )
+    .map((item) => ({
+      title: String(item.title),
+      href:
+        typeof item.href === "string" && item.href.trim()
+          ? item.href
+          : undefined,
+    }))
+    .filter((item) => item.title.trim());
 }
 
 function getCurrentOptionSelectOptions(currentProps: Record<string, unknown>) {
@@ -245,6 +277,69 @@ function ReadonlyJsonSetterInput({ value }: SetterInputProps<unknown>) {
   );
 }
 
+function BreadcrumbItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeBreadcrumbItems(value);
+
+  function updateAt(index: number, key: keyof BreadcrumbItem, nextValue: string) {
+    const nextItems = normalizedValue.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            [key]: key === "href" && !nextValue.trim() ? undefined : nextValue,
+          }
+        : item,
+    );
+    onChange?.(nextItems);
+  }
+
+  function addItem() {
+    onChange?.([
+      ...normalizedValue,
+      {
+        title: `导航${normalizedValue.length + 1}`,
+        href: "",
+      },
+    ]);
+  }
+
+  function removeItem(index: number) {
+    onChange?.(normalizedValue.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 8,
+            gridTemplateColumns: "1fr 1fr auto",
+            alignItems: "center",
+          }}
+        >
+          <Input
+            placeholder="标题"
+            value={item.title}
+            onChange={(event) => updateAt(index, "title", event.target.value)}
+          />
+          <Input
+            placeholder="链接(可选)"
+            value={item.href ?? ""}
+            onChange={(event) => updateAt(index, "href", event.target.value)}
+          />
+          <Button danger type="text" onClick={() => removeItem(index)}>
+            删除
+          </Button>
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addItem}>
+        新增项目
+      </Button>
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -377,6 +472,10 @@ export default function ComponentAttr() {
       return <ReadonlyJsonSetterInput />;
     }
 
+    if (type === "breadcrumbItems") {
+      return <BreadcrumbItemsSetterInput />;
+    }
+
     if (type === "optionList") {
       return <OptionsSetterInput />;
     }
@@ -414,6 +513,12 @@ export default function ComponentAttr() {
     if ("options" in normalizedChangeValues) {
       normalizedChangeValues.options = normalizeOptionItems(
         normalizedChangeValues.options,
+      );
+    }
+
+    if (componentName === "Breadcrumb" && "items" in normalizedChangeValues) {
+      normalizedChangeValues.items = normalizeBreadcrumbItems(
+        normalizedChangeValues.items,
       );
     }
 

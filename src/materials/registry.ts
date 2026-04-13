@@ -1,4 +1,5 @@
 import AvatarConfig from "./Avatar/material";
+import BreadcrumbConfig from "./Breadcrumb/material";
 import ButtonConfig from "./Button/material";
 import CardConfig from "./Card/material";
 import CheckboxConfig from "./Checkbox/material";
@@ -32,6 +33,7 @@ export {
 
 const builtinConfigs: ComponentConfig[] = [
   AvatarConfig,
+  BreadcrumbConfig,
   ButtonConfig,
   CardConfig,
   CheckboxConfig,

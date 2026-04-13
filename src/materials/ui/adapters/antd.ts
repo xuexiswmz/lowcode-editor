@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Breadcrumb,
   Button,
   Card,
   Checkbox,
@@ -34,6 +35,14 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       shape,
       size: size === "medium" ? "default" : size,
       src,
+      style: styles,
+    }),
+  },
+  Breadcrumb: {
+    mapProps: ({ items, separator, styles, ...rest }) => ({
+      ...rest,
+      items,
+      separator,
       style: styles,
     }),
   },
@@ -317,6 +326,7 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
 
 export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Avatar,
+  Breadcrumb,
   Button,
   Card,
   CheckboxGroup,

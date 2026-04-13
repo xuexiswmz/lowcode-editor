@@ -23,6 +23,7 @@ const VOID_COMPONENTS = [
   "Select",
   "DatePicker",
   "Upload",
+  "Breadcrumb",
 ];
 
 // 定义不需要在预览中渲染的组件列表

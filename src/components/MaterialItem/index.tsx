@@ -1,6 +1,7 @@
 import {
   AppstoreOutlined,
   BorderOutlined,
+  ApartmentOutlined,
   CalendarOutlined,
   CheckCircleOutlined,
   DownSquareOutlined,
@@ -30,6 +31,7 @@ export interface MaterialItemProps {
 
 const iconMap = {
   Avatar: UserOutlined,
+  Breadcrumb: ApartmentOutlined,
   Button: BorderOutlined,
   Checkbox: CheckCircleOutlined,
   Col: ColumnWidthOutlined,
