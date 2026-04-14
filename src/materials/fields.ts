@@ -43,6 +43,8 @@ export const field = {
     createSetter("optionList", name, label, extra),
   breadcrumbItems: (name: string, label: string, extra?: SetterExtra) =>
     createSetter("breadcrumbItems", name, label, extra),
+  stepsItems: (name: string, label: string, extra?: SetterExtra) =>
+    createSetter("stepsItems", name, label, extra),
   readonlyJson: (name: string, label: string, extra?: SetterExtra) =>
     createSetter("readonlyJson", name, label, extra),
 };

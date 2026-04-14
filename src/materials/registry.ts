@@ -20,6 +20,7 @@ import RadioConfig from "./Radio/material";
 import RowConfig from "./Row/material";
 import SelectConfig from "./Select/material";
 import SpaceConfig from "./Space/material";
+import StepsConfig from "./Steps/material";
 import SwitchConfig from "./Switch/material";
 import TextConfig from "./Text/material";
 import TagConfig from "./Tag/material";
@@ -56,6 +57,7 @@ const builtinConfigs: ComponentConfig[] = [
   TextConfig,
   TagConfig,
   SpaceConfig,
+  StepsConfig,
   SwitchConfig,
   TextareaConfig,
   UploadConfig,

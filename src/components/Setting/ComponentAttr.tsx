@@ -38,6 +38,11 @@ interface BreadcrumbItem {
   title: string;
   href?: string;
 }
+interface StepItem {
+  title: string;
+  description?: string;
+  status?: "wait" | "process" | "finish" | "error";
+}
 
 function normalizeOptionItems(value: unknown): OptionItem[] {
   if (typeof value === "string" && value.trim()) {
@@ -77,6 +82,55 @@ function normalizeBreadcrumbItems(value: unknown): BreadcrumbItem[] {
           : undefined,
     }))
     .filter((item) => item.title.trim());
+}
+
+function normalizeStepItems(value: unknown): StepItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeStepItems(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is StepItem =>
+        typeof item === "object" && item !== null && "title" in item,
+    )
+    .map((item) => ({
+      title: String(item.title),
+      description:
+        typeof item.description === "string" && item.description.trim()
+          ? item.description
+          : undefined,
+      status:
+        item.status === "wait" ||
+        item.status === "process" ||
+        item.status === "finish" ||
+        item.status === "error"
+          ? item.status
+          : undefined,
+    }))
+    .filter((item) => item.title.trim());
+}
+
+function normalizeStepsCurrent(current: unknown, items: StepItem[]) {
+  const numericValue = Number(current);
+
+  if (!Number.isInteger(numericValue) || numericValue < 0) {
+    return 0;
+  }
+
+  if (items.length === 0) {
+    return 0;
+  }
+
+  return Math.min(numericValue, items.length - 1);
 }
 
 function getCurrentOptionSelectOptions(currentProps: Record<string, unknown>) {
@@ -340,6 +394,100 @@ function BreadcrumbItemsSetterInput({ value, onChange }: SetterInputProps<unknow
   );
 }
 
+function StepsItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeStepItems(value);
+
+  function updateAt(index: number, key: keyof StepItem, nextValue: string) {
+    const nextItems = normalizedValue.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            [key]:
+              (key === "description" || key === "status") && !nextValue.trim()
+                ? undefined
+                : nextValue,
+          }
+        : item,
+    );
+    onChange?.(nextItems);
+  }
+
+  function addItem() {
+    onChange?.([
+      ...normalizedValue,
+      {
+        title: `步骤${normalizedValue.length + 1}`,
+        description: "",
+        status: "wait",
+      },
+    ]);
+  }
+
+  function removeItem(index: number) {
+    onChange?.(normalizedValue.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>步骤 {index + 1}</span>
+            <Button danger size="small" type="text" onClick={() => removeItem(index)}>
+              删除
+            </Button>
+          </div>
+          <Input
+            placeholder="标题"
+            value={item.title}
+            onChange={(event) => updateAt(index, "title", event.target.value)}
+          />
+          <Input
+            placeholder="描述(可选)"
+            value={item.description ?? ""}
+            onChange={(event) =>
+              updateAt(index, "description", event.target.value)
+            }
+          />
+          <Select
+            value={item.status}
+            options={[
+              { label: "等待", value: "wait" },
+              { label: "进行中", value: "process" },
+              { label: "完成", value: "finish" },
+              { label: "错误", value: "error" },
+            ]}
+            onChange={(nextValue) => updateAt(index, "status", String(nextValue))}
+            allowClear
+            placeholder="状态"
+            style={{ width: "100%" }}
+          />
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addItem}>
+        新增步骤
+      </Button>
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -476,6 +624,10 @@ export default function ComponentAttr() {
       return <BreadcrumbItemsSetterInput />;
     }
 
+    if (type === "stepsItems") {
+      return <StepsItemsSetterInput />;
+    }
+
     if (type === "optionList") {
       return <OptionsSetterInput />;
     }
@@ -520,6 +672,24 @@ export default function ComponentAttr() {
       normalizedChangeValues.items = normalizeBreadcrumbItems(
         normalizedChangeValues.items,
       );
+    }
+
+    if (componentName === "Steps") {
+      if ("items" in normalizedChangeValues) {
+        normalizedChangeValues.items = normalizeStepItems(
+          normalizedChangeValues.items,
+        );
+      }
+
+      if ("items" in normalizedChangeValues || "current" in normalizedChangeValues) {
+        const mergedItems = normalizeStepItems(
+          normalizedChangeValues.items ?? currentProps.items,
+        );
+        normalizedChangeValues.current = normalizeStepsCurrent(
+          normalizedChangeValues.current ?? currentProps.current,
+          mergedItems,
+        );
+      }
     }
 
     if (componentName === "DatePicker" && "value" in normalizedChangeValues) {

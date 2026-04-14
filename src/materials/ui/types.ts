@@ -13,6 +13,7 @@ import type {
   Modal as AntdModal,
   Radio as AntdRadio,
   Select as AntdSelect,
+  Steps as AntdSteps,
   Upload as AntdUpload,
   Col as AntdCol,
   Row as AntdRow,
@@ -63,6 +64,12 @@ export interface MaterialBindings {
     ) => Record<string, unknown>;
   };
   DatePicker: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
+  Steps: {
     mapProps: (
       props: Record<string, unknown>,
       context?: MaterialBindingContext,
@@ -197,6 +204,7 @@ export interface MaterialUIAdapter {
   RadioGroup: typeof AntdRadio.Group;
   CheckboxGroup: typeof AntdCheckbox.Group;
   Select: typeof AntdSelect;
+  Steps: typeof AntdSteps;
   Upload: typeof AntdUpload;
   Switch: typeof AntdSwitch;
   Modal: typeof AntdModal;
