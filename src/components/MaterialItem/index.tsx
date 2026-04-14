@@ -18,6 +18,7 @@ import {
   RadiusSettingOutlined,
   OrderedListOutlined,
   DeploymentUnitOutlined,
+  FolderOpenOutlined,
   TableOutlined,
   TagOutlined,
   UploadOutlined,
@@ -54,6 +55,7 @@ const iconMap = {
   Select: DownSquareOutlined,
   Steps: OrderedListOutlined,
   Switch: DeploymentUnitOutlined,
+  Tabs: FolderOpenOutlined,
   Tag: TagOutlined,
   Upload: UploadOutlined,
 } as const;

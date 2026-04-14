@@ -41,7 +41,12 @@ interface BreadcrumbItem {
 interface StepItem {
   title: string;
   description?: string;
-  status?: "wait" | "process" | "finish" | "error";
+}
+interface TabsItem {
+  key: string;
+  label: string;
+  children?: string;
+  disabled?: boolean;
 }
 
 function normalizeOptionItems(value: unknown): OptionItem[] {
@@ -103,20 +108,43 @@ function normalizeEditableStepItems(value: unknown): StepItem[] {
         typeof item === "object" && item !== null && "title" in item,
     )
     .map((item) => ({
-      title: String(item.title),
+      title: String(item.title ?? ""),
       description:
-        typeof item.description === "string" && item.description.trim()
-          ? item.description
+        typeof item.description === "string" ? item.description : undefined,
+    }));
+}
+
+function normalizeTabsItems(value: unknown): TabsItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeTabsItems(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is TabsItem =>
+        typeof item === "object" &&
+        item !== null &&
+        "key" in item &&
+        "label" in item,
+    )
+    .map((item) => ({
+      key: String(item.key),
+      label: String(item.label),
+      children:
+        typeof item.children === "string" && item.children.trim()
+          ? item.children
           : undefined,
-      status:
-        item.status === "wait" ||
-        item.status === "process" ||
-        item.status === "finish" ||
-        item.status === "error"
-          ? item.status
-          : undefined,
+      disabled: Boolean(item.disabled),
     }))
-    .filter((item) => item.title.trim());
+    .filter((item) => item.key.trim() && item.label.trim());
 }
 
 function normalizeStepsCurrent(current: unknown, items: StepItem[]) {
@@ -133,10 +161,34 @@ function normalizeStepsCurrent(current: unknown, items: StepItem[]) {
   return Math.min(numericValue, items.length - 1);
 }
 
+function normalizeTabsActiveKey(activeKey: unknown, items: TabsItem[]) {
+  const nextKey = String(activeKey ?? "");
+
+  if (items.some((item) => item.key === nextKey)) {
+    return nextKey;
+  }
+
+  return items[0]?.key;
+}
+
 function getCurrentOptionSelectOptions(currentProps: Record<string, unknown>) {
   return normalizeOptionItems(currentProps.options).map((item) => ({
     label: `${item.label} (${item.value})`,
     value: item.value,
+  }));
+}
+
+function getCurrentTabSelectOptions(currentProps: Record<string, unknown>) {
+  return normalizeTabsItems(currentProps.items).map((item) => ({
+    label: `${item.label} (${item.key})`,
+    value: item.key,
+  }));
+}
+
+function getCurrentStepSelectOptions(currentProps: Record<string, unknown>) {
+  return normalizeEditableStepItems(currentProps.items).map((item, index) => ({
+    label: `${index + 1}. ${item.title || "未命名步骤"}`,
+    value: index,
   }));
 }
 
@@ -200,6 +252,26 @@ function getFormValues(
     return {
       ...formValues,
       value: getNormalizedComponentValue(componentName, formValues, {}),
+    };
+  }
+
+  if (componentName === "Steps") {
+    const items = normalizeEditableStepItems(formValues.items);
+
+    return {
+      ...formValues,
+      items,
+      current: normalizeStepsCurrent(formValues.current, items),
+    };
+  }
+
+  if (componentName === "Tabs") {
+    const items = normalizeTabsItems(formValues.items);
+
+    return {
+      ...formValues,
+      items,
+      activeKey: normalizeTabsActiveKey(formValues.activeKey, items),
     };
   }
 
@@ -474,6 +546,114 @@ function StepsItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
   );
 }
 
+function TabsItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeTabsItems(value);
+
+  function updateAt(
+    index: number,
+    key: keyof TabsItem,
+    nextValue: string | boolean,
+  ) {
+    const nextItems = normalizedValue.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            [key]:
+              key === "children" &&
+              typeof nextValue === "string" &&
+              !nextValue.trim()
+                ? undefined
+                : nextValue,
+          }
+        : item,
+    );
+    onChange?.(nextItems);
+  }
+
+  function addItem() {
+    onChange?.([
+      ...normalizedValue,
+      {
+        key: `tab${normalizedValue.length + 1}`,
+        label: `标签${normalizedValue.length + 1}`,
+        children: `标签${normalizedValue.length + 1}内容`,
+        disabled: false,
+      },
+    ]);
+  }
+
+  function removeItem(index: number) {
+    onChange?.(normalizedValue.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>
+              面板 {index + 1}
+            </span>
+            <Button danger size="small" type="text" onClick={() => removeItem(index)}>
+              删除
+            </Button>
+          </div>
+          <Input
+            placeholder="key"
+            value={item.key}
+            onChange={(event) => updateAt(index, "key", event.target.value)}
+          />
+          <Input
+            placeholder="标题"
+            value={item.label}
+            onChange={(event) => updateAt(index, "label", event.target.value)}
+          />
+          <Input.TextArea
+            placeholder="内容"
+            value={item.children ?? ""}
+            autoSize={{ minRows: 2, maxRows: 4 }}
+            onChange={(event) => updateAt(index, "children", event.target.value)}
+          />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>禁用</span>
+            <Switch
+              checked={item.disabled}
+              onChange={(checked) => updateAt(index, "disabled", checked)}
+            />
+          </div>
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addItem}>
+        新增面板
+      </Button>
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -556,6 +736,16 @@ export default function ComponentAttr() {
         );
       }
 
+      if (componentName === "Tabs" && name === "activeKey") {
+        return (
+          <Select
+            options={getCurrentTabSelectOptions(currentProps)}
+            placeholder="请先配置面板"
+            allowClear
+          />
+        );
+      }
+
       if (componentName === "Select" && name === "mode") {
         return (
           <Select
@@ -623,6 +813,10 @@ export default function ComponentAttr() {
       return <StepsItemsSetterInput />;
     }
 
+    if (type === "tabsItems") {
+      return <TabsItemsSetterInput />;
+    }
+
     if (type === "optionList") {
       return <OptionsSetterInput />;
     }
@@ -682,6 +876,24 @@ export default function ComponentAttr() {
         );
         normalizedChangeValues.current = normalizeStepsCurrent(
           normalizedChangeValues.current ?? currentProps.current,
+          mergedItems,
+        );
+      }
+    }
+
+    if (componentName === "Tabs") {
+      if ("items" in normalizedChangeValues) {
+        normalizedChangeValues.items = normalizeTabsItems(
+          normalizedChangeValues.items,
+        );
+      }
+
+      if ("items" in normalizedChangeValues || "activeKey" in normalizedChangeValues) {
+        const mergedItems = normalizeTabsItems(
+          normalizedChangeValues.items ?? currentProps.items,
+        );
+        normalizedChangeValues.activeKey = normalizeTabsActiveKey(
+          normalizedChangeValues.activeKey ?? currentProps.activeKey,
           mergedItems,
         );
       }

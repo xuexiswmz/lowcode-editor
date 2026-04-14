@@ -14,6 +14,7 @@ import type {
   Radio as AntdRadio,
   Select as AntdSelect,
   Steps as AntdSteps,
+  Tabs as AntdTabs,
   Upload as AntdUpload,
   Col as AntdCol,
   Row as AntdRow,
@@ -70,6 +71,12 @@ export interface MaterialBindings {
     ) => Record<string, unknown>;
   };
   Steps: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
+  Tabs: {
     mapProps: (
       props: Record<string, unknown>,
       context?: MaterialBindingContext,
@@ -205,6 +212,7 @@ export interface MaterialUIAdapter {
   CheckboxGroup: typeof AntdCheckbox.Group;
   Select: typeof AntdSelect;
   Steps: typeof AntdSteps;
+  Tabs: typeof AntdTabs;
   Upload: typeof AntdUpload;
   Switch: typeof AntdSwitch;
   Modal: typeof AntdModal;

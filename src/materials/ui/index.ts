@@ -19,6 +19,7 @@ export const {
   RadioGroup,
   Select,
   Steps,
+  Tabs,
   Upload,
   Switch,
   Modal,

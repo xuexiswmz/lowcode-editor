@@ -25,6 +25,7 @@ const VOID_COMPONENTS = [
   "Upload",
   "Breadcrumb",
   "Steps",
+  "Tabs",
 ];
 
 // 定义不需要在预览中渲染的组件列表

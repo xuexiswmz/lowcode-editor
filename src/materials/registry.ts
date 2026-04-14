@@ -22,6 +22,7 @@ import SelectConfig from "./Select/material";
 import SpaceConfig from "./Space/material";
 import StepsConfig from "./Steps/material";
 import SwitchConfig from "./Switch/material";
+import TabsConfig from "./Tabs/material";
 import TextConfig from "./Text/material";
 import TagConfig from "./Tag/material";
 import TextareaConfig from "./Textarea/material";
@@ -59,6 +60,7 @@ const builtinConfigs: ComponentConfig[] = [
   SpaceConfig,
   StepsConfig,
   SwitchConfig,
+  TabsConfig,
   TextareaConfig,
   UploadConfig,
 ];
