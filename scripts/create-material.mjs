@@ -1,5 +1,4 @@
 import { mkdir, access, writeFile } from "node:fs/promises";
-import { mkdir, access, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const DEFAULT_CATEGORY = "common";
