@@ -12,7 +12,6 @@ type StepsSize = "default" | "small";
 export interface StepItem {
   title: string;
   description?: string;
-  status?: StepStatus;
 }
 
 type StepsProps = Omit<CommonComponentProps, "children"> & {
@@ -24,9 +23,9 @@ type StepsProps = Omit<CommonComponentProps, "children"> & {
 };
 
 const defaultItems: StepItem[] = [
-  { title: "第一步", description: "开始处理", status: "finish" },
-  { title: "第二步", description: "进行中", status: "process" },
-  { title: "第三步", description: "等待完成", status: "wait" },
+  { title: "第一步", description: "开始处理" },
+  { title: "第二步", description: "进行中" },
+  { title: "第三步", description: "等待完成" },
 ];
 
 function normalizeStepItems(items: unknown): StepItem[] {
@@ -44,13 +43,6 @@ function normalizeStepItems(items: unknown): StepItem[] {
       description:
         typeof item.description === "string" && item.description.trim()
           ? item.description
-          : undefined,
-      status:
-        item.status === "wait" ||
-        item.status === "process" ||
-        item.status === "finish" ||
-        item.status === "error"
-          ? item.status
           : undefined,
     }))
     .filter((item) => item.title.trim());

@@ -84,10 +84,10 @@ function normalizeBreadcrumbItems(value: unknown): BreadcrumbItem[] {
     .filter((item) => item.title.trim());
 }
 
-function normalizeStepItems(value: unknown): StepItem[] {
+function normalizeEditableStepItems(value: unknown): StepItem[] {
   if (typeof value === "string" && value.trim()) {
     try {
-      return normalizeStepItems(JSON.parse(value));
+      return normalizeEditableStepItems(JSON.parse(value));
     } catch {
       return [];
     }
@@ -395,7 +395,7 @@ function BreadcrumbItemsSetterInput({ value, onChange }: SetterInputProps<unknow
 }
 
 function StepsItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
-  const normalizedValue = normalizeStepItems(value);
+  const normalizedValue = normalizeEditableStepItems(value);
 
   function updateAt(index: number, key: keyof StepItem, nextValue: string) {
     const nextItems = normalizedValue.map((item, itemIndex) =>
@@ -403,7 +403,7 @@ function StepsItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
         ? {
             ...item,
             [key]:
-              (key === "description" || key === "status") && !nextValue.trim()
+              key === "description" && !nextValue.trim()
                 ? undefined
                 : nextValue,
           }
@@ -418,7 +418,6 @@ function StepsItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
       {
         title: `步骤${normalizedValue.length + 1}`,
         description: "",
-        status: "wait",
       },
     ]);
   }
@@ -465,19 +464,6 @@ function StepsItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
             onChange={(event) =>
               updateAt(index, "description", event.target.value)
             }
-          />
-          <Select
-            value={item.status}
-            options={[
-              { label: "等待", value: "wait" },
-              { label: "进行中", value: "process" },
-              { label: "完成", value: "finish" },
-              { label: "错误", value: "error" },
-            ]}
-            onChange={(nextValue) => updateAt(index, "status", String(nextValue))}
-            allowClear
-            placeholder="状态"
-            style={{ width: "100%" }}
           />
         </div>
       ))}
@@ -609,6 +595,15 @@ export default function ComponentAttr() {
     }
 
     if (type === "inputNumber") {
+      if (componentName === "Steps" && name === "current") {
+        return (
+          <Select
+            options={getCurrentStepSelectOptions(currentProps)}
+            placeholder="请先配置步骤项"
+          />
+        );
+      }
+
       return <InputNumber style={{ width: "100%" }} />;
     }
 
@@ -676,13 +671,13 @@ export default function ComponentAttr() {
 
     if (componentName === "Steps") {
       if ("items" in normalizedChangeValues) {
-        normalizedChangeValues.items = normalizeStepItems(
+        normalizedChangeValues.items = normalizeEditableStepItems(
           normalizedChangeValues.items,
         );
       }
 
       if ("items" in normalizedChangeValues || "current" in normalizedChangeValues) {
-        const mergedItems = normalizeStepItems(
+        const mergedItems = normalizeEditableStepItems(
           normalizedChangeValues.items ?? currentProps.items,
         );
         normalizedChangeValues.current = normalizeStepsCurrent(

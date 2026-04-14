@@ -97,7 +97,11 @@ const creator: StateCreator<State & Action> = (set, get) => ({
       if (component) {
         component.props = { ...component.props, ...props };
 
-        return { components: [...state.components] };
+        return {
+          components: [...state.components],
+          curComponent:
+            state.curComponentId === componentId ? component : state.curComponent,
+        };
       }
 
       return { components: [...state.components] };
@@ -110,7 +114,11 @@ const creator: StateCreator<State & Action> = (set, get) => ({
           ? { ...styles }
           : { ...component.styles, ...styles };
 
-        return { components: [...state.components] };
+        return {
+          components: [...state.components],
+          curComponent:
+            state.curComponentId === componentId ? component : state.curComponent,
+        };
       }
       return { components: [...state.components] };
     }),
