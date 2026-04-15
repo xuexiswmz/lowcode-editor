@@ -7,11 +7,12 @@ import { Steps, materials } from "../ui";
 
 type StepStatus = "wait" | "process" | "finish" | "error";
 type StepsDirection = "horizontal" | "vertical";
-type StepsSize = "default" | "small";
+type StepsSize = "medium" | "small" | "default";
 
 export interface StepItem {
   title: string;
   description?: string;
+  content?: string;
 }
 
 type StepsProps = Omit<CommonComponentProps, "children"> & {
@@ -40,6 +41,12 @@ function normalizeStepItems(items: unknown): StepItem[] {
     )
     .map((item) => ({
       title: String(item.title),
+      content:
+        typeof item.content === "string" && item.content.trim()
+          ? item.content
+          : typeof item.description === "string" && item.description.trim()
+            ? item.description
+            : undefined,
       description:
         typeof item.description === "string" && item.description.trim()
           ? item.description
@@ -61,6 +68,10 @@ function getNormalizedCurrent(current: unknown, items: StepItem[]) {
   return Math.min(numericValue, items.length - 1);
 }
 
+function normalizeStepsSize(size: unknown): "medium" | "small" {
+  return size === "small" ? "small" : "medium";
+}
+
 function useStepsItems(items: StepItem[] | undefined) {
   return useMemo(
     () => normalizeStepItems(items ?? defaultItems),
@@ -74,7 +85,7 @@ const StepsRenderer = forwardRef<HTMLDivElement, StepsProps>(
       id,
       current = 0,
       direction = "horizontal",
-      size = "default",
+      size = "medium",
       items,
       status,
       onChange,
@@ -92,7 +103,7 @@ const StepsRenderer = forwardRef<HTMLDivElement, StepsProps>(
             {
               current: getNormalizedCurrent(current, stepsItems),
               direction,
-              size,
+              size: normalizeStepsSize(size),
               items: stepsItems,
               status,
               onChange,
@@ -113,7 +124,7 @@ const StepsEditorRenderer = forwardRef<HTMLDivElement, StepsProps>(
       id,
       current = 0,
       direction = "horizontal",
-      size = "default",
+      size = "medium",
       items,
       status,
       onChange,
@@ -131,7 +142,7 @@ const StepsEditorRenderer = forwardRef<HTMLDivElement, StepsProps>(
             {
               current: getNormalizedCurrent(current, stepsItems),
               direction,
-              size,
+              size: normalizeStepsSize(size),
               items: stepsItems,
               status,
               onChange,
@@ -156,7 +167,7 @@ export default createLeafMaterial({
   defaultProps: {
     current: 1,
     direction: "horizontal",
-    size: "default",
+    size: "medium",
     status: "process",
     items: defaultItems,
   },
@@ -168,7 +179,7 @@ export default createLeafMaterial({
       { label: "纵向", value: "vertical" },
     ]),
     field.select("size", "尺寸", [
-      { label: "默认", value: "default" },
+      { label: "默认", value: "medium" },
       { label: "小", value: "small" },
     ]),
     field.stepsItems("items", "步骤项"),

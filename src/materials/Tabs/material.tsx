@@ -29,6 +29,7 @@ type TabsProps = Omit<CommonComponentProps, "children"> & {
   items?: TabItem[];
   activeKey?: string;
   type?: TabsType;
+  tabPlacement?: TabPosition;
   tabPosition?: TabPosition;
   centered?: boolean;
 };
@@ -77,11 +78,11 @@ function normalizeTabsType(type: unknown): TabsType {
   return type === "card" || type === "editable-card" ? type : "line";
 }
 
-function normalizeTabPosition(tabPosition: unknown): TabPosition {
-  return tabPosition === "right" ||
-    tabPosition === "bottom" ||
-    tabPosition === "left"
-    ? tabPosition
+function normalizeTabPlacement(tabPlacement: unknown): TabPosition {
+  return tabPlacement === "right" ||
+    tabPlacement === "bottom" ||
+    tabPlacement === "left"
+    ? tabPlacement
     : "top";
 }
 
@@ -117,7 +118,8 @@ const TabsRenderer = forwardRef<TabsMaterialRef, TabsProps>(
       items,
       activeKey,
       type = "line",
-      tabPosition = "top",
+      tabPlacement,
+      tabPosition,
       centered = false,
       onChange,
       onTabClick,
@@ -151,7 +153,7 @@ const TabsRenderer = forwardRef<TabsMaterialRef, TabsProps>(
             items: tabItems,
             activeKey: managedActiveKey,
             type: normalizeTabsType(type),
-            tabPosition: normalizeTabPosition(tabPosition),
+            tabPlacement: normalizeTabPlacement(tabPlacement ?? tabPosition),
             centered,
             onChange: (nextKey: string) => {
               switchTab(nextKey);
@@ -175,7 +177,8 @@ const TabsEditorRenderer = forwardRef<HTMLDivElement, TabsProps>(
       items,
       activeKey,
       type = "line",
-      tabPosition = "top",
+      tabPlacement,
+      tabPosition,
       centered = false,
       onChange,
       onTabClick,
@@ -226,7 +229,7 @@ const TabsEditorRenderer = forwardRef<HTMLDivElement, TabsProps>(
               items: tabItems,
               activeKey: managedActiveKey,
               type: normalizeTabsType(type),
-              tabPosition: normalizeTabPosition(tabPosition),
+              tabPlacement: normalizeTabPlacement(tabPlacement ?? tabPosition),
               centered,
               onChange: (nextKey: string) => {
                 switchTab(nextKey);
@@ -255,7 +258,7 @@ export default createLeafMaterial({
     items: defaultItems,
     activeKey: "tab1",
     type: "line",
-    tabPosition: "top",
+    tabPlacement: "top",
     centered: false,
   },
   allowedParents: [...TABS_ALLOWED_PARENTS],
@@ -267,7 +270,7 @@ export default createLeafMaterial({
       { label: "卡片", value: "card" },
       { label: "可编辑卡片", value: "editable-card" },
     ]),
-    field.select("tabPosition", "标签位置", [
+    field.select("tabPlacement", "标签位置", [
       { label: "上", value: "top" },
       { label: "右", value: "right" },
       { label: "下", value: "bottom" },

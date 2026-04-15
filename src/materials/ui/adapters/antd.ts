@@ -102,7 +102,28 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       current,
       orientation: direction,
       size,
-      items,
+      items: Array.isArray(items)
+        ? items.map((item) => {
+            if (typeof item !== "object" || item === null) {
+              return item;
+            }
+
+            const { description: _description, ...stepItem } = item as Record<
+              string,
+              unknown
+            >;
+
+            return {
+              ...stepItem,
+              content:
+                typeof stepItem.content === "string" && stepItem.content.trim()
+                  ? stepItem.content
+                  : typeof _description === "string" && _description.trim()
+                    ? _description
+                    : undefined,
+            };
+          })
+        : items,
       status,
       onChange,
       style: styles,
@@ -113,6 +134,7 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       items,
       activeKey,
       type,
+      tabPlacement,
       tabPosition,
       centered,
       onChange,
@@ -124,7 +146,13 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       items,
       activeKey,
       type,
-      tabPosition,
+      tabPlacement:
+        tabPlacement ??
+        (tabPosition === "right" ||
+        tabPosition === "bottom" ||
+        tabPosition === "left"
+          ? tabPosition
+          : "top"),
       centered,
       onChange,
       onTabClick,
