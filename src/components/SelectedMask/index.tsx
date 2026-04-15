@@ -1,130 +1,41 @@
-import { useEffect, useState, useMemo } from "react";
-import { getComponentById, useComponentsStore } from "../../stores/components";
-import { createPortal } from "react-dom";
+import { useMemo } from "react";
 import { Dropdown, Popconfirm, Space } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { createPortal } from "react-dom";
+import { getComponentById, useComponentsStore } from "../../stores/components";
+import { useMaskPosition } from "../useMaskPosition";
 
 interface SelectedMaskProps {
-  containerClassName?: string;
+  containerClassName: string;
   componentId: number;
 }
 
 function SelectedMask({ containerClassName, componentId }: SelectedMaskProps) {
-  const [position, setPosition] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-    height: 0,
-    labelTop: 0,
-    labelLeft: 0,
-  });
-  const {
-    components,
-    curComponentId,
-    curComponent,
-    deleteComponent,
-    setCurComponentId,
-  } = useComponentsStore();
-
-  useEffect(() => {
-    updatePosition();
-  }, [componentId]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      updatePosition();
-    }, 200);
-  }, [components]);
-
-  useEffect(() => {
-    // 监听窗口大小变化
-    window.addEventListener("resize", updatePosition);
-
-    return () => {
-      window.removeEventListener("resize", updatePosition);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!containerClassName) return;
-
-    const container = document.querySelector(`.${containerClassName}`);
-    if (!container) return;
-
-    // 创建 ResizeObserver 监听容器大小变化
-    const resizeObserver = new ResizeObserver(() => {
-      // 使用 setTimeout 确保 DOM 更新后再计算位置
-      setTimeout(() => {
-        updatePosition();
-      }, 10);
-    });
-
-    // 监听容器大小变化
-    resizeObserver.observe(container);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [containerClassName]);
-
-  function updatePosition() {
-    if (!componentId) return;
-
-    const container = document.querySelector(`.${containerClassName}`);
-    if (!container) return;
-
-    // 确保使用正确的组件ID进行查询，避免选择错误的组件
-    const selector = `[data-component-id="${componentId}"]`;
-    const node = document.querySelector(selector);
-
-    if (!node) {
-      console.log(`未找到组件: ${selector}`);
-      return;
-    }
-
-    const { top, left, width, height } = node.getBoundingClientRect();
-    const { top: containerTop, left: containerLeft } =
-      container.getBoundingClientRect();
-
-    let labelTop = top - containerTop + container.scrollTop;
-    const labelLeft = left - containerLeft + width;
-
-    if (labelTop <= 0) {
-      labelTop -= -20;
-    }
-
-    setPosition({
-      top: top - containerTop + container.scrollTop,
-      left: left - containerLeft + container.scrollLeft,
-      width,
-      height,
-      labelTop,
-      labelLeft,
-    });
-  }
+  const { components, deleteComponent, setCurComponentId } = useComponentsStore();
+  const position = useMaskPosition(containerClassName, componentId, [components]);
 
   const el = useMemo(() => {
     return document.querySelector(`.${containerClassName}`);
-  }, []);
+  }, [containerClassName]);
 
   const curSelectedComponent = useMemo(() => {
     return getComponentById(componentId, components);
-  }, [componentId]);
+  }, [componentId, components]);
 
   function handleDelete() {
-    deleteComponent(curComponentId!);
+    deleteComponent(componentId);
     setCurComponentId(null);
   }
 
   const parentComponents = useMemo(() => {
     const parentComponents = [];
-    let component = curComponent;
+    let component = curSelectedComponent;
     while (component?.parentId) {
       component = getComponentById(component.parentId, components)!;
       parentComponents.push(component);
     }
     return parentComponents;
-  }, [curComponent]);
+  }, [curSelectedComponent, components]);
 
   if (!el || !componentId) return null;
   return createPortal(
@@ -151,7 +62,16 @@ function SelectedMask({ containerClassName, componentId }: SelectedMaskProps) {
           fontSize: "14px",
           zIndex: 13,
           display: !position.width || position.width < 10 ? "none" : "inline",
-          transform: "translate(-100%, -100%)",
+          transform:
+            position.labelPlacement === "top"
+              ? "translate(-100%, -100%)"
+              : "translate(-100%, 0)",
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
         }}
       >
         <Space>
@@ -180,7 +100,7 @@ function SelectedMask({ containerClassName, componentId }: SelectedMaskProps) {
               {curSelectedComponent?.desc}
             </div>
           </Dropdown>
-          {curComponentId !== 1 && (
+          {componentId !== 1 && (
             <div style={{ padding: "0 8px", backgroundColor: "blue" }}>
               <Popconfirm
                 title="确定删除该组件吗？"

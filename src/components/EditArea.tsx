@@ -4,6 +4,21 @@ import { useComponentsStore, type Component } from "../stores/components";
 import HoverMask from "./HoverMask";
 import SelectedMask from "./SelectedMask";
 
+function getComponentId(path: EventTarget[]) {
+  for (let i = 0; i < path.length; i += 1) {
+    const ele = path[i] as HTMLElement | null;
+    const componentNode = ele?.closest?.("[data-component-id]") as
+      | HTMLElement
+      | null;
+    const componentId = componentNode?.dataset?.componentId;
+    if (componentId) {
+      return +componentId;
+    }
+  }
+
+  return undefined;
+}
+
 export default function EditArea() {
   const { components, curComponentId, setCurComponentId } = useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
@@ -46,26 +61,26 @@ export default function EditArea() {
 
   const handleMouseOver: MouseEventHandler = (e) => {
     const path = e.nativeEvent.composedPath();
-    for (let i = 0; i < path.length; i += 1) {
-      const ele = path[i] as HTMLElement;
-      const componentId = ele.dataset.componentId;
-      if (componentId) {
-        setHoveredComponentId(+componentId);
-        return;
-      }
+    const componentId = getComponentId(path);
+
+    if (componentId) {
+      setHoveredComponentId(componentId);
+      return;
     }
+
+    setHoveredComponentId(undefined);
   };
 
-  const handleClick: MouseEventHandler = (e) => {
+  const handleMouseDown: MouseEventHandler = (e) => {
     const path = e.nativeEvent.composedPath();
-    for (let i = 0; i < path.length; i += 1) {
-      const ele = path[i] as HTMLElement;
-      const componentId = ele.dataset.componentId;
-      if (componentId) {
-        setCurComponentId(+componentId);
-        return;
-      }
+    const componentId = getComponentId(path);
+
+    if (componentId) {
+      setCurComponentId(componentId);
+      return;
     }
+
+    setCurComponentId(null);
   };
 
   return (
@@ -73,7 +88,7 @@ export default function EditArea() {
       className="edit-area lce-edit-area scrollable overflow-y-auto"
       onMouseOver={handleMouseOver}
       onMouseLeave={() => setHoveredComponentId(undefined)}
-      onClick={handleClick}
+      onMouseDown={handleMouseDown}
     >
       {renderComponents(components)}
       {hoveredComponentId && hoveredComponentId !== curComponentId && (

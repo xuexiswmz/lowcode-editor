@@ -127,6 +127,10 @@ const creator: StateCreator<State & Action> = (set, get) => ({
 export const useComponentsStore = create<State & Action>()(
   persist(creator, {
     name: "components",
+    partialize: (state) => ({
+      components: state.components,
+      mode: state.mode,
+    }),
   })
 );
 
