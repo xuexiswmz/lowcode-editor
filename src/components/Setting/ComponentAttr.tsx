@@ -195,10 +195,10 @@ function normalizeDropdownMenuItems(value: unknown): DropdownMenuItem[] {
     .filter((item) => item.key.trim() && item.label.trim());
 }
 
-function normalizeDescriptionsItems(value: unknown): DescriptionItem[] {
+function normalizeEditableDescriptionsItems(value: unknown): DescriptionItem[] {
   if (typeof value === "string" && value.trim()) {
     try {
-      return normalizeDescriptionsItems(JSON.parse(value));
+      return normalizeEditableDescriptionsItems(JSON.parse(value));
     } catch {
       return [];
     }
@@ -225,8 +225,39 @@ function normalizeDescriptionsItems(value: unknown): DescriptionItem[] {
         Number.isInteger(Number(item.span)) && Number(item.span) > 0
           ? Number(item.span)
           : 1,
-    }))
-    .filter((item) => item.key.trim() && item.label.trim());
+    }));
+}
+
+function normalizeEditableMenuItems(value: unknown): EditableMenuItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeEditableMenuItems(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is EditableMenuItem =>
+        typeof item === "object" &&
+        item !== null &&
+        "key" in item &&
+        "label" in item,
+    )
+    .map((item) => ({
+      key: String(item.key ?? ""),
+      label: String(item.label ?? ""),
+      disabled: Boolean(item.disabled),
+      children: (() => {
+        const nextChildren = normalizeEditableMenuItems(item.children);
+        return nextChildren.length > 0 ? nextChildren : undefined;
+      })(),
+    }));
 }
 
 function normalizeStepsCurrent(current: unknown, items: StepItem[]) {
@@ -384,21 +415,24 @@ function getFormValues(
   }
 
   if (componentName === "Menu") {
-    const items = normalizeMenuItems(formValues.items);
+    const items = normalizeEditableMenuItems(formValues.items);
 
     return {
       ...formValues,
       items,
       mode: normalizeMenuMode(formValues.mode),
       theme: normalizeMenuTheme(formValues.theme),
-      selectedKeys: normalizeMenuSelectedKeys(formValues.selectedKeys, items),
+      selectedKeys: normalizeMenuSelectedKeys(
+        formValues.selectedKeys,
+        normalizeMenuItems(items),
+      ),
     };
   }
 
   if (componentName === "Descriptions") {
     return {
       ...formValues,
-      items: normalizeDescriptionsItems(formValues.items),
+      items: normalizeEditableDescriptionsItems(formValues.items),
     };
   }
 
@@ -859,7 +893,7 @@ function DropdownMenuItemsSetterInput({
 }
 
 function MenuItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
-  const normalizedValue = normalizeMenuItems(value);
+  const normalizedValue = normalizeEditableMenuItems(value);
 
   function updateItems(nextItems: EditableMenuItem[]) {
     onChange?.(nextItems);
@@ -1068,7 +1102,7 @@ function DescriptionsItemsSetterInput({
   value,
   onChange,
 }: SetterInputProps<unknown>) {
-  const normalizedValue = normalizeDescriptionsItems(value);
+  const normalizedValue = normalizeEditableDescriptionsItems(value);
 
   function updateAt(
     index: number,
@@ -1438,7 +1472,7 @@ export default function ComponentAttr() {
 
     if (componentName === "Menu") {
       if ("items" in normalizedChangeValues) {
-        normalizedChangeValues.items = normalizeMenuItems(
+        normalizedChangeValues.items = normalizeEditableMenuItems(
           normalizedChangeValues.items,
         );
       }
@@ -1463,7 +1497,7 @@ export default function ComponentAttr() {
     }
 
     if (componentName === "Descriptions" && "items" in normalizedChangeValues) {
-      normalizedChangeValues.items = normalizeDescriptionsItems(
+      normalizedChangeValues.items = normalizeEditableDescriptionsItems(
         normalizedChangeValues.items,
       );
     }
