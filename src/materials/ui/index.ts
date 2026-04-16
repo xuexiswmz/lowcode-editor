@@ -10,6 +10,7 @@ export const {
   CheckboxGroup,
   Col,
   DatePicker,
+  Descriptions,
   Dropdown,
   Divider,
   Flex,

@@ -62,6 +62,12 @@ interface DropdownMenuItem {
   disabled?: boolean;
 }
 type EditableMenuItem = MenuItemConfig;
+interface DescriptionItem {
+  key: string;
+  label: string;
+  children: string;
+  span?: number;
+}
 function normalizeOptionItems(value: unknown): OptionItem[] {
   if (typeof value === "string" && value.trim()) {
     try {
@@ -185,6 +191,40 @@ function normalizeDropdownMenuItems(value: unknown): DropdownMenuItem[] {
       key: String(item.key),
       label: String(item.label),
       disabled: Boolean(item.disabled),
+    }))
+    .filter((item) => item.key.trim() && item.label.trim());
+}
+
+function normalizeDescriptionsItems(value: unknown): DescriptionItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeDescriptionsItems(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is DescriptionItem =>
+        typeof item === "object" &&
+        item !== null &&
+        "key" in item &&
+        "label" in item &&
+        "children" in item,
+    )
+    .map((item) => ({
+      key: String(item.key ?? ""),
+      label: String(item.label ?? ""),
+      children: String(item.children ?? ""),
+      span:
+        Number.isInteger(Number(item.span)) && Number(item.span) > 0
+          ? Number(item.span)
+          : 1,
     }))
     .filter((item) => item.key.trim() && item.label.trim());
 }
@@ -352,6 +392,13 @@ function getFormValues(
       mode: normalizeMenuMode(formValues.mode),
       theme: normalizeMenuTheme(formValues.theme),
       selectedKeys: normalizeMenuSelectedKeys(formValues.selectedKeys, items),
+    };
+  }
+
+  if (componentName === "Descriptions") {
+    return {
+      ...formValues,
+      items: normalizeDescriptionsItems(formValues.items),
     };
   }
 
@@ -1017,6 +1064,105 @@ function MenuItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
   );
 }
 
+function DescriptionsItemsSetterInput({
+  value,
+  onChange,
+}: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeDescriptionsItems(value);
+
+  function updateAt(
+    index: number,
+    key: keyof DescriptionItem,
+    nextValue: string | number,
+  ) {
+    const nextItems = normalizedValue.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            [key]: nextValue,
+          }
+        : item,
+    );
+    onChange?.(nextItems);
+  }
+
+  function addItem() {
+    onChange?.([
+      ...normalizedValue,
+      {
+        key: `field${normalizedValue.length + 1}`,
+        label: `字段${normalizedValue.length + 1}`,
+        children: `值${normalizedValue.length + 1}`,
+        span: 1,
+      },
+    ]);
+  }
+
+  function removeItem(index: number) {
+    onChange?.(normalizedValue.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>
+              键值项 {index + 1}
+            </span>
+            <Button danger size="small" type="text" onClick={() => removeItem(index)}>
+              删除
+            </Button>
+          </div>
+          <Input
+            placeholder="key"
+            value={item.key}
+            onChange={(event) => updateAt(index, "key", event.target.value)}
+          />
+          <Input
+            placeholder="字段名"
+            value={item.label}
+            onChange={(event) => updateAt(index, "label", event.target.value)}
+          />
+          <Input.TextArea
+            placeholder="字段值"
+            value={item.children}
+            autoSize={{ minRows: 2, maxRows: 4 }}
+            onChange={(event) => updateAt(index, "children", event.target.value)}
+          />
+          <InputNumber
+            placeholder="占列数"
+            min={1}
+            style={{ width: "100%" }}
+            value={item.span ?? 1}
+            onChange={(value) => updateAt(index, "span", Number(value) || 1)}
+          />
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addItem}>
+        新增键值项
+      </Button>
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -1198,6 +1344,10 @@ export default function ComponentAttr() {
       return <MenuItemsSetterInput />;
     }
 
+    if (type === "descriptionsItems") {
+      return <DescriptionsItemsSetterInput />;
+    }
+
     if (type === "optionList") {
       return <OptionsSetterInput />;
     }
@@ -1310,6 +1460,12 @@ export default function ComponentAttr() {
           mergedItems,
         );
       }
+    }
+
+    if (componentName === "Descriptions" && "items" in normalizedChangeValues) {
+      normalizedChangeValues.items = normalizeDescriptionsItems(
+        normalizedChangeValues.items,
+      );
     }
 
     if (componentName === "DatePicker" && "value" in normalizedChangeValues) {

@@ -6,6 +6,7 @@ import {
   Checkbox,
   Col,
   DatePicker,
+  Descriptions,
   Dropdown,
   Divider,
   Flex,
@@ -94,6 +95,20 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       style: {
         width: "100%",
         minWidth: 160,
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
+  Descriptions: {
+    mapProps: ({ items, title, column, bordered, size, styles, ...rest }) => ({
+      ...rest,
+      items,
+      title,
+      column,
+      bordered,
+      size,
+      style: {
+        width: "100%",
         ...(typeof styles === "object" && styles !== null ? styles : {}),
       },
     }),
@@ -457,6 +472,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   CheckboxGroup,
   Col,
   DatePicker,
+  Descriptions,
   Divider,
   Flex,
   Form,

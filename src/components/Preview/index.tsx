@@ -22,6 +22,7 @@ const VOID_COMPONENTS = [
   "Switch",
   "Select",
   "DatePicker",
+  "Descriptions",
   "Upload",
   "Breadcrumb",
   "Steps",
