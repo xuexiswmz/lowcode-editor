@@ -25,6 +25,7 @@ const VOID_COMPONENTS = [
   "Upload",
   "Breadcrumb",
   "Steps",
+  "Dropdown",
   "Tabs",
 ];
 

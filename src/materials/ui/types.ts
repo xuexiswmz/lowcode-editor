@@ -5,6 +5,7 @@ import type {
   Card as AntdCard,
   Checkbox as AntdCheckbox,
   DatePicker as AntdDatePicker,
+  Dropdown as AntdDropdown,
   Divider as AntdDivider,
   Flex as AntdFlex,
   Form as AntdForm,
@@ -71,6 +72,12 @@ export interface MaterialBindings {
     ) => Record<string, unknown>;
   };
   Steps: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
+  Dropdown: {
     mapProps: (
       props: Record<string, unknown>,
       context?: MaterialBindingContext,
@@ -212,6 +219,7 @@ export interface MaterialUIAdapter {
   CheckboxGroup: typeof AntdCheckbox.Group;
   Select: typeof AntdSelect;
   Steps: typeof AntdSteps;
+  Dropdown: typeof AntdDropdown;
   Tabs: typeof AntdTabs;
   Upload: typeof AntdUpload;
   Switch: typeof AntdSwitch;

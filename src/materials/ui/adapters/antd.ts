@@ -6,6 +6,7 @@ import {
   Checkbox,
   Col,
   DatePicker,
+  Dropdown,
   Divider,
   Flex,
   Form,
@@ -127,6 +128,35 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       status,
       onChange,
       style: styles,
+    }),
+  },
+  Dropdown: {
+    mapProps: ({
+      menu,
+      trigger,
+      placement,
+      disabled,
+      open,
+      onOpenChange,
+      autoAdjustOverflow,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      menu,
+      trigger: Array.isArray(trigger)
+        ? trigger
+        : trigger === "contextMenu"
+          ? ["contextMenu"]
+          : trigger === "click"
+            ? ["click"]
+            : ["hover"],
+      placement,
+      disabled,
+      open,
+      onOpenChange,
+      autoAdjustOverflow,
+      overlayStyle: styles,
     }),
   },
   Tabs: {
@@ -406,6 +436,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   RadioGroup,
   Select,
   Steps,
+  Dropdown,
   Tabs,
   Upload,
   Switch,

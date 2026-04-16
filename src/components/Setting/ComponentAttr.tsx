@@ -48,6 +48,11 @@ interface TabsItem {
   children?: string;
   disabled?: boolean;
 }
+interface DropdownMenuItem {
+  key: string;
+  label: string;
+  disabled?: boolean;
+}
 
 function normalizeOptionItems(value: unknown): OptionItem[] {
   if (typeof value === "string" && value.trim()) {
@@ -142,6 +147,35 @@ function normalizeTabsItems(value: unknown): TabsItem[] {
         typeof item.children === "string" && item.children.trim()
           ? item.children
           : undefined,
+      disabled: Boolean(item.disabled),
+    }))
+    .filter((item) => item.key.trim() && item.label.trim());
+}
+
+function normalizeDropdownMenuItems(value: unknown): DropdownMenuItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeDropdownMenuItems(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is DropdownMenuItem =>
+        typeof item === "object" &&
+        item !== null &&
+        "key" in item &&
+        "label" in item,
+    )
+    .map((item) => ({
+      key: String(item.key),
+      label: String(item.label),
       disabled: Boolean(item.disabled),
     }))
     .filter((item) => item.key.trim() && item.label.trim());
@@ -654,6 +688,105 @@ function TabsItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
   );
 }
 
+function DropdownMenuItemsSetterInput({
+  value,
+  onChange,
+}: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeDropdownMenuItems(value);
+
+  function updateAt(
+    index: number,
+    key: keyof DropdownMenuItem,
+    nextValue: string | boolean,
+  ) {
+    const nextItems = normalizedValue.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            [key]: nextValue,
+          }
+        : item,
+    );
+    onChange?.(nextItems);
+  }
+
+  function addItem() {
+    onChange?.([
+      ...normalizedValue,
+      {
+        key: `menu${normalizedValue.length + 1}`,
+        label: `菜单${normalizedValue.length + 1}`,
+        disabled: false,
+      },
+    ]);
+  }
+
+  function removeItem(index: number) {
+    onChange?.(normalizedValue.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>
+              菜单项 {index + 1}
+            </span>
+            <Button danger size="small" type="text" onClick={() => removeItem(index)}>
+              删除
+            </Button>
+          </div>
+          <Input
+            placeholder="key"
+            value={item.key}
+            onChange={(event) => updateAt(index, "key", event.target.value)}
+          />
+          <Input
+            placeholder="标题"
+            value={item.label}
+            onChange={(event) => updateAt(index, "label", event.target.value)}
+          />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>禁用</span>
+            <Switch
+              checked={item.disabled}
+              onChange={(checked) => updateAt(index, "disabled", checked)}
+            />
+          </div>
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addItem}>
+        新增菜单项
+      </Button>
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -817,6 +950,10 @@ export default function ComponentAttr() {
       return <TabsItemsSetterInput />;
     }
 
+    if (type === "dropdownMenuItems") {
+      return <DropdownMenuItemsSetterInput />;
+    }
+
     if (type === "optionList") {
       return <OptionsSetterInput />;
     }
@@ -897,6 +1034,12 @@ export default function ComponentAttr() {
           mergedItems,
         );
       }
+    }
+
+    if (componentName === "Dropdown" && "menu" in normalizedChangeValues) {
+      normalizedChangeValues.menu = normalizeDropdownMenuItems(
+        normalizedChangeValues.menu,
+      );
     }
 
     if (componentName === "DatePicker" && "value" in normalizedChangeValues) {
