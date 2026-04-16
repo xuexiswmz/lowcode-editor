@@ -50,6 +50,7 @@ const iconMap = {
   Textarea: RadiusSettingOutlined,
   Link: LinkOutlined,
   Modal: FileImageOutlined,
+  Menu: MenuOutlined,
   Text: FontSizeOutlined,
   Page: MenuOutlined,
   Radio: CheckCircleOutlined,

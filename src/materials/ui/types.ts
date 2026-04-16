@@ -11,6 +11,7 @@ import type {
   Form as AntdForm,
   Image as AntdImage,
   Input as AntdInput,
+  Menu as AntdMenu,
   Modal as AntdModal,
   Radio as AntdRadio,
   Select as AntdSelect,
@@ -84,6 +85,12 @@ export interface MaterialBindings {
     ) => Record<string, unknown>;
   };
   Tabs: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
+  Menu: {
     mapProps: (
       props: Record<string, unknown>,
       context?: MaterialBindingContext,
@@ -221,6 +228,7 @@ export interface MaterialUIAdapter {
   Steps: typeof AntdSteps;
   Dropdown: typeof AntdDropdown;
   Tabs: typeof AntdTabs;
+  Menu: typeof AntdMenu;
   Upload: typeof AntdUpload;
   Switch: typeof AntdSwitch;
   Modal: typeof AntdModal;

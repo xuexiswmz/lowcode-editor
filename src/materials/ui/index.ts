@@ -16,6 +16,7 @@ export const {
   Form,
   Image,
   Input,
+  Menu,
   TextArea,
   RadioGroup,
   Select,

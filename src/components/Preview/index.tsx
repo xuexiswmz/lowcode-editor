@@ -26,6 +26,7 @@ const VOID_COMPONENTS = [
   "Breadcrumb",
   "Steps",
   "Dropdown",
+  "Menu",
   "Tabs",
 ];
 

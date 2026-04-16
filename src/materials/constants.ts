@@ -115,6 +115,12 @@ export const DROPDOWN_ALLOWED_PARENTS = [
   "Modal",
   "Card",
 ] as const;
+export const MENU_ALLOWED_PARENTS = [
+  "Page",
+  "Container",
+  "Modal",
+  "Drawer",
+] as const;
 export const UPLOAD_ALLOWED_PARENTS = [
   "Page",
   "Container",
@@ -223,6 +229,7 @@ export const MATERIAL_ALLOWED_PARENTS = {
   Steps: STEPS_ALLOWED_PARENTS,
   Tabs: TABS_ALLOWED_PARENTS,
   Dropdown: DROPDOWN_ALLOWED_PARENTS,
+  Menu: MENU_ALLOWED_PARENTS,
   Upload: UPLOAD_ALLOWED_PARENTS,
   Form: FORM_ALLOWED_PARENTS,
   FormItem: FORM_ITEM_ALLOWED_PARENTS,

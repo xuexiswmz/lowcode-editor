@@ -15,6 +15,7 @@ import IconConfig from "./Icon/material";
 import ImageConfig from "./Image/material";
 import InputConfig from "./Input/material";
 import LinkConfig from "./Link/material";
+import MenuConfig from "./Menu/material";
 import ModalConfig from "./Modal/material";
 import PageConfig from "./Page/material";
 import RadioConfig from "./Radio/material";
@@ -52,6 +53,7 @@ const builtinConfigs: ComponentConfig[] = [
   ImageConfig,
   InputConfig,
   LinkConfig,
+  MenuConfig,
   ModalConfig,
   PageConfig,
   RadioConfig,

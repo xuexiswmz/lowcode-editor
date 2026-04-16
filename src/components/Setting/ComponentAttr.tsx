@@ -22,6 +22,14 @@ import {
   normalizeSingleChoiceValue,
   type ChoiceOption,
 } from "../../materials/shared/choice";
+import {
+  flattenMenuSelectableItems,
+  normalizeMenuItems,
+  normalizeMenuMode,
+  normalizeMenuSelectedKeys,
+  normalizeMenuTheme,
+  type MenuItemConfig,
+} from "../../materials/shared/menu";
 import { useComponentsStore } from "../../stores/components";
 import {
   useComponentConfigStore,
@@ -53,7 +61,7 @@ interface DropdownMenuItem {
   label: string;
   disabled?: boolean;
 }
-
+type EditableMenuItem = MenuItemConfig;
 function normalizeOptionItems(value: unknown): OptionItem[] {
   if (typeof value === "string" && value.trim()) {
     try {
@@ -226,6 +234,10 @@ function getCurrentStepSelectOptions(currentProps: Record<string, unknown>) {
   }));
 }
 
+function getCurrentMenuSelectOptions(currentProps: Record<string, unknown>) {
+  return flattenMenuSelectableItems(normalizeMenuItems(currentProps.items));
+}
+
 function getSelectMode(currentProps: Record<string, unknown>) {
   return normalizeChoiceMode(currentProps.mode);
 }
@@ -328,6 +340,18 @@ function getFormValues(
     return {
       ...formValues,
       value: dateValue,
+    };
+  }
+
+  if (componentName === "Menu") {
+    const items = normalizeMenuItems(formValues.items);
+
+    return {
+      ...formValues,
+      items,
+      mode: normalizeMenuMode(formValues.mode),
+      theme: normalizeMenuTheme(formValues.theme),
+      selectedKeys: normalizeMenuSelectedKeys(formValues.selectedKeys, items),
     };
   }
 
@@ -787,6 +811,212 @@ function DropdownMenuItemsSetterInput({
   );
 }
 
+function MenuItemsSetterInput({ value, onChange }: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeMenuItems(value);
+
+  function updateItems(nextItems: EditableMenuItem[]) {
+    onChange?.(nextItems);
+  }
+
+  function updateItemAtPath(
+    items: EditableMenuItem[],
+    path: number[],
+    updater: (item: EditableMenuItem) => EditableMenuItem,
+  ): EditableMenuItem[] {
+    return items.map((item, index) => {
+      if (index !== path[0]) {
+        return item;
+      }
+
+      if (path.length === 1) {
+        return updater(item);
+      }
+
+      return {
+        ...item,
+        children: updateItemAtPath(item.children ?? [], path.slice(1), updater),
+      };
+    });
+  }
+
+  function removeItemAtPath(items: EditableMenuItem[], path: number[]): EditableMenuItem[] {
+    return items.flatMap((item, index) => {
+      if (index !== path[0]) {
+        return [item];
+      }
+
+      if (path.length === 1) {
+        return [];
+      }
+
+      const nextChildren = removeItemAtPath(item.children ?? [], path.slice(1));
+      return [
+        {
+          ...item,
+          children: nextChildren.length > 0 ? nextChildren : undefined,
+        },
+      ];
+    });
+  }
+
+  function createMenuItem(seed: number): EditableMenuItem {
+    return {
+      key: `menu-${seed}`,
+      label: `菜单${seed}`,
+      disabled: false,
+    };
+  }
+
+  function addRootItem() {
+    updateItems([...normalizedValue, createMenuItem(normalizedValue.length + 1)]);
+  }
+
+  function addSibling(path: number[]) {
+    function insertAtPath(items: EditableMenuItem[], currentPath: number[]): EditableMenuItem[] {
+      if (currentPath.length === 1) {
+        const insertIndex = currentPath[0] + 1;
+        const nextItems = [...items];
+        nextItems.splice(insertIndex, 0, createMenuItem(Date.now()));
+        return nextItems;
+      }
+
+      return items.map((item, index) =>
+        index === currentPath[0]
+          ? {
+              ...item,
+              children: insertAtPath(item.children ?? [], currentPath.slice(1)),
+            }
+          : item,
+      );
+    }
+
+    updateItems(insertAtPath(normalizedValue, path));
+  }
+
+  function addChild(path: number[]) {
+    updateItems(
+      updateItemAtPath(normalizedValue, path, (item) => ({
+        ...item,
+        children: [
+          ...(item.children ?? []),
+          createMenuItem(Date.now()),
+        ],
+      })),
+    );
+  }
+
+  function updateField(
+    path: number[],
+    key: keyof EditableMenuItem,
+    nextValue: string | boolean,
+  ) {
+    updateItems(
+      updateItemAtPath(normalizedValue, path, (item) => ({
+        ...item,
+        [key]: nextValue,
+      })),
+    );
+  }
+
+  function removeItem(path: number[]) {
+    updateItems(removeItemAtPath(normalizedValue, path));
+  }
+
+  function renderItems(items: EditableMenuItem[], parentPath: number[] = [], depth = 0) {
+    return items.map((item, index) => {
+      const path = [...parentPath, index];
+      const pathKey = path.join("-");
+
+      return (
+        <div
+          key={pathKey}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+            minWidth: 0,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+              flexWrap: "wrap",
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>
+              菜单项 {path.map((itemIndex) => itemIndex + 1).join(".")}
+            </span>
+            <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+              <Button size="small" type="text" onClick={() => addSibling(path)}>
+                新增同级
+              </Button>
+              <Button size="small" type="text" onClick={() => addChild(path)}>
+                新增子级
+              </Button>
+              <Button danger size="small" type="text" onClick={() => removeItem(path)}>
+                删除
+              </Button>
+            </div>
+          </div>
+          <Input
+            placeholder="key"
+            value={item.key}
+            onChange={(event) => updateField(path, "key", event.target.value)}
+          />
+          <Input
+            placeholder="标题"
+            value={item.label}
+            onChange={(event) => updateField(path, "label", event.target.value)}
+          />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>禁用</span>
+            <Switch
+              checked={item.disabled}
+              onChange={(checked) => updateField(path, "disabled", checked)}
+            />
+          </div>
+          {item.children && item.children.length > 0 ? (
+            <div
+              style={{
+                display: "grid",
+                gap: 8,
+                minWidth: 0,
+                paddingLeft: 12,
+                marginLeft: 4,
+                borderLeft: "2px solid #f0f0f0",
+              }}
+            >
+              {renderItems(item.children, path, depth + 1)}
+            </div>
+          ) : null}
+        </div>
+      );
+    });
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {renderItems(normalizedValue)}
+      <Button type="dashed" block onClick={addRootItem}>
+        新增菜单项
+      </Button>
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -879,6 +1109,16 @@ export default function ComponentAttr() {
         );
       }
 
+      if (componentName === "Menu" && name === "selectedKeys") {
+        return (
+          <Select
+            mode="multiple"
+            options={getCurrentMenuSelectOptions(currentProps)}
+            placeholder="请先配置可选菜单项"
+          />
+        );
+      }
+
       if (componentName === "Select" && name === "mode") {
         return (
           <Select
@@ -952,6 +1192,10 @@ export default function ComponentAttr() {
 
     if (type === "dropdownMenuItems") {
       return <DropdownMenuItemsSetterInput />;
+    }
+
+    if (type === "menuItems") {
+      return <MenuItemsSetterInput />;
     }
 
     if (type === "optionList") {
@@ -1040,6 +1284,32 @@ export default function ComponentAttr() {
       normalizedChangeValues.menu = normalizeDropdownMenuItems(
         normalizedChangeValues.menu,
       );
+    }
+
+    if (componentName === "Menu") {
+      if ("items" in normalizedChangeValues) {
+        normalizedChangeValues.items = normalizeMenuItems(
+          normalizedChangeValues.items,
+        );
+      }
+
+      if ("mode" in normalizedChangeValues) {
+        normalizedChangeValues.mode = normalizeMenuMode(normalizedChangeValues.mode);
+      }
+
+      if ("theme" in normalizedChangeValues) {
+        normalizedChangeValues.theme = normalizeMenuTheme(normalizedChangeValues.theme);
+      }
+
+      if ("items" in normalizedChangeValues || "selectedKeys" in normalizedChangeValues) {
+        const mergedItems = normalizeMenuItems(
+          normalizedChangeValues.items ?? currentProps.items,
+        );
+        normalizedChangeValues.selectedKeys = normalizeMenuSelectedKeys(
+          normalizedChangeValues.selectedKeys ?? currentProps.selectedKeys,
+          mergedItems,
+        );
+      }
     }
 
     if (componentName === "DatePicker" && "value" in normalizedChangeValues) {
