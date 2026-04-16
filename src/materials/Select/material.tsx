@@ -10,6 +10,7 @@ import {
   type ChoiceMode,
   type ChoiceOption,
 } from "../shared/choice";
+import { getComponentPopupContainer } from "../shared/popup";
 import { Select, materials } from "../ui";
 
 type SelectProps = Omit<CommonComponentProps, "children"> & {
@@ -71,6 +72,7 @@ const SelectRenderer = forwardRef<HTMLDivElement, SelectProps>(
               onSelect,
               onSearch,
               showSearch: true,
+              getPopupContainer: getComponentPopupContainer,
               styles,
               ...props,
             },
@@ -127,6 +129,7 @@ const SelectEditorRenderer = forwardRef<HTMLDivElement, SelectProps>(
               onSelect,
               onSearch,
               showSearch: true,
+              getPopupContainer: getComponentPopupContainer,
               styles,
               ...props,
             },

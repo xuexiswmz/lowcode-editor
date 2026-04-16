@@ -11,6 +11,7 @@ import type { CommonComponentProps } from "../../interface";
 import { DROPDOWN_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import { wrapPopupWithComponent } from "../shared/popup";
 import { Dropdown, materials } from "../ui";
 
 type DropdownTrigger = "hover" | "click" | "contextMenu";
@@ -111,17 +112,6 @@ function DropdownTriggerButton({ disabled }: { disabled?: boolean }) {
   );
 }
 
-function renderDropdownPopup(id: number, originNode: ReactNode) {
-  return (
-    <span
-      data-component-id={id}
-      style={{ display: "inline-block", width: "max-content" }}
-    >
-      {originNode}
-    </span>
-  );
-}
-
 const DropdownRenderer = forwardRef<DropdownMaterialRef, DropdownProps>(
   (
     {
@@ -172,7 +162,7 @@ const DropdownRenderer = forwardRef<DropdownMaterialRef, DropdownProps>(
               autoAdjustOverflow: false,
               minOverlayWidthMatchTrigger: false,
               popupRender: (originNode: ReactNode) =>
-                renderDropdownPopup(id, originNode),
+                wrapPopupWithComponent(id, originNode),
               onOpenChange: (nextOpen: boolean) => {
                 handleOpenChange(nextOpen);
                 onOpenChange?.(nextOpen);
@@ -232,7 +222,7 @@ const DropdownEditorRenderer = forwardRef<HTMLDivElement, DropdownProps>(
               autoAdjustOverflow: false,
               minOverlayWidthMatchTrigger: false,
               popupRender: (originNode: ReactNode) =>
-                renderDropdownPopup(id, originNode),
+                wrapPopupWithComponent(id, originNode),
               onOpenChange: (nextOpen: boolean) => {
                 handleOpenChange(nextOpen);
                 onOpenChange?.(nextOpen);

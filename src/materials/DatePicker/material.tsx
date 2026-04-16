@@ -5,6 +5,7 @@ import { useComponentsStore } from "../../stores/components";
 import { DATE_PICKER_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import { getComponentPopupContainer } from "../shared/popup";
 import { DatePicker, materials } from "../ui";
 
 type DatePickerMode = "date" | "week" | "month" | "quarter" | "year";
@@ -119,6 +120,7 @@ const DatePickerRenderer = forwardRef<MaterialDatePickerRef, DatePickerProps>(
             format: resolvedFormat,
             placeholder: getDatePickerPlaceholder(picker, placeholder),
             disabled,
+            getPopupContainer: getComponentPopupContainer,
             onChange: (nextValue: Dayjs | null) => {
               const serializedValue = serializeDateValue(nextValue, resolvedFormat);
               updateComponentProps(id, { value: serializedValue });
@@ -165,6 +167,7 @@ const DatePickerEditorRenderer = forwardRef<HTMLDivElement, DatePickerProps>(
               format: resolvedFormat,
               placeholder: getDatePickerPlaceholder(picker, placeholder),
               disabled,
+              getPopupContainer: getComponentPopupContainer,
               onChange: (nextValue: Dayjs | null) => {
                 const serializedValue = serializeDateValue(nextValue, resolvedFormat);
                 updateComponentProps(id, { value: serializedValue });

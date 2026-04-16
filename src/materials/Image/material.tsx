@@ -3,6 +3,7 @@ import type { CommonComponentProps } from "../../interface";
 import { IMAGE_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import { normalizeImagePreviewConfig } from "../shared/popup";
 import { Image, materials } from "../ui";
 import ImagePlaceholder from "./Placeholder";
 
@@ -34,7 +35,7 @@ const ImageRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
               height,
               width,
               placeholder,
-              preview,
+              preview: normalizeImagePreviewConfig(id, preview),
               onError,
             },
             { mode: "preview" },
