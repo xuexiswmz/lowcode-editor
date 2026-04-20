@@ -209,6 +209,14 @@ export const BADGE_ALLOWED_PARENTS = [
   "Flex",
   "Space",
 ] as const;
+export const PROGRESS_ALLOWED_PARENTS = [
+  "Page",
+  "Container",
+  "Modal",
+  "Card",
+  "Flex",
+  "Space",
+] as const;
 export const ICON_ALLOWED_PARENTS = [
   "Page",
   "Container",
@@ -281,6 +289,7 @@ export const MATERIAL_ALLOWED_PARENTS = {
   Tag: TAG_ALLOWED_PARENTS,
   Avatar: AVATAR_ALLOWED_PARENTS,
   Badge: BADGE_ALLOWED_PARENTS,
+  Progress: PROGRESS_ALLOWED_PARENTS,
   Icon: ICON_ALLOWED_PARENTS,
   Space: SPACE_ALLOWED_PARENTS,
   Flex: FLEX_ALLOWED_PARENTS,

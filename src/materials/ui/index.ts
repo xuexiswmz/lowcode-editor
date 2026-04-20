@@ -27,6 +27,7 @@ export const {
   Upload,
   Switch,
   Modal,
+  Progress,
   Row,
   Space,
   Tag,

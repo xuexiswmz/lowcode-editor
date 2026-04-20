@@ -16,6 +16,7 @@ import {
   Input,
   Menu,
   Modal,
+  Progress,
   Radio,
   Select,
   Row,
@@ -258,6 +259,29 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       style: {
         width: mode === "horizontal" ? "100%" : inlineCollapsed ? 80 : 220,
         minWidth: mode === "horizontal" ? 0 : inlineCollapsed ? 80 : 220,
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
+  Progress: {
+    mapProps: ({
+      percent,
+      status,
+      type,
+      strokeColor,
+      showInfo,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      percent,
+      status,
+      type,
+      strokeColor,
+      showInfo,
+      style: {
+        width: type === "circle" || type === "dashboard" ? undefined : "100%",
+        minWidth: type === "circle" || type === "dashboard" ? undefined : 160,
         ...(typeof styles === "object" && styles !== null ? styles : {}),
       },
     }),
@@ -517,6 +541,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Upload,
   Switch,
   Modal,
+  Progress,
   Row,
   Space,
   Tag,

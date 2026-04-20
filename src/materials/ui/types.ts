@@ -15,6 +15,7 @@ import type {
   Input as AntdInput,
   Menu as AntdMenu,
   Modal as AntdModal,
+  Progress as AntdProgress,
   Radio as AntdRadio,
   Select as AntdSelect,
   Steps as AntdSteps,
@@ -105,6 +106,12 @@ export interface MaterialBindings {
     ) => Record<string, unknown>;
   };
   Menu: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
+  Progress: {
     mapProps: (
       props: Record<string, unknown>,
       context?: MaterialBindingContext,
@@ -248,6 +255,7 @@ export interface MaterialUIAdapter {
   Upload: typeof AntdUpload;
   Switch: typeof AntdSwitch;
   Modal: typeof AntdModal;
+  Progress: typeof AntdProgress;
   Col: typeof AntdCol;
   Row: typeof AntdRow;
   Space: typeof AntdSpace;
