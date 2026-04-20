@@ -1,4 +1,5 @@
 import AvatarConfig from "./Avatar/material";
+import BadgeConfig from "./Badge/material";
 import BreadcrumbConfig from "./Breadcrumb/material";
 import ButtonConfig from "./Button/material";
 import CardConfig from "./Card/material";
@@ -38,6 +39,7 @@ export {
 
 const builtinConfigs: ComponentConfig[] = [
   AvatarConfig,
+  BadgeConfig,
   BreadcrumbConfig,
   ButtonConfig,
   CardConfig,

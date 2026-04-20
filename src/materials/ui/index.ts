@@ -4,6 +4,7 @@ export const materialUI = antdMaterialUIAdapter;
 
 export const {
   Avatar,
+  Badge,
   Breadcrumb,
   Button,
   Card,

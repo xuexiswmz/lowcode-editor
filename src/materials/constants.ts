@@ -8,6 +8,7 @@ export const CONTAINER_ALLOWED_PARENTS = [
   "Card",
   "Row",
   "Col",
+  "Badge",
 ] as const;
 export const BUTTON_ALLOWED_PARENTS = [
   "Page",
@@ -18,6 +19,7 @@ export const BUTTON_ALLOWED_PARENTS = [
   "Card",
   "Row",
   "Col",
+  "Badge",
 ] as const;
 export const TEXT_ALLOWED_PARENTS = [
   "Page",
@@ -28,6 +30,7 @@ export const TEXT_ALLOWED_PARENTS = [
   "Card",
   "Row",
   "Col",
+  "Badge",
 ] as const;
 export const DIVIDER_ALLOWED_PARENTS = [
   "Page",
@@ -38,6 +41,7 @@ export const DIVIDER_ALLOWED_PARENTS = [
   "Card",
   "Row",
   "Col",
+  "Badge",
 ] as const;
 export const INPUT_ALLOWED_PARENTS = [
   "Page",
@@ -48,6 +52,7 @@ export const INPUT_ALLOWED_PARENTS = [
   "Card",
   "Row",
   "Col",
+  "Badge",
 ] as const;
 export const TEXTAREA_ALLOWED_PARENTS = [
   "Page",
@@ -55,6 +60,7 @@ export const TEXTAREA_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Form",
+  "Badge",
 ] as const;
 export const RADIO_ALLOWED_PARENTS = [
   "Page",
@@ -62,6 +68,7 @@ export const RADIO_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Form",
+  "Badge",
 ] as const;
 export const CHECKBOX_ALLOWED_PARENTS = [
   "Page",
@@ -69,6 +76,7 @@ export const CHECKBOX_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Form",
+  "Badge",
 ] as const;
 export const SWITCH_ALLOWED_PARENTS = [
   "Page",
@@ -76,6 +84,7 @@ export const SWITCH_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Form",
+  "Badge",
 ] as const;
 export const SELECT_ALLOWED_PARENTS = [
   "Page",
@@ -83,6 +92,7 @@ export const SELECT_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Form",
+  "Badge",
 ] as const;
 export const DATE_PICKER_ALLOWED_PARENTS = [
   "Page",
@@ -90,42 +100,49 @@ export const DATE_PICKER_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Form",
+  "Badge",
 ] as const;
 export const BREADCRUMB_ALLOWED_PARENTS = [
   "Page",
   "Container",
   "Modal",
   "Card",
+  "Badge",
 ] as const;
 export const STEPS_ALLOWED_PARENTS = [
   "Page",
   "Container",
   "Modal",
   "Card",
+  "Badge",
 ] as const;
 export const TABS_ALLOWED_PARENTS = [
   "Page",
   "Container",
   "Modal",
   "Drawer",
+  "Badge",
 ] as const;
 export const DROPDOWN_ALLOWED_PARENTS = [
   "Page",
   "Container",
   "Modal",
   "Card",
+  "Badge",
 ] as const;
 export const MENU_ALLOWED_PARENTS = [
   "Page",
   "Container",
   "Modal",
   "Drawer",
+  "Badge",
 ] as const;
 export const DESCRIPTIONS_ALLOWED_PARENTS = [
   "Page",
   "Container",
   "Modal",
   "Card",
+  "Badge",
 ] as const;
 export const UPLOAD_ALLOWED_PARENTS = [
   "Page",
@@ -133,6 +150,7 @@ export const UPLOAD_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Form",
+  "Badge",
 ] as const;
 export const FORM_ALLOWED_PARENTS = [
   "Page",
@@ -143,6 +161,7 @@ export const FORM_ALLOWED_PARENTS = [
   "Card",
   "Row",
   "Col",
+  "Badge",
 ] as const;
 export const IMAGE_ALLOWED_PARENTS = [
   "Page",
@@ -153,6 +172,7 @@ export const IMAGE_ALLOWED_PARENTS = [
   "Card",
   "Row",
   "Col",
+  "Badge",
 ] as const;
 export const LINK_ALLOWED_PARENTS = [
   "Page",
@@ -161,6 +181,7 @@ export const LINK_ALLOWED_PARENTS = [
   "Card",
   "Flex",
   "Space",
+  "Badge",
 ] as const;
 export const TAG_ALLOWED_PARENTS = [
   "Page",
@@ -169,8 +190,18 @@ export const TAG_ALLOWED_PARENTS = [
   "Card",
   "Flex",
   "Space",
+  "Badge",
 ] as const;
 export const AVATAR_ALLOWED_PARENTS = [
+  "Page",
+  "Container",
+  "Modal",
+  "Card",
+  "Flex",
+  "Space",
+  "Badge",
+] as const;
+export const BADGE_ALLOWED_PARENTS = [
   "Page",
   "Container",
   "Modal",
@@ -186,6 +217,7 @@ export const ICON_ALLOWED_PARENTS = [
   "Flex",
   "Space",
   "Button",
+  "Badge",
 ] as const;
 export const SPACE_ALLOWED_PARENTS = [
   "Page",
@@ -193,6 +225,7 @@ export const SPACE_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Drawer",
+  "Badge",
 ] as const;
 export const FLEX_ALLOWED_PARENTS = [
   "Page",
@@ -200,12 +233,14 @@ export const FLEX_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Drawer",
+  "Badge",
 ] as const;
 export const CARD_ALLOWED_PARENTS = [
   "Page",
   "Container",
   "Modal",
   "Drawer",
+  "Badge",
 ] as const;
 export const MODAL_ALLOWED_PARENTS = ["Page"] as const;
 export const FORM_ITEM_ALLOWED_PARENTS = ["Form"] as const;
@@ -215,6 +250,7 @@ export const ROW_ALLOWED_PARENTS = [
   "Modal",
   "Card",
   "Drawer",
+  "Badge",
 ] as const;
 export const COL_ALLOWED_PARENTS = ["Row"] as const;
 
@@ -244,6 +280,7 @@ export const MATERIAL_ALLOWED_PARENTS = {
   Link: LINK_ALLOWED_PARENTS,
   Tag: TAG_ALLOWED_PARENTS,
   Avatar: AVATAR_ALLOWED_PARENTS,
+  Badge: BADGE_ALLOWED_PARENTS,
   Icon: ICON_ALLOWED_PARENTS,
   Space: SPACE_ALLOWED_PARENTS,
   Flex: FLEX_ALLOWED_PARENTS,

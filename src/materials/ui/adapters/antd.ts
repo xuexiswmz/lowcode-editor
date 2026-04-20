@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Badge,
   Breadcrumb,
   Button,
   Card,
@@ -41,6 +42,33 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       size: size === "medium" ? "default" : size,
       src,
       style: styles,
+    }),
+  },
+  Badge: {
+    mapProps: ({
+      count,
+      status,
+      text,
+      color,
+      dot,
+      overflowCount,
+      offset,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      count,
+      status,
+      text,
+      color,
+      dot,
+      overflowCount,
+      offset,
+      style: {
+        display: "inline-flex",
+        alignItems: "center",
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
     }),
   },
   Breadcrumb: {
@@ -466,6 +494,7 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
 
 export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Avatar,
+  Badge,
   Breadcrumb,
   Button,
   Card,
