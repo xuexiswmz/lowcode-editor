@@ -68,6 +68,12 @@ interface DescriptionItem {
   children: string;
   span?: number;
 }
+interface ListDataItem {
+  key: string;
+  title: string;
+  description?: string;
+  extra?: string;
+}
 function normalizeOptionItems(value: unknown): OptionItem[] {
   if (typeof value === "string" && value.trim()) {
     try {
@@ -260,6 +266,36 @@ function normalizeEditableMenuItems(value: unknown): EditableMenuItem[] {
     }));
 }
 
+function normalizeEditableListDataSource(value: unknown): ListDataItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeEditableListDataSource(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is ListDataItem =>
+        typeof item === "object" &&
+        item !== null &&
+        "key" in item &&
+        "title" in item,
+    )
+    .map((item) => ({
+      key: String(item.key ?? ""),
+      title: String(item.title ?? ""),
+      description:
+        typeof item.description === "string" ? item.description : undefined,
+      extra: typeof item.extra === "string" ? item.extra : undefined,
+    }));
+}
+
 function normalizeStepsCurrent(current: unknown, items: StepItem[]) {
   const numericValue = Number(current);
 
@@ -433,6 +469,13 @@ function getFormValues(
     return {
       ...formValues,
       items: normalizeEditableDescriptionsItems(formValues.items),
+    };
+  }
+
+  if (componentName === "List") {
+    return {
+      ...formValues,
+      dataSource: normalizeEditableListDataSource(formValues.dataSource),
     };
   }
 
@@ -1197,6 +1240,103 @@ function DescriptionsItemsSetterInput({
   );
 }
 
+function ListDataSourceSetterInput({
+  value,
+  onChange,
+}: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeEditableListDataSource(value);
+
+  function updateAt(
+    index: number,
+    key: keyof ListDataItem,
+    nextValue: string,
+  ) {
+    const nextItems = normalizedValue.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            [key]: nextValue,
+          }
+        : item,
+    );
+    onChange?.(nextItems);
+  }
+
+  function addItem() {
+    onChange?.([
+      ...normalizedValue,
+      {
+        key: `list-${normalizedValue.length + 1}`,
+        title: `列表项${normalizedValue.length + 1}`,
+        description: `这里是列表项${normalizedValue.length + 1}的描述信息`,
+        extra: "",
+      },
+    ]);
+  }
+
+  function removeItem(index: number) {
+    onChange?.(normalizedValue.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>
+              数据项 {index + 1}
+            </span>
+            <Button danger size="small" type="text" onClick={() => removeItem(index)}>
+              删除
+            </Button>
+          </div>
+          <Input
+            placeholder="key"
+            value={item.key}
+            onChange={(event) => updateAt(index, "key", event.target.value)}
+          />
+          <Input
+            placeholder="标题"
+            value={item.title}
+            onChange={(event) => updateAt(index, "title", event.target.value)}
+          />
+          <Input.TextArea
+            placeholder="描述"
+            value={item.description ?? ""}
+            autoSize={{ minRows: 2, maxRows: 4 }}
+            onChange={(event) => updateAt(index, "description", event.target.value)}
+          />
+          <Input
+            placeholder="右侧内容(可选)"
+            value={item.extra ?? ""}
+            onChange={(event) => updateAt(index, "extra", event.target.value)}
+          />
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addItem}>
+        新增数据项
+      </Button>
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -1382,6 +1522,10 @@ export default function ComponentAttr() {
       return <DescriptionsItemsSetterInput />;
     }
 
+    if (type === "listDataSource") {
+      return <ListDataSourceSetterInput />;
+    }
+
     if (type === "optionList") {
       return <OptionsSetterInput />;
     }
@@ -1499,6 +1643,12 @@ export default function ComponentAttr() {
     if (componentName === "Descriptions" && "items" in normalizedChangeValues) {
       normalizedChangeValues.items = normalizeEditableDescriptionsItems(
         normalizedChangeValues.items,
+      );
+    }
+
+    if (componentName === "List" && "dataSource" in normalizedChangeValues) {
+      normalizedChangeValues.dataSource = normalizeEditableListDataSource(
+        normalizedChangeValues.dataSource,
       );
     }
 

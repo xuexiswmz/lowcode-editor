@@ -53,6 +53,8 @@ export const field = {
     createSetter("menuItems", name, label, extra),
   descriptionsItems: (name: string, label: string, extra?: SetterExtra) =>
     createSetter("descriptionsItems", name, label, extra),
+  listDataSource: (name: string, label: string, extra?: SetterExtra) =>
+    createSetter("listDataSource", name, label, extra),
   readonlyJson: (name: string, label: string, extra?: SetterExtra) =>
     createSetter("readonlyJson", name, label, extra),
 };

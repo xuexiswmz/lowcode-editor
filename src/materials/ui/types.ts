@@ -13,6 +13,7 @@ import type {
   Form as AntdForm,
   Image as AntdImage,
   Input as AntdInput,
+  List as AntdList,
   Menu as AntdMenu,
   Modal as AntdModal,
   Progress as AntdProgress,
@@ -169,6 +170,12 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  List: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   TextArea: {
     mapProps: (
       props: Record<string, unknown>,
@@ -244,6 +251,7 @@ export interface MaterialUIAdapter {
   Form: typeof AntdForm;
   Image: typeof AntdImage;
   Input: typeof AntdInput;
+  List: typeof AntdList;
   TextArea: typeof AntdInput.TextArea;
   RadioGroup: typeof AntdRadio.Group;
   CheckboxGroup: typeof AntdCheckbox.Group;

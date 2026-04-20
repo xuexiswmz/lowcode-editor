@@ -14,6 +14,7 @@ import {
   Form,
   Image,
   Input,
+  List,
   Menu,
   Modal,
   Progress,
@@ -371,6 +372,32 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       onError,
     }),
   },
+  List: {
+    mapProps: ({
+      dataSource,
+      itemLayout,
+      bordered,
+      size,
+      header,
+      footer,
+      renderItem,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      dataSource,
+      itemLayout,
+      bordered,
+      size,
+      header,
+      footer,
+      renderItem,
+      style: {
+        width: "100%",
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
   Input: {
     mapProps: ({ styles, ...rest }) => ({
       ...rest,
@@ -531,6 +558,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Form,
   Image,
   Input,
+  List,
   Menu,
   TextArea,
   RadioGroup,
