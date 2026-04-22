@@ -28,6 +28,7 @@ const VOID_COMPONENTS = [
   "Steps",
   "Progress",
   "List",
+  "Table",
   "Dropdown",
   "Menu",
   "Tabs",

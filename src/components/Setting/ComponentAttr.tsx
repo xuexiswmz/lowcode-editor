@@ -74,6 +74,25 @@ interface ListDataItem {
   description?: string;
   extra?: string;
 }
+interface TableColumnItem {
+  key: string;
+  title: string;
+  dataIndex: string;
+  width?: number;
+  align?: "left" | "center" | "right";
+  ellipsis?: boolean;
+  renderType?: "text" | "index" | "custom";
+  template?: string;
+}
+interface TableActionItem {
+  key: string;
+  label: string;
+  type?: "text" | "button";
+  buttonType?: "default" | "primary" | "link";
+  danger?: boolean;
+  disabled?: boolean;
+}
+type TableDataRow = Record<string, unknown>;
 function normalizeOptionItems(value: unknown): OptionItem[] {
   if (typeof value === "string" && value.trim()) {
     try {
@@ -296,6 +315,102 @@ function normalizeEditableListDataSource(value: unknown): ListDataItem[] {
     }));
 }
 
+function normalizeEditableTableColumns(value: unknown): TableColumnItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeEditableTableColumns(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is TableColumnItem =>
+        typeof item === "object" &&
+        item !== null &&
+        ("key" in item || "title" in item || "dataIndex" in item),
+    )
+    .map((item, index) => {
+      const key = String(item.key ?? "").trim();
+      const dataIndex = String(item.dataIndex ?? "").trim();
+      const widthValue = Number(item.width);
+
+      return {
+        key: key || dataIndex || `column-${index + 1}`,
+        title: String(item.title ?? ""),
+        dataIndex,
+        width:
+          Number.isFinite(widthValue) && widthValue > 0 ? widthValue : undefined,
+        align:
+          item.align === "center" || item.align === "right" ? item.align : "left",
+        ellipsis: item.ellipsis !== false,
+        renderType:
+          item.renderType === "index" || item.renderType === "custom"
+            ? item.renderType
+            : "text",
+        template:
+          typeof item.template === "string" ? item.template : undefined,
+      };
+    });
+}
+
+function normalizeEditableTableDataSource(value: unknown): TableDataRow[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeEditableTableDataSource(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter(
+    (item): item is TableDataRow =>
+      typeof item === "object" && item !== null && !Array.isArray(item),
+  );
+}
+
+function normalizeEditableTableActions(value: unknown): TableActionItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeEditableTableActions(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is TableActionItem =>
+        typeof item === "object" &&
+        item !== null &&
+        ("key" in item || "label" in item),
+    )
+    .map((item, index) => ({
+      key: String(item.key ?? "").trim() || `action-${index + 1}`,
+      label: String(item.label ?? ""),
+      type: item.type === "button" ? "button" : "text",
+      buttonType:
+        item.buttonType === "primary" || item.buttonType === "link"
+          ? item.buttonType
+          : "default",
+      danger: Boolean(item.danger),
+      disabled: Boolean(item.disabled),
+    }));
+}
+
 function normalizeStepsCurrent(current: unknown, items: StepItem[]) {
   const numericValue = Number(current);
 
@@ -476,6 +591,25 @@ function getFormValues(
     return {
       ...formValues,
       dataSource: normalizeEditableListDataSource(formValues.dataSource),
+    };
+  }
+
+  if (componentName === "Table") {
+    return {
+      ...formValues,
+      columns: normalizeEditableTableColumns(formValues.columns),
+      dataSource: normalizeEditableTableDataSource(formValues.dataSource),
+      actions: normalizeEditableTableActions(formValues.actions),
+      actionsAlign:
+        formValues.actionsAlign === "center" || formValues.actionsAlign === "right"
+          ? formValues.actionsAlign
+          : "left",
+      pagination: formValues.pagination !== false,
+      pageSize:
+        Number.isInteger(Number(formValues.pageSize)) && Number(formValues.pageSize) > 0
+          ? Number(formValues.pageSize)
+          : 10,
+      rowKey: String(formValues.rowKey ?? "key"),
     };
   }
 
@@ -1337,6 +1471,452 @@ function ListDataSourceSetterInput({
   );
 }
 
+function TableColumnsSetterInput({
+  value,
+  onChange,
+}: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeEditableTableColumns(value);
+
+  function updateAt(
+    index: number,
+    key: keyof TableColumnItem,
+    nextValue: string | number | boolean | undefined,
+  ) {
+    onChange?.(
+      normalizedValue.map((item, itemIndex) =>
+        itemIndex === index
+          ? {
+              ...item,
+              [key]: nextValue,
+            }
+          : item,
+      ),
+    );
+  }
+
+  function addColumn() {
+    const nextIndex = normalizedValue.length + 1;
+    onChange?.([
+      ...normalizedValue,
+      {
+        key: `column-${nextIndex}`,
+        title: `列${nextIndex}`,
+        dataIndex: `field${nextIndex}`,
+        width: 160,
+        align: "left",
+        ellipsis: true,
+        renderType: "text",
+        template: "",
+      },
+    ]);
+  }
+
+  function removeColumn(index: number) {
+    onChange?.(normalizedValue.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>
+              列 {index + 1}
+            </span>
+            <Button danger size="small" type="text" onClick={() => removeColumn(index)}>
+              删除
+            </Button>
+          </div>
+          <Input
+            placeholder="列 key"
+            value={item.key}
+            onChange={(event) => updateAt(index, "key", event.target.value)}
+          />
+          <Input
+            placeholder="列标题"
+            value={item.title}
+            onChange={(event) => updateAt(index, "title", event.target.value)}
+          />
+          <Input
+            placeholder="字段名 dataIndex"
+            value={item.dataIndex}
+            onChange={(event) => updateAt(index, "dataIndex", event.target.value)}
+            disabled={item.renderType === "index"}
+          />
+          <InputNumber
+            placeholder="列宽"
+            min={80}
+            style={{ width: "100%" }}
+            value={item.width}
+            onChange={(nextValue) =>
+              updateAt(
+                index,
+                "width",
+                typeof nextValue === "number" ? nextValue : undefined,
+              )
+            }
+          />
+          <Select
+            value={item.renderType ?? "text"}
+            options={[
+              { label: "普通文本", value: "text" },
+              { label: "序号列", value: "index" },
+              { label: "模板列", value: "custom" },
+            ]}
+            onChange={(nextValue) => {
+              const nextRenderType = String(nextValue) as TableColumnItem["renderType"];
+
+              onChange?.(
+                normalizedValue.map((column, columnIndex) =>
+                  columnIndex === index
+                    ? {
+                        ...column,
+                        renderType: nextRenderType,
+                        dataIndex:
+                          nextRenderType === "index"
+                            ? "__index__"
+                            : column.dataIndex === "__index__"
+                              ? `field${index + 1}`
+                              : column.dataIndex,
+                        template:
+                          nextRenderType === "custom"
+                            ? column.template || "{{name}}"
+                            : "",
+                      }
+                    : column,
+                ),
+              );
+            }}
+          />
+          <Select
+            value={item.align ?? "left"}
+            options={[
+              { label: "左对齐", value: "left" },
+              { label: "居中", value: "center" },
+              { label: "右对齐", value: "right" },
+            ]}
+            onChange={(nextValue) => updateAt(index, "align", nextValue)}
+          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>超出省略</span>
+            <Switch
+              checked={item.ellipsis !== false}
+              onChange={(checked) => updateAt(index, "ellipsis", checked)}
+            />
+          </div>
+          {item.renderType === "custom" ? (
+            <Input.TextArea
+              placeholder="模板列内容，例如：{{name}} / {{status}}"
+              value={item.template ?? ""}
+              autoSize={{ minRows: 2, maxRows: 4 }}
+              onChange={(event) => updateAt(index, "template", event.target.value)}
+            />
+          ) : null}
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addColumn}>
+        新增列
+      </Button>
+    </div>
+  );
+}
+
+function TableDataSourceSetterInput({
+  value,
+  onChange,
+  columns,
+  rowKey,
+}: SetterInputProps<unknown> & {
+  columns?: unknown;
+  rowKey?: string;
+}) {
+  const normalizedValue = normalizeEditableTableDataSource(value);
+  const normalizedColumns = normalizeEditableTableColumns(columns).filter(
+    (item) => item.dataIndex.trim() || item.key.trim(),
+  );
+  const resolvedRowKey = String(rowKey ?? "").trim() || "key";
+
+  function updateRowAt(index: number, key: string, nextValue: string) {
+    onChange?.(
+      normalizedValue.map((item, itemIndex) =>
+        itemIndex === index
+          ? {
+              ...item,
+              [key]: nextValue,
+            }
+          : item,
+      ),
+    );
+  }
+
+  function addRow() {
+    const nextIndex = normalizedValue.length + 1;
+    const nextRow = normalizedColumns.reduce<TableDataRow>(
+      (acc, item) => {
+        const fieldName = item.dataIndex.trim() || item.key;
+        acc[fieldName] = `${item.title || fieldName}${nextIndex}`;
+        return acc;
+      },
+      {
+        [resolvedRowKey]: `row-${nextIndex}`,
+      },
+    );
+
+    onChange?.([...normalizedValue, nextRow]);
+  }
+
+  function removeRow(index: number) {
+    onChange?.(normalizedValue.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  if (normalizedColumns.length === 0) {
+    return (
+      <div
+        style={{
+          padding: 12,
+          borderRadius: 8,
+          border: "1px dashed #d9d9d9",
+          background: "#fafafa",
+          color: "#999",
+          fontSize: 12,
+        }}
+      >
+        请先配置列信息，再编辑数据源
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      <div
+        style={{
+          padding: 10,
+          borderRadius: 8,
+          background: "#fafafa",
+          border: "1px solid #f0f0f0",
+          color: "#666",
+          fontSize: 12,
+        }}
+      >
+        当前行主键字段：{resolvedRowKey}
+      </div>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>
+              行 {index + 1}
+            </span>
+            <Button danger size="small" type="text" onClick={() => removeRow(index)}>
+              删除
+            </Button>
+          </div>
+          {normalizedColumns.map((column) => {
+            const fieldName = column.dataIndex.trim() || column.key;
+
+            if (fieldName === resolvedRowKey || column.renderType === "index") {
+              return null;
+            }
+
+            return (
+              <Input
+                key={`${index}-${fieldName}`}
+                placeholder={column.title || fieldName}
+                value={String(item[fieldName] ?? "")}
+                onChange={(event) =>
+                  updateRowAt(index, fieldName, event.target.value)
+                }
+              />
+            );
+          })}
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addRow}>
+        新增行
+      </Button>
+    </div>
+  );
+}
+
+function TableActionsSetterInput({
+  value,
+  onChange,
+}: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeEditableTableActions(value);
+
+  function updateAt(
+    index: number,
+    key: keyof TableActionItem,
+    nextValue: string | boolean,
+  ) {
+    onChange?.(
+      normalizedValue.map((item, itemIndex) =>
+        itemIndex === index
+          ? {
+              ...item,
+              [key]: nextValue,
+            }
+          : item,
+      ),
+    );
+  }
+
+  function addItem() {
+    const nextIndex = normalizedValue.length + 1;
+    onChange?.([
+      ...normalizedValue,
+      {
+        key: `action-${nextIndex}`,
+        label: `操作${nextIndex}`,
+        type: "text",
+        buttonType: "default",
+        danger: false,
+        disabled: false,
+      },
+    ]);
+  }
+
+  function removeItem(index: number) {
+    onChange?.(normalizedValue.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {normalizedValue.map((item, index) => (
+        <div
+          key={index}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>
+              操作项 {index + 1}
+            </span>
+            <Button danger size="small" type="text" onClick={() => removeItem(index)}>
+              删除
+            </Button>
+          </div>
+          <Input
+            placeholder="操作 key"
+            value={item.key}
+            onChange={(event) => updateAt(index, "key", event.target.value)}
+          />
+          <Input
+            placeholder="显示文字"
+            value={item.label}
+            onChange={(event) => updateAt(index, "label", event.target.value)}
+          />
+          <Select
+            value={item.type ?? "text"}
+            options={[
+              { label: "文字", value: "text" },
+              { label: "按钮", value: "button" },
+            ]}
+            onChange={(nextValue) => updateAt(index, "type", String(nextValue))}
+          />
+          {item.type === "button" ? (
+            <Select
+              value={item.buttonType ?? "default"}
+              options={[
+                { label: "默认按钮", value: "default" },
+                { label: "主按钮", value: "primary" },
+                { label: "链接按钮", value: "link" },
+              ]}
+              onChange={(nextValue) =>
+                updateAt(index, "buttonType", String(nextValue))
+              }
+            />
+          ) : null}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>危险态</span>
+            <Switch
+              checked={item.danger === true}
+              onChange={(checked) => updateAt(index, "danger", checked)}
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>禁用</span>
+            <Switch
+              checked={item.disabled === true}
+              onChange={(checked) => updateAt(index, "disabled", checked)}
+            />
+          </div>
+        </div>
+      ))}
+      <Button type="dashed" block onClick={addItem}>
+        新增操作项
+      </Button>
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -1526,6 +2106,23 @@ export default function ComponentAttr() {
       return <ListDataSourceSetterInput />;
     }
 
+    if (type === "tableColumns") {
+      return <TableColumnsSetterInput />;
+    }
+
+    if (type === "tableDataSource") {
+      return (
+        <TableDataSourceSetterInput
+          columns={currentProps.columns}
+          rowKey={String(currentProps.rowKey ?? "key")}
+        />
+      );
+    }
+
+    if (type === "tableActions") {
+      return <TableActionsSetterInput />;
+    }
+
     if (type === "optionList") {
       return <OptionsSetterInput />;
     }
@@ -1650,6 +2247,84 @@ export default function ComponentAttr() {
       normalizedChangeValues.dataSource = normalizeEditableListDataSource(
         normalizedChangeValues.dataSource,
       );
+    }
+
+    if (componentName === "Table") {
+      if ("columns" in normalizedChangeValues) {
+        normalizedChangeValues.columns = normalizeEditableTableColumns(
+          normalizedChangeValues.columns,
+        );
+      }
+
+      if ("dataSource" in normalizedChangeValues) {
+        normalizedChangeValues.dataSource = normalizeEditableTableDataSource(
+          normalizedChangeValues.dataSource,
+        );
+      }
+
+      if ("actions" in normalizedChangeValues) {
+        normalizedChangeValues.actions = normalizeEditableTableActions(
+          normalizedChangeValues.actions,
+        );
+      }
+
+      if ("actionsAlign" in normalizedChangeValues) {
+        normalizedChangeValues.actionsAlign =
+          normalizedChangeValues.actionsAlign === "center" ||
+          normalizedChangeValues.actionsAlign === "right"
+            ? normalizedChangeValues.actionsAlign
+            : "left";
+      }
+
+      if ("pagination" in normalizedChangeValues) {
+        normalizedChangeValues.pagination =
+          normalizedChangeValues.pagination !== false;
+      }
+
+      if ("pageSize" in normalizedChangeValues) {
+        normalizedChangeValues.pageSize =
+          Number.isInteger(Number(normalizedChangeValues.pageSize)) &&
+          Number(normalizedChangeValues.pageSize) > 0
+            ? Number(normalizedChangeValues.pageSize)
+            : 10;
+      }
+
+      if ("rowKey" in normalizedChangeValues) {
+        const previousRowKey = String(currentProps.rowKey ?? "key").trim() || "key";
+        const nextRowKey =
+          String(normalizedChangeValues.rowKey ?? "").trim() || "key";
+
+        normalizedChangeValues.rowKey = nextRowKey;
+
+        if (previousRowKey !== nextRowKey) {
+          const mergedDataSource = normalizeEditableTableDataSource(
+            normalizedChangeValues.dataSource ?? currentProps.dataSource,
+          ).map((item, index) => {
+            const nextItem = { ...item };
+            const previousValue = nextItem[previousRowKey];
+            const nextValue = nextItem[nextRowKey];
+
+            if (
+              (typeof nextValue !== "string" || !nextValue.trim()) &&
+              typeof previousValue === "string" &&
+              previousValue.trim()
+            ) {
+              nextItem[nextRowKey] = previousValue;
+            }
+
+            if (
+              typeof nextItem[nextRowKey] !== "string" ||
+              !String(nextItem[nextRowKey]).trim()
+            ) {
+              nextItem[nextRowKey] = `row-${index + 1}`;
+            }
+
+            return nextItem;
+          });
+
+          normalizedChangeValues.dataSource = mergedDataSource;
+        }
+      }
     }
 
     if (componentName === "DatePicker" && "value" in normalizedChangeValues) {

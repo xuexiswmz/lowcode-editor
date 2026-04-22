@@ -31,6 +31,7 @@ import SwitchConfig from "./Switch/material";
 import TabsConfig from "./Tabs/material";
 import TextConfig from "./Text/material";
 import TagConfig from "./Tag/material";
+import TableConfig from "./Table/material";
 import TextareaConfig from "./Textarea/material";
 import UploadConfig from "./Upload/material";
 import type { ComponentConfig, ComponentConfigMap } from "./types";
@@ -68,6 +69,7 @@ const builtinConfigs: ComponentConfig[] = [
   RowConfig,
   SelectConfig,
   TextConfig,
+  TableConfig,
   TagConfig,
   SpaceConfig,
   StepsConfig,
