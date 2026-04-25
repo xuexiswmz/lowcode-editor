@@ -1,4 +1,5 @@
 import type {
+  Alert as AntdAlert,
   Avatar as AntdAvatar,
   Badge as AntdBadge,
   Breadcrumb as AntdBreadcrumb,
@@ -48,6 +49,12 @@ export interface FormSchemaItem {
 }
 
 export interface MaterialBindings {
+  Alert: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   Avatar: {
     mapProps: (
       props: Record<string, unknown>,
@@ -253,6 +260,7 @@ export interface MaterialBindings {
 }
 
 export interface MaterialUIAdapter {
+  Alert: typeof AntdAlert;
   Avatar: typeof AntdAvatar;
   Badge: typeof AntdBadge;
   Breadcrumb: typeof AntdBreadcrumb;

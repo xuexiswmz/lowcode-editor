@@ -3,6 +3,7 @@ import { antdMaterialUIAdapter } from "./adapters/antd";
 export const materialUI = antdMaterialUIAdapter;
 
 export const {
+  Alert,
   Avatar,
   Badge,
   Breadcrumb,

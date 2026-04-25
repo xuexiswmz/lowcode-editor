@@ -1,5 +1,6 @@
 import {
   AppstoreOutlined,
+  AlertOutlined,
   NotificationOutlined,
   BorderOutlined,
   ApartmentOutlined,
@@ -37,6 +38,7 @@ export interface MaterialItemProps {
 }
 
 const iconMap = {
+  Alert: AlertOutlined,
   Avatar: UserOutlined,
   Badge: NotificationOutlined,
   Breadcrumb: ApartmentOutlined,

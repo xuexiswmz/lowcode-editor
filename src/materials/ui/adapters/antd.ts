@@ -1,4 +1,5 @@
 import {
+  Alert,
   Avatar,
   Badge,
   Breadcrumb,
@@ -37,6 +38,32 @@ const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
 
 const antdMaterialBindings: MaterialUIAdapter["materials"] = {
+  Alert: {
+    mapProps: ({
+      message,
+      description,
+      type,
+      closable,
+      showIcon,
+      banner,
+      onClose,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      message,
+      description,
+      type,
+      closable,
+      showIcon,
+      banner,
+      onClose,
+      style: {
+        width: "100%",
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
   Avatar: {
     mapProps: ({ alt, gap, icon, shape, size, src, styles }) => ({
       alt,
@@ -604,6 +631,7 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
 };
 
 export const antdMaterialUIAdapter: MaterialUIAdapter = {
+  Alert,
   Avatar,
   Badge,
   Breadcrumb,

@@ -12,6 +12,7 @@ import { type ComponentRef } from "../../utils/types";
 
 // 定义不能接受children的组件列表
 const VOID_COMPONENTS = [
+  "Alert",
   "Input",
   "Textarea",
   "Button",

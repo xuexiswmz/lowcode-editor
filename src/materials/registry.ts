@@ -1,3 +1,4 @@
+import AlertConfig from "./Alert/material";
 import AvatarConfig from "./Avatar/material";
 import BadgeConfig from "./Badge/material";
 import BreadcrumbConfig from "./Breadcrumb/material";
@@ -42,6 +43,7 @@ export {
 } from "./config-utils";
 
 const builtinConfigs: ComponentConfig[] = [
+  AlertConfig,
   AvatarConfig,
   BadgeConfig,
   BreadcrumbConfig,
