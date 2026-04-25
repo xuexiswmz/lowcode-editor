@@ -65,12 +65,36 @@ const ModalEditorRenderer = forwardRef<HTMLDivElement, CommonComponentProps>(
   ({ id, children, title, styles }, ref) => (
     <div
       ref={ref}
-      style={styles}
+      style={{
+        minHeight: 160,
+        padding: 20,
+        border: "1px solid #000",
+        borderRadius: 8,
+        background: "#fff",
+        ...styles,
+      }}
       data-component-id={id}
-      className="min-h-[100px] p-[20px] border-[1px] border-[#000] rounded-md"
     >
-      <h4>{title}</h4>
-      <div>{children}</div>
+      <h4 style={{ margin: 0, marginBottom: 12 }}>{title}</h4>
+      <div style={{ minHeight: 96 }}>
+        {children ?? (
+          <div
+            style={{
+              minHeight: 96,
+              border: "1px dashed #d9d9d9",
+              borderRadius: 8,
+              background: "#fafafa",
+              color: "#999",
+              fontSize: 12,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            可在弹窗中拖入文本、按钮、表单、树、上传等组件
+          </div>
+        )}
+      </div>
     </div>
   ),
 );
