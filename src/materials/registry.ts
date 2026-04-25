@@ -32,6 +32,7 @@ import StepsConfig from "./Steps/material";
 import SwitchConfig from "./Switch/material";
 import TabsConfig from "./Tabs/material";
 import TextConfig from "./Text/material";
+import TooltipConfig from "./Tooltip/material";
 import TreeConfig from "./Tree/material";
 import TagConfig from "./Tag/material";
 import TableConfig from "./Table/material";
@@ -82,6 +83,7 @@ const builtinConfigs: ComponentConfig[] = [
   SwitchConfig,
   TabsConfig,
   TextareaConfig,
+  TooltipConfig,
   UploadConfig,
 ];
 

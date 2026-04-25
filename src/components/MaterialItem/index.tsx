@@ -28,6 +28,7 @@ import {
   FolderOpenOutlined,
   TableOutlined,
   TagOutlined,
+  ToolOutlined,
   UploadOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -73,6 +74,7 @@ const iconMap = {
   Switch: DeploymentUnitOutlined,
   Tabs: FolderOpenOutlined,
   Tag: TagOutlined,
+  Tooltip: ToolOutlined,
   Tree: ApartmentOutlined,
   Upload: UploadOutlined,
 } as const;

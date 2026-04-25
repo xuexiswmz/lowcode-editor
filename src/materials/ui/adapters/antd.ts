@@ -29,6 +29,7 @@ import {
   Steps,
   Switch,
   Tabs,
+  Tooltip,
   Tag,
   Upload,
 } from "antd";
@@ -232,6 +233,27 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       open,
       onOpenChange,
       autoAdjustOverflow,
+      overlayStyle: styles,
+    }),
+  },
+  Tooltip: {
+    mapProps: ({
+      title,
+      placement,
+      color,
+      trigger,
+      open,
+      onOpenChange,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      title,
+      placement,
+      color,
+      trigger,
+      open,
+      onOpenChange,
       overlayStyle: styles,
     }),
   },
@@ -667,6 +689,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Select,
   Steps,
   Dropdown,
+  Tooltip,
   Tabs,
   Upload,
   Switch,

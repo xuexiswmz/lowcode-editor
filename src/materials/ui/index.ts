@@ -29,6 +29,7 @@ export const {
   Select,
   Steps,
   Tabs,
+  Tooltip,
   Upload,
   Switch,
   Modal,

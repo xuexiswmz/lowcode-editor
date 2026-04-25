@@ -25,6 +25,7 @@ import type {
   Select as AntdSelect,
   Steps as AntdSteps,
   Tabs as AntdTabs,
+  Tooltip as AntdTooltip,
   Upload as AntdUpload,
   Col as AntdCol,
   Row as AntdRow,
@@ -105,6 +106,12 @@ export interface MaterialBindings {
     ) => Record<string, unknown>;
   };
   Dropdown: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
+  Tooltip: {
     mapProps: (
       props: Record<string, unknown>,
       context?: MaterialBindingContext,
@@ -290,6 +297,7 @@ export interface MaterialUIAdapter {
   Select: typeof AntdSelect;
   Steps: typeof AntdSteps;
   Dropdown: typeof AntdDropdown;
+  Tooltip: typeof AntdTooltip;
   Tabs: typeof AntdTabs;
   Menu: typeof AntdMenu;
   Upload: typeof AntdUpload;
