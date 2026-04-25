@@ -10,6 +10,7 @@ import ContainerConfig from "./Container/material";
 import DatePickerConfig from "./DatePicker/material";
 import DescriptionsConfig from "./Descriptions/material";
 import DividerConfig from "./Divider/material";
+import DrawerConfig from "./Drawer/material";
 import DropdownConfig from "./Dropdown/material";
 import FlexConfig from "./Flex/material";
 import FormConfig from "./Form/material";
@@ -58,6 +59,7 @@ const builtinConfigs: ComponentConfig[] = [
   DatePickerConfig,
   DescriptionsConfig,
   DividerConfig,
+  DrawerConfig,
   DropdownConfig,
   FlexConfig,
   FormConfig,

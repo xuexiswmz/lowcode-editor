@@ -13,6 +13,7 @@ export const {
   Col,
   DatePicker,
   Descriptions,
+  Drawer,
   Dropdown,
   Divider,
   Flex,
