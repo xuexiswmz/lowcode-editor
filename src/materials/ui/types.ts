@@ -14,6 +14,7 @@ import type {
   Image as AntdImage,
   Input as AntdInput,
   List as AntdList,
+  Tree as AntdTree,
   Table as AntdTable,
   Menu as AntdMenu,
   Modal as AntdModal,
@@ -183,6 +184,12 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  Tree: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   TextArea: {
     mapProps: (
       props: Record<string, unknown>,
@@ -259,6 +266,7 @@ export interface MaterialUIAdapter {
   Image: typeof AntdImage;
   Input: typeof AntdInput;
   List: typeof AntdList;
+  Tree: typeof AntdTree;
   Table: typeof AntdTable;
   TextArea: typeof AntdInput.TextArea;
   RadioGroup: typeof AntdRadio.Group;

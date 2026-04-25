@@ -231,6 +231,13 @@ export const TABLE_ALLOWED_PARENTS = [
   "Card",
   "Drawer",
 ] as const;
+export const TREE_ALLOWED_PARENTS = [
+  "Page",
+  "Container",
+  "Modal",
+  "Card",
+  "Drawer",
+] as const;
 export const ICON_ALLOWED_PARENTS = [
   "Page",
   "Container",

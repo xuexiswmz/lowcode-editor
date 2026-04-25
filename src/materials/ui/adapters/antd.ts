@@ -15,6 +15,7 @@ import {
   Image,
   Input,
   List,
+  Tree,
   Table,
   Menu,
   Modal,
@@ -431,6 +432,32 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       },
     }),
   },
+  Tree: {
+    mapProps: ({
+      treeData,
+      defaultExpandAll,
+      selectable,
+      checkable,
+      onSelect,
+      onCheck,
+      onExpand,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      treeData,
+      defaultExpandAll,
+      selectable,
+      checkable,
+      onSelect,
+      onCheck,
+      onExpand,
+      style: {
+        width: "100%",
+        ...(typeof styles === "object" && styles !== null ? styles : {}),
+      },
+    }),
+  },
   Input: {
     mapProps: ({ styles, ...rest }) => ({
       ...rest,
@@ -592,6 +619,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Image,
   Input,
   List,
+  Tree,
   Table,
   Menu,
   TextArea,

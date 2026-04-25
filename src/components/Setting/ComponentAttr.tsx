@@ -92,6 +92,15 @@ interface TableActionItem {
   danger?: boolean;
   disabled?: boolean;
 }
+interface TreeNodeItem {
+  key: string;
+  title: string;
+  disabled?: boolean;
+  children?: TreeNodeItem[];
+}
+
+const MAX_TREE_DEPTH = 6;
+
 type TableDataRow = Record<string, unknown>;
 function normalizeOptionItems(value: unknown): OptionItem[] {
   if (typeof value === "string" && value.trim()) {
@@ -411,6 +420,39 @@ function normalizeEditableTableActions(value: unknown): TableActionItem[] {
     }));
 }
 
+function normalizeEditableTreeData(value: unknown): TreeNodeItem[] {
+  if (typeof value === "string" && value.trim()) {
+    try {
+      return normalizeEditableTreeData(JSON.parse(value));
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(
+      (item): item is TreeNodeItem =>
+        typeof item === "object" &&
+        item !== null &&
+        "key" in item &&
+        "title" in item,
+    )
+    .map((item) => {
+      const children = normalizeEditableTreeData(item.children);
+
+      return {
+        key: String(item.key ?? ""),
+        title: String(item.title ?? ""),
+        disabled: Boolean(item.disabled),
+        children: children.length > 0 ? children : undefined,
+      };
+    });
+}
+
 function normalizeStepsCurrent(current: unknown, items: StepItem[]) {
   const numericValue = Number(current);
 
@@ -610,6 +652,13 @@ function getFormValues(
           ? Number(formValues.pageSize)
           : 10,
       rowKey: String(formValues.rowKey ?? "key"),
+    };
+  }
+
+  if (componentName === "Tree") {
+    return {
+      ...formValues,
+      treeData: normalizeEditableTreeData(formValues.treeData),
     };
   }
 
@@ -1917,6 +1966,228 @@ function TableActionsSetterInput({
   );
 }
 
+function TreeDataSetterInput({ value, onChange }: SetterInputProps<unknown>) {
+  const normalizedValue = normalizeEditableTreeData(value);
+
+  function updateItems(
+    items: TreeNodeItem[],
+    path: number[],
+    updater: (item: TreeNodeItem) => TreeNodeItem,
+  ): TreeNodeItem[] {
+    return items.map((item, index) => {
+      if (index !== path[0]) {
+        return item;
+      }
+
+      if (path.length === 1) {
+        return updater(item);
+      }
+
+      return {
+        ...item,
+        children: updateItems(item.children ?? [], path.slice(1), updater),
+      };
+    });
+  }
+
+  function addRootItem() {
+    const nextIndex = normalizedValue.length + 1;
+    onChange?.([
+      ...normalizedValue,
+      {
+        key: `tree-${nextIndex}`,
+        title: `节点${nextIndex}`,
+        disabled: false,
+      },
+    ]);
+  }
+
+  function addSibling(path: number[]) {
+    const parentPath = path.slice(0, -1);
+    const nextIndex = path[path.length - 1] + 2;
+    const nextItem: TreeNodeItem = {
+      key: `tree-${Date.now()}`,
+      title: `节点${nextIndex}`,
+      disabled: false,
+    };
+
+    if (parentPath.length === 0) {
+      const nextItems = [...normalizedValue];
+      nextItems.splice(path[0] + 1, 0, nextItem);
+      onChange?.(nextItems);
+      return;
+    }
+
+    onChange?.(
+      updateItems(normalizedValue, parentPath, (item) => {
+        const nextChildren = [...(item.children ?? [])];
+        nextChildren.splice(path[path.length - 1] + 1, 0, nextItem);
+        return {
+          ...item,
+          children: nextChildren,
+        };
+      }),
+    );
+  }
+
+  function addChild(path: number[]) {
+    onChange?.(
+      updateItems(normalizedValue, path, (item) => {
+        const nextChildren = [...(item.children ?? [])];
+        nextChildren.push({
+          key: `tree-${Date.now()}`,
+          title: `子节点${nextChildren.length + 1}`,
+          disabled: false,
+        });
+        return {
+          ...item,
+          children: nextChildren,
+        };
+      }),
+    );
+  }
+
+  function removeItem(path: number[]) {
+    function removeAt(items: TreeNodeItem[], currentPath: number[]): TreeNodeItem[] {
+      if (currentPath.length === 1) {
+        return items.filter((_, index) => index !== currentPath[0]);
+      }
+
+      return items.map((item, index) => {
+        if (index !== currentPath[0]) {
+          return item;
+        }
+
+        const nextChildren = removeAt(item.children ?? [], currentPath.slice(1));
+
+        return {
+          ...item,
+          children: nextChildren.length > 0 ? nextChildren : undefined,
+        };
+      });
+    }
+
+    onChange?.(removeAt(normalizedValue, path));
+  }
+
+  function updateField(
+    path: number[],
+    key: keyof TreeNodeItem,
+    nextValue: string | boolean,
+  ) {
+    onChange?.(
+      updateItems(normalizedValue, path, (item) => ({
+        ...item,
+        [key]: nextValue,
+      })),
+    );
+  }
+
+  function renderItems(items: TreeNodeItem[], parentPath: number[] = []) {
+    return items.map((item, index) => {
+      const path = [...parentPath, index];
+      const currentDepth = path.length;
+      const canAddChild = currentDepth < MAX_TREE_DEPTH;
+
+      return (
+        <div
+          key={path.join("-")}
+          style={{
+            display: "grid",
+            gap: 10,
+            padding: 10,
+            border: "1px solid #f0f0f0",
+            borderRadius: 8,
+            background: "#fafafa",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 8,
+              flexWrap: "wrap",
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>
+              节点 {path.map((itemIndex) => itemIndex + 1).join(".")}
+            </span>
+            <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+              <Button size="small" type="text" onClick={() => addSibling(path)}>
+                新增同级
+              </Button>
+              <Button
+                size="small"
+                type="text"
+                disabled={!canAddChild}
+                onClick={() => addChild(path)}
+              >
+                新增子级
+              </Button>
+              <Button danger size="small" type="text" onClick={() => removeItem(path)}>
+                删除
+              </Button>
+            </div>
+          </div>
+          {!canAddChild ? (
+            <div style={{ color: "#999", fontSize: 12 }}>
+              已达到最大层级限制，最多支持 {MAX_TREE_DEPTH} 层
+            </div>
+          ) : null}
+          <Input
+            placeholder="key"
+            value={item.key}
+            onChange={(event) => updateField(path, "key", event.target.value)}
+          />
+          <Input
+            placeholder="标题"
+            value={item.title}
+            onChange={(event) => updateField(path, "title", event.target.value)}
+          />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+            }}
+          >
+            <span style={{ color: "#666", fontSize: 12 }}>禁用</span>
+            <Switch
+              checked={item.disabled}
+              onChange={(checked) => updateField(path, "disabled", checked)}
+            />
+          </div>
+          {item.children && item.children.length > 0 ? (
+            <div
+              style={{
+                display: "grid",
+                gap: 8,
+                minWidth: 0,
+                paddingLeft: 12,
+                marginLeft: 4,
+                borderLeft: "2px solid #f0f0f0",
+              }}
+            >
+              {renderItems(item.children, path)}
+            </div>
+          ) : null}
+        </div>
+      );
+    });
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 8 }}>
+      {renderItems(normalizedValue)}
+      <Button type="dashed" block onClick={addRootItem}>
+        新增根节点
+      </Button>
+    </div>
+  );
+}
+
 export default function ComponentAttr() {
   const [form] = Form.useForm();
   const { curComponentId, curComponent, updateComponentProps, components } =
@@ -2123,6 +2394,10 @@ export default function ComponentAttr() {
       return <TableActionsSetterInput />;
     }
 
+    if (type === "treeData") {
+      return <TreeDataSetterInput />;
+    }
+
     if (type === "optionList") {
       return <OptionsSetterInput />;
     }
@@ -2325,6 +2600,12 @@ export default function ComponentAttr() {
           normalizedChangeValues.dataSource = mergedDataSource;
         }
       }
+    }
+
+    if (componentName === "Tree" && "treeData" in normalizedChangeValues) {
+      normalizedChangeValues.treeData = normalizeEditableTreeData(
+        normalizedChangeValues.treeData,
+      );
     }
 
     if (componentName === "DatePicker" && "value" in normalizedChangeValues) {

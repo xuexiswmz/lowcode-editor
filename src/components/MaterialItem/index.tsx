@@ -69,6 +69,7 @@ const iconMap = {
   Switch: DeploymentUnitOutlined,
   Tabs: FolderOpenOutlined,
   Tag: TagOutlined,
+  Tree: ApartmentOutlined,
   Upload: UploadOutlined,
 } as const;
 

@@ -19,6 +19,7 @@ export const {
   Image,
   Input,
   List,
+  Tree,
   Table,
   Menu,
   TextArea,
