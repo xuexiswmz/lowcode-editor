@@ -27,6 +27,7 @@ import RadioConfig from "./Radio/material";
 import RowConfig from "./Row/material";
 import SelectConfig from "./Select/material";
 import SpaceConfig from "./Space/material";
+import SpinConfig from "./Spin/material";
 import StepsConfig from "./Steps/material";
 import SwitchConfig from "./Switch/material";
 import TabsConfig from "./Tabs/material";
@@ -71,6 +72,7 @@ const builtinConfigs: ComponentConfig[] = [
   RadioConfig,
   RowConfig,
   SelectConfig,
+  SpinConfig,
   TextConfig,
   TreeConfig,
   TableConfig,

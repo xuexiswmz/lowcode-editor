@@ -16,6 +16,7 @@ import {
   Image,
   Input,
   List,
+  Spin,
   Tree,
   Table,
   Menu,
@@ -427,6 +428,16 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       },
     }),
   },
+  Spin: {
+    mapProps: ({ spinning, tip, size, fullscreen, styles, ...rest }) => ({
+      ...rest,
+      spinning,
+      tip,
+      size,
+      fullscreen,
+      style: styles,
+    }),
+  },
   Table: {
     mapProps: ({
       columns,
@@ -647,6 +658,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Image,
   Input,
   List,
+  Spin,
   Tree,
   Table,
   Menu,

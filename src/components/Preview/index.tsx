@@ -28,6 +28,7 @@ const VOID_COMPONENTS = [
   "Breadcrumb",
   "Steps",
   "Progress",
+  "Spin",
   "List",
   "Table",
   "Tree",

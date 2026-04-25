@@ -20,6 +20,7 @@ export const {
   Image,
   Input,
   List,
+  Spin,
   Tree,
   Table,
   Menu,

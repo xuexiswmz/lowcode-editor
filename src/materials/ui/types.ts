@@ -15,6 +15,7 @@ import type {
   Image as AntdImage,
   Input as AntdInput,
   List as AntdList,
+  Spin as AntdSpin,
   Tree as AntdTree,
   Table as AntdTable,
   Menu as AntdMenu,
@@ -185,6 +186,12 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  Spin: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   Table: {
     mapProps: (
       props: Record<string, unknown>,
@@ -274,6 +281,7 @@ export interface MaterialUIAdapter {
   Image: typeof AntdImage;
   Input: typeof AntdInput;
   List: typeof AntdList;
+  Spin: typeof AntdSpin;
   Tree: typeof AntdTree;
   Table: typeof AntdTable;
   TextArea: typeof AntdInput.TextArea;

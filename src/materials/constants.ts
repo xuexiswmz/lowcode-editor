@@ -218,6 +218,15 @@ export const ALERT_ALLOWED_PARENTS = [
   "Flex",
   "Space",
 ] as const;
+export const SPIN_ALLOWED_PARENTS = [
+  "Page",
+  "Container",
+  "Modal",
+  "Drawer",
+  "Card",
+  "Flex",
+  "Space",
+] as const;
 export const PROGRESS_ALLOWED_PARENTS = [
   "Page",
   "Container",
@@ -320,6 +329,7 @@ export const MATERIAL_ALLOWED_PARENTS = {
   Avatar: AVATAR_ALLOWED_PARENTS,
   Badge: BADGE_ALLOWED_PARENTS,
   Alert: ALERT_ALLOWED_PARENTS,
+  Spin: SPIN_ALLOWED_PARENTS,
   Progress: PROGRESS_ALLOWED_PARENTS,
   List: LIST_ALLOWED_PARENTS,
   Icon: ICON_ALLOWED_PARENTS,
