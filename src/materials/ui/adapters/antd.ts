@@ -16,6 +16,7 @@ import {
   Image,
   Input,
   List,
+  Popover,
   Spin,
   Tree,
   Table,
@@ -450,6 +451,29 @@ const antdMaterialBindings: MaterialUIAdapter["materials"] = {
       },
     }),
   },
+  Popover: {
+    mapProps: ({
+      title,
+      content,
+      placement,
+      trigger,
+      open,
+      color,
+      onOpenChange,
+      styles,
+      ...rest
+    }) => ({
+      ...rest,
+      title,
+      content,
+      placement,
+      trigger,
+      open,
+      color,
+      onOpenChange,
+      overlayStyle: styles,
+    }),
+  },
   Spin: {
     mapProps: ({ spinning, tip, size, fullscreen, styles, ...rest }) => ({
       ...rest,
@@ -680,6 +704,7 @@ export const antdMaterialUIAdapter: MaterialUIAdapter = {
   Image,
   Input,
   List,
+  Popover,
   Spin,
   Tree,
   Table,

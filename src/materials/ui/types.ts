@@ -15,6 +15,7 @@ import type {
   Image as AntdImage,
   Input as AntdInput,
   List as AntdList,
+  Popover as AntdPopover,
   Spin as AntdSpin,
   Tree as AntdTree,
   Table as AntdTable,
@@ -193,6 +194,12 @@ export interface MaterialBindings {
       context?: MaterialBindingContext,
     ) => Record<string, unknown>;
   };
+  Popover: {
+    mapProps: (
+      props: Record<string, unknown>,
+      context?: MaterialBindingContext,
+    ) => Record<string, unknown>;
+  };
   Spin: {
     mapProps: (
       props: Record<string, unknown>,
@@ -288,6 +295,7 @@ export interface MaterialUIAdapter {
   Image: typeof AntdImage;
   Input: typeof AntdInput;
   List: typeof AntdList;
+  Popover: typeof AntdPopover;
   Spin: typeof AntdSpin;
   Tree: typeof AntdTree;
   Table: typeof AntdTable;

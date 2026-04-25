@@ -22,6 +22,7 @@ import ListConfig from "./List/material";
 import MenuConfig from "./Menu/material";
 import ModalConfig from "./Modal/material";
 import PageConfig from "./Page/material";
+import PopoverConfig from "./Popover/material";
 import ProgressConfig from "./Progress/material";
 import RadioConfig from "./Radio/material";
 import RowConfig from "./Row/material";
@@ -69,6 +70,7 @@ const builtinConfigs: ComponentConfig[] = [
   MenuConfig,
   ModalConfig,
   PageConfig,
+  PopoverConfig,
   ProgressConfig,
   RadioConfig,
   RowConfig,
