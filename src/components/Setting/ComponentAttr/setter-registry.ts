@@ -19,15 +19,16 @@ import {
   DescriptionsItemsSetter,
   DropdownMenuItemsSetter,
   ListDataSourceSetter,
-  MenuItemsSetter,
   OptionListSetter,
   StepsItemsSetter,
+  TabsItemsSetter,
+} from "./setters/collections/flat";
+import { MenuItemsSetter, TreeDataSetter } from "./setters/collections/tree";
+import {
   TableActionsSetter,
   TableColumnsSetter,
   TableDataSourceSetter,
-  TabsItemsSetter,
-  TreeDataSetter,
-} from "./setters/collections";
+} from "./setters/collections/table";
 
 export const setterRegistry: Record<string, SetterRenderer> = {
   input: BasicInputSetter,
