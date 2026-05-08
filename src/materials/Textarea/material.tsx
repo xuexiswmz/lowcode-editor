@@ -3,6 +3,7 @@ import { TEXTAREA_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { TextArea, materials, type MaterialTextAreaRef } from "../ui";
+import type { SetterContext } from "../types";
 import type { InputProps } from "../Input/material";
 import { useManagedInputValue } from "../Input/shared";
 
@@ -148,7 +149,25 @@ export default createLeafMaterial({
   },
   allowedParents: [...TEXTAREA_ALLOWED_PARENTS],
   setter: [
-    field.input("value", "值"),
+    field.textarea("value", "值", {
+      props: ({ currentProps, config }: SetterContext) => {
+        const rows =
+          (currentProps.rows as number | undefined) ??
+          (config?.defaultProps?.rows as number | undefined) ??
+          4;
+
+        return {
+          rows,
+          maxLength:
+            (currentProps.maxLength as number | undefined) ??
+            (config?.defaultProps?.maxLength as number | undefined),
+          autoSize: {
+            minRows: rows,
+            maxRows: rows,
+          },
+        };
+      },
+    }),
     field.input("placeholder", "占位符"),
     field.inputNumber("rows", "行数"),
     field.switch("disabled", "禁用"),

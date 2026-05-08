@@ -4,6 +4,7 @@ import type { MenuItemConfig } from "../../../materials/shared/menu";
 import type {
   ComponentConfig,
   componentSetter,
+  SetterContext,
 } from "../../../stores/component-config";
 
 export interface SetterInputProps<TValue = unknown> {
@@ -90,3 +91,5 @@ export interface SetterRendererProps<TValue = unknown>
 }
 
 export type SetterRenderer = ComponentType<SetterRendererProps>;
+
+export type ResolvedSetterContext = SetterContext;

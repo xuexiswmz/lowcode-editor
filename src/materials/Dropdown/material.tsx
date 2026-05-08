@@ -12,6 +12,7 @@ import { DROPDOWN_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { wrapPopupWithComponent } from "../shared/popup";
+import type { ComponentPropsAdapter } from "../types";
 import { Dropdown, materials } from "../ui";
 
 type DropdownTrigger = "hover" | "click" | "contextMenu";
@@ -45,6 +46,29 @@ const defaultMenuItems: DropdownMenuItem[] = [
   { key: "menu1", label: "菜单一" },
   { key: "menu2", label: "菜单二" },
 ];
+
+const dropdownPropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+
+    return {
+      ...formValues,
+      menu: normalizeDropdownMenuItems(formValues.menu),
+    };
+  },
+  fromFormPatch: (patch) => {
+    const nextPatch = { ...patch };
+
+    if ("menu" in nextPatch) {
+      nextPatch.menu = normalizeDropdownMenuItems(nextPatch.menu);
+    }
+
+    return nextPatch;
+  },
+};
 
 function normalizeDropdownMenuItems(menu: unknown): DropdownMenuItem[] {
   if (!Array.isArray(menu)) {
@@ -281,6 +305,7 @@ export default createLeafMaterial({
     { name: "open", label: "打开" },
     { name: "close", label: "关闭" },
   ],
+  propsAdapter: dropdownPropsAdapter,
   render: DropdownRenderer,
   renderInEditor: DropdownEditorRenderer,
 });

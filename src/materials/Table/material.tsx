@@ -8,6 +8,7 @@ import type { CommonComponentProps } from "../../interface";
 import { TABLE_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import type { ComponentPropsAdapter } from "../types";
 import { Button, Table, materials } from "../ui";
 
 type TableSize = "large" | "middle" | "small";
@@ -134,6 +135,95 @@ const defaultActions: TableActionConfig[] = [
     danger: true,
   },
 ];
+
+const tablePropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+
+    return {
+      ...formValues,
+      columns: normalizeTableColumns(formValues.columns),
+      dataSource: normalizeTableDataSource(
+        formValues.dataSource,
+        normalizeTableRowKey(formValues.rowKey),
+      ),
+      actions: normalizeTableActions(formValues.actions),
+      actionsAlign: normalizeTableActionsAlign(formValues.actionsAlign),
+      pagination: formValues.pagination !== false,
+      pageSize: normalizeTablePageSize(formValues.pageSize),
+      rowKey: normalizeTableRowKey(formValues.rowKey),
+    };
+  },
+  fromFormPatch: (patch, prevProps) => {
+    const nextPatch = { ...patch };
+
+    if ("columns" in nextPatch) {
+      nextPatch.columns = normalizeTableColumns(nextPatch.columns);
+    }
+
+    if ("dataSource" in nextPatch) {
+      nextPatch.dataSource = normalizeTableDataSource(
+        nextPatch.dataSource,
+        normalizeTableRowKey(nextPatch.rowKey ?? prevProps.rowKey),
+      );
+    }
+
+    if ("actions" in nextPatch) {
+      nextPatch.actions = normalizeTableActions(nextPatch.actions);
+    }
+
+    if ("actionsAlign" in nextPatch) {
+      nextPatch.actionsAlign = normalizeTableActionsAlign(nextPatch.actionsAlign);
+    }
+
+    if ("pagination" in nextPatch) {
+      nextPatch.pagination = nextPatch.pagination !== false;
+    }
+
+    if ("pageSize" in nextPatch) {
+      nextPatch.pageSize = normalizeTablePageSize(nextPatch.pageSize);
+    }
+
+    if ("rowKey" in nextPatch) {
+      const previousRowKey = normalizeTableRowKey(prevProps.rowKey);
+      const nextRowKey = normalizeTableRowKey(nextPatch.rowKey);
+      nextPatch.rowKey = nextRowKey;
+
+      if (previousRowKey !== nextRowKey) {
+        nextPatch.dataSource = normalizeTableDataSource(
+          nextPatch.dataSource ?? prevProps.dataSource,
+          previousRowKey,
+        ).map((item, index) => {
+          const nextItem = { ...item };
+          const previousValue = nextItem[previousRowKey];
+          const nextValue = nextItem[nextRowKey];
+
+          if (
+            (typeof nextValue !== "string" || !nextValue.trim()) &&
+            typeof previousValue === "string" &&
+            previousValue.trim()
+          ) {
+            nextItem[nextRowKey] = previousValue;
+          }
+
+          if (
+            typeof nextItem[nextRowKey] !== "string" ||
+            !String(nextItem[nextRowKey]).trim()
+          ) {
+            nextItem[nextRowKey] = `row-${index + 1}`;
+          }
+
+          return nextItem;
+        });
+      }
+    }
+
+    return nextPatch;
+  },
+};
 
 function normalizeTableSize(size: unknown): TableSize {
   return size === "large" || size === "small" ? size : "middle";
@@ -745,6 +835,7 @@ export default createLeafMaterial({
     { name: "onRowClick", label: "行点击事件" },
     { name: "onActionClick", label: "操作点击事件" },
   ],
+  propsAdapter: tablePropsAdapter,
   render: TableRenderer,
   renderInEditor: TableEditorRenderer,
 });

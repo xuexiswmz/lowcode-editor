@@ -4,10 +4,12 @@ import { CHECKBOX_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import {
+  normalizeMultipleChoiceValue,
   normalizeChoiceOptions,
   useManagedChoiceValue,
   type ChoiceOption,
 } from "../shared/choice";
+import type { ComponentPropsAdapter, SetterContext } from "../types";
 import { CheckboxGroup, materials } from "../ui";
 
 type CheckboxProps = Omit<CommonComponentProps, "children"> & {
@@ -20,6 +22,42 @@ const defaultOptions: ChoiceOption[] = [
   { label: "选项一", value: "option1" },
   { label: "选项二", value: "option2" },
 ];
+
+const checkboxPropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+
+    return {
+      ...formValues,
+      value: normalizeMultipleChoiceValue(
+        formValues.value,
+        normalizeChoiceOptions(formValues.options),
+      ),
+    };
+  },
+  fromFormPatch: (patch, prevProps) => {
+    const nextPatch = { ...patch };
+
+    if ("options" in nextPatch) {
+      nextPatch.options = normalizeChoiceOptions(nextPatch.options);
+    }
+
+    const mergedProps = {
+      ...prevProps,
+      ...nextPatch,
+    };
+
+    nextPatch.value = normalizeMultipleChoiceValue(
+      mergedProps.value,
+      normalizeChoiceOptions(mergedProps.options),
+    );
+
+    return nextPatch;
+  },
+};
 
 const CheckboxRenderer = forwardRef<HTMLDivElement, CheckboxProps>(
   (
@@ -129,11 +167,22 @@ export default createLeafMaterial({
   },
   allowedParents: [...CHECKBOX_ALLOWED_PARENTS],
   setter: [
-    field.select("value", "当前选中", [], { mode: "multiple" }),
+    field.select("value", "当前选中", [], {
+      deriveOptions: ({ currentProps }: SetterContext) =>
+        normalizeChoiceOptions(currentProps.options).map((item) => ({
+          label: `${item.label} (${item.value})`,
+          value: item.value,
+        })),
+      props: {
+        mode: "multiple",
+        placeholder: "请先配置选项",
+      },
+    }),
     field.optionList("options", "选项"),
     field.switch("disabled", "禁用"),
   ],
   events: [{ name: "onChange", label: "值变化事件" }],
+  propsAdapter: checkboxPropsAdapter,
   render: CheckboxRenderer,
   renderInEditor: CheckboxEditorRenderer,
 });

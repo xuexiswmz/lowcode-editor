@@ -4,6 +4,7 @@ import { INPUT_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { Input, materials, type MaterialInputRef } from "../ui";
+import type { SetterContext } from "../types";
 import { useManagedInputValue } from "./shared";
 
 export type InputProps = Omit<CommonComponentProps, "children">;
@@ -149,7 +150,13 @@ export default createLeafMaterial({
   },
   allowedParents: [...INPUT_ALLOWED_PARENTS],
   setter: [
-    field.input("value", "值"),
+    field.input("value", "值", {
+      props: ({ currentProps, config }: SetterContext) => ({
+        maxLength:
+          (currentProps.maxLength as number | undefined) ??
+          (config?.defaultProps?.maxLength as number | undefined),
+      }),
+    }),
     field.input("placeholder", "占位符"),
     field.switch("disabled", "禁用"),
     field.inputNumber("maxLength", "最大长度"),

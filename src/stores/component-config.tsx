@@ -6,7 +6,9 @@ export type {
   ComponentConfig,
   ComponentEvent,
   ComponentMethod,
+  ComponentPropsAdapter,
   ComponentSetter,
+  SetterContext,
   componentSetter,
 } from "../materials/types";
 

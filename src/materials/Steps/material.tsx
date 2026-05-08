@@ -3,6 +3,7 @@ import type { CommonComponentProps } from "../../interface";
 import { STEPS_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import type { ComponentPropsAdapter, SetterContext } from "../types";
 import { Steps, materials } from "../ui";
 
 type StepStatus = "wait" | "process" | "finish" | "error";
@@ -28,6 +29,39 @@ const defaultItems: StepItem[] = [
   { title: "第二步", description: "进行中" },
   { title: "第三步", description: "等待完成" },
 ];
+
+const stepsPropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+    const items = normalizeStepItems(formValues.items);
+
+    return {
+      ...formValues,
+      items,
+      current: getNormalizedCurrent(formValues.current, items),
+    };
+  },
+  fromFormPatch: (patch, prevProps) => {
+    const nextPatch = { ...patch };
+
+    if ("items" in nextPatch) {
+      nextPatch.items = normalizeStepItems(nextPatch.items);
+    }
+
+    if ("items" in nextPatch || "current" in nextPatch) {
+      const mergedItems = normalizeStepItems(nextPatch.items ?? prevProps.items);
+      nextPatch.current = getNormalizedCurrent(
+        nextPatch.current ?? prevProps.current,
+        mergedItems,
+      );
+    }
+
+    return nextPatch;
+  },
+};
 
 function normalizeStepItems(items: unknown): StepItem[] {
   if (!Array.isArray(items)) {
@@ -173,7 +207,16 @@ export default createLeafMaterial({
   },
   allowedParents: [...STEPS_ALLOWED_PARENTS],
   setter: [
-    field.inputNumber("current", "当前步骤"),
+    field.select("current", "当前步骤", [], {
+      deriveOptions: ({ currentProps }: SetterContext) =>
+        normalizeStepItems(currentProps.items).map((item, index) => ({
+          label: `${index + 1}. ${item.title || "未命名步骤"}`,
+          value: index,
+        })),
+      props: {
+        placeholder: "请先配置步骤项",
+      },
+    }),
     field.select("direction", "方向", [
       { label: "横向", value: "horizontal" },
       { label: "纵向", value: "vertical" },
@@ -191,6 +234,7 @@ export default createLeafMaterial({
     ]),
   ],
   events: [{ name: "onChange", label: "切换事件" }],
+  propsAdapter: stepsPropsAdapter,
   render: StepsRenderer,
   renderInEditor: StepsEditorRenderer,
 });

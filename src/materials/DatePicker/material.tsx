@@ -6,6 +6,7 @@ import { DATE_PICKER_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import { getComponentPopupContainer } from "../shared/popup";
+import type { ComponentPropsAdapter } from "../types";
 import { DatePicker, materials } from "../ui";
 
 type DatePickerMode = "date" | "week" | "month" | "quarter" | "year";
@@ -27,6 +28,36 @@ const pickerOptions = [
   { label: "季度", value: "quarter" },
   { label: "年", value: "year" },
 ] as const;
+
+const datePickerPropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+    const resolvedFormat = String(formValues.format ?? "YYYY-MM-DD");
+
+    return {
+      ...formValues,
+      value: parseDateValue(formValues.value, resolvedFormat),
+    };
+  },
+  fromFormPatch: (patch, prevProps) => {
+    const nextPatch = { ...patch };
+
+    if ("value" in nextPatch) {
+      const mergedFormat = String(
+        nextPatch.format ?? prevProps.format ?? "YYYY-MM-DD",
+      );
+      nextPatch.value = serializeDateValue(
+        nextPatch.value as Dayjs | null | undefined,
+        mergedFormat,
+      );
+    }
+
+    return nextPatch;
+  },
+};
 
 function getDatePickerFormat(picker: DatePickerMode = "date", format?: string) {
   if (format) {
@@ -215,6 +246,7 @@ export default createLeafMaterial({
     { name: "focus", label: "聚焦" },
     { name: "blur", label: "失焦" },
   ],
+  propsAdapter: datePickerPropsAdapter,
   render: DatePickerRenderer,
   renderInEditor: DatePickerEditorRenderer,
 });

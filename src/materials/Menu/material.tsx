@@ -12,6 +12,7 @@ import { MENU_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import {
+  flattenMenuSelectableItems,
   normalizeMenuItems,
   normalizeMenuMode,
   normalizeMenuSelectedKeys,
@@ -22,6 +23,7 @@ import {
   type MenuTheme,
 } from "../shared/menu";
 import { getComponentPopupContainer } from "../shared/popup";
+import type { ComponentPropsAdapter, SetterContext } from "../types";
 import { Menu, materials } from "../ui";
 
 type MenuProps = Omit<CommonComponentProps, "children"> & {
@@ -44,6 +46,49 @@ const defaultItems: MenuItemConfig[] = [
   },
   { key: "about", label: "关于我们" },
 ];
+
+const menuPropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+    const items = normalizeMenuItems(formValues.items);
+
+    return {
+      ...formValues,
+      items,
+      mode: normalizeMenuMode(formValues.mode),
+      theme: normalizeMenuTheme(formValues.theme),
+      selectedKeys: normalizeMenuSelectedKeys(formValues.selectedKeys, items),
+    };
+  },
+  fromFormPatch: (patch, prevProps) => {
+    const nextPatch = { ...patch };
+
+    if ("items" in nextPatch) {
+      nextPatch.items = normalizeMenuItems(nextPatch.items);
+    }
+
+    if ("mode" in nextPatch) {
+      nextPatch.mode = normalizeMenuMode(nextPatch.mode);
+    }
+
+    if ("theme" in nextPatch) {
+      nextPatch.theme = normalizeMenuTheme(nextPatch.theme);
+    }
+
+    if ("items" in nextPatch || "selectedKeys" in nextPatch) {
+      const mergedItems = normalizeMenuItems(nextPatch.items ?? prevProps.items);
+      nextPatch.selectedKeys = normalizeMenuSelectedKeys(
+        nextPatch.selectedKeys ?? prevProps.selectedKeys,
+        mergedItems,
+      );
+    }
+
+    return nextPatch;
+  },
+};
 
 const collapsedMenuIcons = [
   HomeOutlined,
@@ -301,7 +346,14 @@ export default createLeafMaterial({
   allowedParents: [...MENU_ALLOWED_PARENTS],
   setter: [
     field.menuItems("items", "菜单项"),
-    field.select("selectedKeys", "当前选中", []),
+    field.select("selectedKeys", "当前选中", [], {
+      deriveOptions: ({ currentProps }: SetterContext) =>
+        flattenMenuSelectableItems(normalizeMenuItems(currentProps.items)),
+      props: {
+        mode: "multiple",
+        placeholder: "请先配置可选菜单项",
+      },
+    }),
     field.select("mode", "模式", [
       { label: "内联", value: "inline" },
       { label: "垂直", value: "vertical" },
@@ -318,6 +370,7 @@ export default createLeafMaterial({
     { name: "onSelect", label: "选中事件" },
     { name: "onOpenChange", label: "展开收起事件" },
   ],
+  propsAdapter: menuPropsAdapter,
   render: MenuRenderer,
   renderInEditor: MenuEditorRenderer,
 });

@@ -9,6 +9,7 @@ import { useComponentsStore } from "../../stores/components";
 import { TABS_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import type { ComponentPropsAdapter, SetterContext } from "../types";
 import { Tabs, materials } from "../ui";
 
 type TabsType = "line" | "card" | "editable-card";
@@ -38,6 +39,39 @@ const defaultItems: TabItem[] = [
   { key: "tab1", label: "标签一", children: "标签一内容" },
   { key: "tab2", label: "标签二", children: "标签二内容" },
 ];
+
+const tabsPropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+    const items = normalizeTabItems(formValues.items);
+
+    return {
+      ...formValues,
+      items,
+      activeKey: normalizeActiveKey(formValues.activeKey, items),
+    };
+  },
+  fromFormPatch: (patch, prevProps) => {
+    const nextPatch = { ...patch };
+
+    if ("items" in nextPatch) {
+      nextPatch.items = normalizeTabItems(nextPatch.items);
+    }
+
+    if ("items" in nextPatch || "activeKey" in nextPatch) {
+      const mergedItems = normalizeTabItems(nextPatch.items ?? prevProps.items);
+      nextPatch.activeKey = normalizeActiveKey(
+        nextPatch.activeKey ?? prevProps.activeKey,
+        mergedItems,
+      );
+    }
+
+    return nextPatch;
+  },
+};
 
 function normalizeTabItems(items: unknown): TabItem[] {
   if (!Array.isArray(items)) {
@@ -264,7 +298,17 @@ export default createLeafMaterial({
   allowedParents: [...TABS_ALLOWED_PARENTS],
   setter: [
     field.tabsItems("items", "面板"),
-    field.select("activeKey", "当前面板", []),
+    field.select("activeKey", "当前面板", [], {
+      deriveOptions: ({ currentProps }: SetterContext) =>
+        normalizeTabItems(currentProps.items).map((item) => ({
+          label: `${item.label} (${item.key})`,
+          value: item.key,
+        })),
+      props: {
+        placeholder: "请先配置面板",
+        allowClear: true,
+      },
+    }),
     field.select("type", "类型", [
       { label: "线条", value: "line" },
       { label: "卡片", value: "card" },
@@ -283,6 +327,7 @@ export default createLeafMaterial({
     { name: "onTabClick", label: "点击页签事件" },
   ],
   methods: [{ name: "switchTab", label: "切换页签" }],
+  propsAdapter: tabsPropsAdapter,
   render: TabsRenderer,
   renderInEditor: TabsEditorRenderer,
 });

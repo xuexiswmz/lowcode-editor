@@ -3,6 +3,7 @@ import type { CommonComponentProps } from "../../interface";
 import { TREE_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
+import type { ComponentPropsAdapter } from "../types";
 import { materials, Tree } from "../ui";
 
 export interface TreeNodeConfig {
@@ -40,6 +41,29 @@ const defaultTreeData: TreeNodeConfig[] = [
     ],
   },
 ];
+
+const treePropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+
+    return {
+      ...formValues,
+      treeData: normalizeTreeData(formValues.treeData),
+    };
+  },
+  fromFormPatch: (patch) => {
+    const nextPatch = { ...patch };
+
+    if ("treeData" in nextPatch) {
+      nextPatch.treeData = normalizeTreeData(nextPatch.treeData);
+    }
+
+    return nextPatch;
+  },
+};
 
 function normalizeTreeData(value: unknown): TreeNodeConfig[] {
   if (typeof value === "string" && value.trim()) {
@@ -244,6 +268,7 @@ export default createLeafMaterial({
     { name: "onCheck", label: "勾选事件" },
     { name: "onExpand", label: "展开事件" },
   ],
+  propsAdapter: treePropsAdapter,
   render: TreeRenderer,
   renderInEditor: TreeEditorRenderer,
 });

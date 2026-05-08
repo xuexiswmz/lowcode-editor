@@ -10,144 +10,55 @@ import {
   TimePicker,
 } from "antd";
 import type { SetterRendererProps } from "../types";
-import {
-  getCurrentMenuSelectOptions,
-  getCurrentOptionSelectOptions,
-  getCurrentStepSelectOptions,
-  getCurrentTabSelectOptions,
-  getSelectMode,
-} from "../utils/options";
-
-export function BasicSelectSetter({
-  setting,
-  componentName,
-  currentProps,
-}: SetterRendererProps) {
-  const { options, name } = setting;
-
-  if (componentName === "Radio" && name === "value") {
-    return (
-      <Select
-        options={getCurrentOptionSelectOptions(currentProps)}
-        placeholder="请先配置选项"
-        allowClear
-      />
-    );
-  }
-
-  if (componentName === "Checkbox" && name === "value") {
-    return (
-      <Select
-        mode="multiple"
-        options={getCurrentOptionSelectOptions(currentProps)}
-        placeholder="请先配置选项"
-      />
-    );
-  }
-
-  if (componentName === "Select" && name === "value") {
-    return (
-      <Select
-        mode={getSelectMode(currentProps)}
-        options={getCurrentOptionSelectOptions(currentProps)}
-        placeholder="请先配置选项"
-        allowClear
-      />
-    );
-  }
-
-  if (componentName === "Tabs" && name === "activeKey") {
-    return (
-      <Select
-        options={getCurrentTabSelectOptions(currentProps)}
-        placeholder="请先配置面板"
-        allowClear
-      />
-    );
-  }
-
-  if (componentName === "Menu" && name === "selectedKeys") {
-    return (
-      <Select
-        mode="multiple"
-        options={getCurrentMenuSelectOptions(currentProps)}
-        placeholder="请先配置可选菜单项"
-      />
-    );
-  }
-
-  if (componentName === "Select" && name === "mode") {
-    return (
-      <Select
-        options={[
-          { label: "单选", value: "single" },
-          { label: "多选", value: "multiple" },
-        ]}
-      />
-    );
-  }
+export function BasicSelectSetter({ setting }: SetterRendererProps) {
+  const inputProps = (setting.props ?? {}) as Record<string, unknown>;
 
   return (
     <Select
-      options={options as { label: string; value: string }[] | undefined}
+      options={setting.options as { label: string; value: string }[] | undefined}
+      disabled={Boolean(setting.disabled)}
+      {...inputProps}
     />
   );
 }
 
 export function BasicInputSetter({
   setting,
-  componentName,
-  currentProps,
-  config,
 }: SetterRendererProps) {
-  const { name } = setting;
-
-  let maxLength: number | undefined;
-  if ((componentName === "Input" || componentName === "Textarea") && name === "value") {
-    maxLength = currentProps.maxLength as number | undefined;
-    if (maxLength === undefined) {
-      maxLength = config?.defaultProps?.maxLength as number | undefined;
-    }
-  }
-
-  if (componentName === "Textarea" && name === "value") {
-    const rows =
-      (currentProps.rows as number | undefined) ??
-      (config?.defaultProps?.rows as number | undefined) ??
-      4;
-    return <Input.TextArea maxLength={maxLength} rows={rows} />;
-  }
-
-  if (name === "value" && maxLength !== undefined) {
-    return <Input maxLength={maxLength} />;
-  }
-
-  return <Input />;
+  return (
+    <Input
+      disabled={Boolean(setting.disabled)}
+      {...((setting.props ?? {}) as Record<string, unknown>)}
+    />
+  );
 }
 
-export function BasicSwitchSetter() {
-  return <Switch />;
+export function BasicSwitchSetter({ setting }: SetterRendererProps) {
+  return (
+    <Switch
+      disabled={Boolean(setting.disabled)}
+      {...((setting.props ?? {}) as Record<string, unknown>)}
+    />
+  );
 }
 
-export function BasicInputNumberSetter({
-  setting,
-  componentName,
-  currentProps,
-}: SetterRendererProps) {
-  if (componentName === "Steps" && setting.name === "current") {
-    return (
-      <Select
-        options={getCurrentStepSelectOptions(currentProps)}
-        placeholder="请先配置步骤项"
-      />
-    );
-  }
-
-  return <InputNumber style={{ width: "100%" }} />;
+export function BasicInputNumberSetter({ setting }: SetterRendererProps) {
+  return (
+    <InputNumber
+      style={{ width: "100%" }}
+      disabled={Boolean(setting.disabled)}
+      {...((setting.props ?? {}) as Record<string, unknown>)}
+    />
+  );
 }
 
-export function BasicTextareaSetter() {
-  return <Input.TextArea />;
+export function BasicTextareaSetter({ setting }: SetterRendererProps) {
+  return (
+    <Input.TextArea
+      disabled={Boolean(setting.disabled)}
+      {...((setting.props ?? {}) as Record<string, unknown>)}
+    />
+  );
 }
 
 export function ImageSetter({ value, onChange }: SetterRendererProps) {
@@ -194,24 +105,50 @@ export function ReadonlyJsonSetter({ value }: SetterRendererProps) {
   );
 }
 
-export function RadioSetter() {
-  return <Radio.Group />;
+export function RadioSetter({ setting }: SetterRendererProps) {
+  return (
+    <Radio.Group
+      disabled={Boolean(setting.disabled)}
+      {...((setting.props ?? {}) as Record<string, unknown>)}
+    />
+  );
 }
 
-export function CheckboxSetter() {
-  return <Checkbox.Group />;
+export function CheckboxSetter({ setting }: SetterRendererProps) {
+  return (
+    <Checkbox.Group
+      disabled={Boolean(setting.disabled)}
+      {...((setting.props ?? {}) as Record<string, unknown>)}
+    />
+  );
 }
 
-export function DatePickerSetter() {
-  return <DatePicker />;
+export function DatePickerSetter({ setting }: SetterRendererProps) {
+  return (
+    <DatePicker
+      disabled={Boolean(setting.disabled)}
+      {...((setting.props ?? {}) as Record<string, unknown>)}
+    />
+  );
 }
 
-export function TimePickerSetter() {
-  return <TimePicker />;
+export function TimePickerSetter({ setting }: SetterRendererProps) {
+  return (
+    <TimePicker
+      disabled={Boolean(setting.disabled)}
+      {...((setting.props ?? {}) as Record<string, unknown>)}
+    />
+  );
 }
 
-export function DateTimePickerSetter() {
-  return <DatePicker showTime />;
+export function DateTimePickerSetter({ setting }: SetterRendererProps) {
+  return (
+    <DatePicker
+      showTime
+      disabled={Boolean(setting.disabled)}
+      {...((setting.props ?? {}) as Record<string, unknown>)}
+    />
+  );
 }
 
 export function FallbackInputSetter() {

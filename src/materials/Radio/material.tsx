@@ -5,10 +5,12 @@ import { RADIO_ALLOWED_PARENTS } from "../constants";
 import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import {
+  normalizeSingleChoiceValue,
   normalizeChoiceOptions,
   useManagedChoiceValue,
   type ChoiceOption,
 } from "../shared/choice";
+import type { ComponentPropsAdapter, SetterContext } from "../types";
 import { RadioGroup, materials } from "../ui";
 
 type RadioProps = Omit<CommonComponentProps, "children"> & {
@@ -22,6 +24,42 @@ const defaultOptions: ChoiceOption[] = [
   { label: "选项一", value: "option1" },
   { label: "选项二", value: "option2" },
 ];
+
+const radioPropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+
+    return {
+      ...formValues,
+      value: normalizeSingleChoiceValue(
+        formValues.value,
+        normalizeChoiceOptions(formValues.options),
+      ),
+    };
+  },
+  fromFormPatch: (patch, prevProps) => {
+    const nextPatch = { ...patch };
+
+    if ("options" in nextPatch) {
+      nextPatch.options = normalizeChoiceOptions(nextPatch.options);
+    }
+
+    const mergedProps = {
+      ...prevProps,
+      ...nextPatch,
+    };
+
+    nextPatch.value = normalizeSingleChoiceValue(
+      mergedProps.value,
+      normalizeChoiceOptions(mergedProps.options),
+    );
+
+    return nextPatch;
+  },
+};
 
 const RadioRenderer = forwardRef<HTMLDivElement, RadioProps>(
   (
@@ -134,7 +172,17 @@ export default createLeafMaterial({
   },
   allowedParents: [...RADIO_ALLOWED_PARENTS],
   setter: [
-    field.select("value", "当前选中", []),
+    field.select("value", "当前选中", [], {
+      deriveOptions: ({ currentProps }: SetterContext) =>
+        normalizeChoiceOptions(currentProps.options).map((item) => ({
+          label: `${item.label} (${item.value})`,
+          value: item.value,
+        })),
+      props: {
+        placeholder: "请先配置选项",
+        allowClear: true,
+      },
+    }),
     field.optionList("options", "选项"),
     field.select("optionType", "风格", [
       { label: "默认", value: "default" },
@@ -143,6 +191,7 @@ export default createLeafMaterial({
     field.switch("disabled", "禁用"),
   ],
   events: [{ name: "onChange", label: "值变化事件" }],
+  propsAdapter: radioPropsAdapter,
   render: RadioRenderer,
   renderInEditor: RadioEditorRenderer,
 });

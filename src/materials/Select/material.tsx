@@ -5,12 +5,15 @@ import { field } from "../fields";
 import { createLeafMaterial } from "../factories";
 import {
   normalizeChoiceMode,
+  normalizeChoiceModeFieldValue,
   normalizeChoiceOptions,
+  normalizeChoiceValue,
   useManagedChoiceValue,
   type ChoiceMode,
   type ChoiceOption,
 } from "../shared/choice";
 import { getComponentPopupContainer } from "../shared/popup";
+import type { ComponentPropsAdapter, SetterContext } from "../types";
 import { Select, materials } from "../ui";
 
 type SelectProps = Omit<CommonComponentProps, "children"> & {
@@ -26,6 +29,49 @@ const defaultOptions: ChoiceOption[] = [
   { label: "选项一", value: "option1" },
   { label: "选项二", value: "option2" },
 ];
+
+const selectPropsAdapter: ComponentPropsAdapter = {
+  toFormValues: (props, defaultProps) => {
+    const formValues = {
+      ...defaultProps,
+      ...props,
+    };
+
+    return {
+      ...formValues,
+      mode: normalizeChoiceModeFieldValue(formValues.mode),
+      value: normalizeChoiceValue(
+        formValues.value,
+        normalizeChoiceOptions(formValues.options),
+        normalizeChoiceMode(formValues.mode),
+      ),
+    };
+  },
+  fromFormPatch: (patch, prevProps) => {
+    const nextPatch = { ...patch };
+
+    if ("options" in nextPatch) {
+      nextPatch.options = normalizeChoiceOptions(nextPatch.options);
+    }
+
+    if ("mode" in nextPatch) {
+      nextPatch.mode = nextPatch.mode === "multiple" ? "multiple" : undefined;
+    }
+
+    const mergedProps = {
+      ...prevProps,
+      ...nextPatch,
+    };
+
+    nextPatch.value = normalizeChoiceValue(
+      mergedProps.value,
+      normalizeChoiceOptions(mergedProps.options),
+      normalizeChoiceMode(mergedProps.mode),
+    );
+
+    return nextPatch;
+  },
+};
 
 const SelectRenderer = forwardRef<HTMLDivElement, SelectProps>(
   (
@@ -158,12 +204,30 @@ export default createLeafMaterial({
   },
   allowedParents: [...SELECT_ALLOWED_PARENTS],
   setter: [
-    field.select("value", "当前选中", []),
+    field.select("value", "当前选中", [], {
+      deriveOptions: ({ currentProps }: SetterContext) =>
+        normalizeChoiceOptions(currentProps.options).map((item) => ({
+          label: `${item.label} (${item.value})`,
+          value: item.value,
+        })),
+      props: ({ currentProps }: SetterContext) => ({
+        mode: normalizeChoiceMode(currentProps.mode),
+        placeholder: "请先配置选项",
+        allowClear: true,
+      }),
+    }),
     field.optionList("options", "选项"),
     field.select("mode", "模式", [
       { label: "单选", value: "single" },
       { label: "多选", value: "multiple" },
-    ]),
+    ], {
+      props: {
+        options: [
+          { label: "单选", value: "single" },
+          { label: "多选", value: "multiple" },
+        ],
+      },
+    }),
     field.input("placeholder", "占位符"),
     field.switch("disabled", "禁用"),
     field.switch("allowClear", "允许清空"),
@@ -178,6 +242,7 @@ export default createLeafMaterial({
     { name: "blur", label: "失焦" },
     { name: "clear", label: "清空" },
   ],
+  propsAdapter: selectPropsAdapter,
   render: SelectRenderer,
   renderInEditor: SelectEditorRenderer,
 });

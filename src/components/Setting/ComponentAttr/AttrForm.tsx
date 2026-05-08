@@ -6,6 +6,7 @@ import type {
   componentSetter,
 } from "../../../stores/component-config";
 import { FallbackInputSetter, setterRegistry } from "./setter-registry";
+import type { ResolvedSetterContext } from "./types";
 
 interface AttrFormProps {
   form: FormInstance;
@@ -33,6 +34,55 @@ function renderSetter(
   );
 }
 
+function resolveValue<T>(
+  value: T | ((context: ResolvedSetterContext) => T),
+  context: ResolvedSetterContext,
+) {
+  return typeof value === "function"
+    ? (value as (context: ResolvedSetterContext) => T)(context)
+    : value;
+}
+
+function resolveSetter(
+  setter: componentSetter,
+  componentName: string,
+  currentProps: Record<string, unknown>,
+  config: ComponentConfig,
+) {
+  const context: ResolvedSetterContext = {
+    setting: setter,
+    componentName,
+    currentProps,
+    config,
+  };
+  const visible = setter.visible === undefined
+    ? true
+    : resolveValue(setter.visible, context);
+
+  if (!visible) {
+    return null;
+  }
+
+  const props =
+    setter.props === undefined
+      ? undefined
+      : resolveValue(setter.props, context);
+  const options = setter.deriveOptions
+    ? setter.deriveOptions(context)
+    : setter.options;
+  const disabled =
+    setter.disabled === undefined
+      ? undefined
+      : resolveValue(setter.disabled, context);
+
+  return {
+    ...setter,
+    props,
+    options,
+    disabled,
+  };
+}
+
 export default function AttrForm({
   form,
   curComponent,
@@ -42,6 +92,16 @@ export default function AttrForm({
 }: AttrFormProps) {
   const componentName = curComponent.name;
   const currentProps = curComponent.props as Record<string, unknown>;
+  const resolvedSetters = (config.setter ?? []).flatMap((setter) => {
+    const resolvedSetter = resolveSetter(
+      setter,
+      componentName,
+      currentProps,
+      config,
+    );
+
+    return resolvedSetter ? [resolvedSetter] : [];
+  });
 
   return (
     <Form
@@ -61,7 +121,7 @@ export default function AttrForm({
       <Form.Item label="组件描述">
         <Input value={curComponent.desc} disabled />
       </Form.Item>
-      {config.setter?.map((setter) => (
+      {resolvedSetters.map((setter) => (
         <Form.Item
           key={setter.name}
           label={setter.label}
